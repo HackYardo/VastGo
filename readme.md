@@ -26,5 +26,5 @@ julia> include("path/to/file.jl")
 
 ### Q&A
 - Why running board.jl takes so long? 
-  - Julia is a just in time language and needs a bit more time to first plot.
+  - Julia needs more time to first plot.
   - You can use [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots) to accelerate.
