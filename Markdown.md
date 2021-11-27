@@ -22,7 +22,7 @@ Markdown | a text makeup language
 `:bomb: :heart: :joy: :smile: :sparkles: :tada: :vs: :warning: :zap: :+1:` | :bomb: :heart: :joy: :smile: :sparkles: :tada: :vs: :warning: :zap: :+1:
 
 ---
-*`How to take notes? In .txt .word Onenote HTML? Try Common/Github Markdown!*
+*How to take notes? In .txt .word Onenote HTML? Try Common/Github Markdown!*
 ---
 
 **Glossary**
@@ -84,7 +84,6 @@ println()
 `___`
 ___
 ## [600 Second Markdown Tutorial](http://commonmark.org/help/tutorial/)
-This Tutorial is too 卡
 ___
 # Github Markdown
 ## Create a Task List
