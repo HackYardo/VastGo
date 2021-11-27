@@ -89,11 +89,3 @@ ownership=scatter(
 	)
 
 board=plot([colLine, rowLine, starPoint, whiteStone, blackStone, ownership], boardLayout)
-
-
-
-# Sublime Text 代码层次导航：ctrl F2 打标签，shitf ctrl [] 折叠/展开，F2 浏览标签
-#	或者 ctrl M 跳括号
-#	ctrl G 跳转到行数
-#	ctrl U 跳转到上一个改变
-#	MENU Edit Code Folding
