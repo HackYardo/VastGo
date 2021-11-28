@@ -15,6 +15,7 @@ Go GUI | Language
 [Lizgoban](https://github.com/kaorahi/lizgoban) | JavaScript
 [BadukAI](https://github.com/aki65/aki65.github.io) | python
 [Ogatak](https://github.com/rooklift/ogatak) | JavaScript
+
 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
 ## What can the repo do today/tomorrow?
