@@ -2,11 +2,81 @@
 
 [myMarkdownCheatSheet](./Markdown.md)
 
-> This is a repo about the game of [Go/WeiQi/Baduk](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Common MarkDown](https://commonmark.org/), [Julia](https://julialang.org/) , [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
+> This is a repo about the game of [Go/WeiQi/Baduk](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Common MarkDown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
 
+## Why create this repo?
+There are 
+Go GUI | Language
+--- | ---
+[Sabaki](https://github.com/SabakiHQ/Sabaki) | JavaScript
+[q5Go](https://github.com/bernds/q5Go) | C++
+[Lizzie](https://github.com/featurecat/lizzie) | Java
+[KaTrain](https://github.com/sanderland/katrain) | Python
+[Lizgoban](https://github.com/kaorahi/lizgoban) | JavaScript
+[Ogatak](https://github.com/rooklift/ogatak) | JavaScript
+
+### 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
+
+## What can this repo do today and tomorrow?
+- [] basic game features
+  - [x] static Go board 19x19
+  - [] mouse-click event to play stones
+  - [] dynamic Go board
+  - [] GTP to call Go engines and manage games
+  - [] judge game-end
+  - [] completely play games
+  - [] load/save sgf
+  - [] time setting
+  - [] handicap
+- [] features from GNUGo   
+  - [] vertex eyes
+  - [] attack group
+- [] features from modern Go-playing artificial intelligence engines
+  - [] winrate
+  - [] order, principal variation 
+  - [] visits
+- [] features from KataGo [1](https://github.com/lightvector/KataGo/tree/master/cpp/configs) [2](https://github.com/lightvector/KataGo/tree/master/docs)
+  - [] ruleSet, komi (-150,150)
+  - [] scoreLead, ownership, ownershipStdev
+  - [] boardSize (2x2,19x19) 
+  - [] boardSize (2x2,29x29)?
+  - [] playoutDoublingAdvantage (-3,3), dynmic
+  - [] wideRootNoise (0,1)
+  - [] resignThreshold (-1,1), resignMinScoreDifference, resignConsecTurns
+  - [] kata-raw-nn SYMMETRY (0,7)+("all")
+  - [] opening books on 7x7 board
+  - [] parallel analyze
+- [] features from KaTrain
+  - [] weak bot 
+- [] features from Sabaki
+  - [] KataJigo 
+- [] features from [waterfire](https://waterfire.us/joseki.htm)
+  - [] Kogo's Joseki Dictionary
+- [] advanced features 
+  - [] load/save analyzed svg
+  - [] svg2sgf or sgf2svg
+  - [] opening book of modern Go community?
+  - [] random opening
+  - [] reuse captures by each other
+  - [] [First Capture Go](https://senseis.xmp.net/?AtariGo)
+  - [] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz)
+  - [] [One Color Go](https://senseis.xmp.net/?OneColourGo)
+  - [] [Blind Go](https://senseis.xmp.net/?BlindGo)
+  - [] [Fog Of War Go](https://senseis.xmp.net/?FogOfWar)
+  - [] [Multi-color Go](https://senseis.xmp.net/?MultiColorGo)
+  - [] [Pair Go](https://senseis.xmp.net/?PairGo)
+  - [] [Double Go](https://senseis.xmp.net/?DoubleGo)
+  - [] [Quantum Go](https://arxiv.org/abs/1603.04751)
+  - [] [Topological Go](https://senseis.xmp.net/?TopologicalGo)?
+  - [] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
+  - [] [1000-Volt-Go](https://senseis.xmp.net/?ElectricGo)
+  - [] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
+  - **Be careful**: not the same as [kahv](https://go.kahv.io/) and can be played by KataGo
+  - [] Five In A Row, not merely Go
+  - [] Chess, not merely Go board and stones
 ## How to run "board.jl"?
-1. install [julia](https://julialang.org/) 
-2. run julia in your shell/cmd/terminal and you will enter julia-REPL mode
+1. download and install [julia](https://julialang.org/) 
+2. run julia in your cmd/shell/terminal and you will enter julia-REPL mode
 ```shell
 cmd> julia 
 ```  
@@ -21,10 +91,13 @@ julia> ]
 5. download board.jl file
 6. run board.jl
 ```julia
-julia> include("path/to/file.jl") 
+julia> include("path/to/fileName.jl") 
 ```
 
-### Q&A
+### Q&A 
 - Why running board.jl takes so long? 
   - Julia needs more time to first plot.
   - You can use [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots) to accelerate.
+- Why Julia?
+- Why Plotly(JS) Dash?
+  - Julia is a
