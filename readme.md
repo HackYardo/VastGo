@@ -13,7 +13,7 @@ Go GUI | Language
 [Lizzie](https://github.com/featurecat/lizzie) | Java
 [KaTrain](https://github.com/sanderland/katrain) | Python
 [Lizgoban](https://github.com/kaorahi/lizgoban) | JavaScript
-[BadukAI](https://github.com/aki65/aki65.github.io) | python
+[BadukAI](https://github.com/aki65/aki65.github.io) | Python
 [Ogatak](https://github.com/rooklift/ogatak) | JavaScript
 
 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
