@@ -13,12 +13,12 @@ Go GUI | Language
 [Lizzie](https://github.com/featurecat/lizzie) | Java
 [KaTrain](https://github.com/sanderland/katrain) | Python
 [Lizgoban](https://github.com/kaorahi/lizgoban) | JavaScript
+[BadukAI](https://github.com/aki65/aki65.github.io) | python
 [Ogatak](https://github.com/rooklift/ogatak) | JavaScript
-
-### 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
+🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
 ## What can the repo do today/tomorrow?
-### - [ ] basic game features
+- [ ] basic game features
   - [x] static Go board 19x19
   - [ ] mouse-click event to play stones
   - [ ] dynamic Go board
@@ -28,14 +28,14 @@ Go GUI | Language
   - [ ] load/save sgf
   - [ ] time setting
   - [ ] handicap
-### - [ ] features from GNUGo   
+- [ ] features from GNUGo   
   - [ ] vertex eyes
   - [ ] attack group
-### - [ ] features from modern Go-playing artificial intelligence engines
+- [ ] features from modern Go-playing artificial intelligence engines
   - [ ] winrate
   - [ ] order, principal variation 
   - [ ] visits
-### - [ ] features from KataGo [1](https://github.com/lightvector/KataGo/tree/master/cpp/configs) [2](https://github.com/lightvector/KataGo/tree/master/docs)
+- [ ] features from KataGo [1](https://github.com/lightvector/KataGo/tree/master/cpp/configs) [2](https://github.com/lightvector/KataGo/tree/master/docs)
   - [ ] ruleSet, komi (-150,150)
   - [ ] scoreLead, ownership, ownershipStdev
   - [ ] boardSize (2x2,19x19) 
@@ -46,16 +46,17 @@ Go GUI | Language
   - [ ] kata-raw-nn SYMMETRY (0,7)+("all")
   - [ ] opening books on 7x7 board
   - [ ] parallel analyze
-### - features from KaTrain
+- [ ] features from KaTrain
   - [ ] weak bot 
-### - features from Sabaki
+- [ ] features from Sabaki
   - [ ] KataJigo 
-### - features from [waterfire](https://waterfire.us/joseki.htm)
+- [ ] features from [waterfire](https://waterfire.us/joseki.htm)
   - [ ] Kogo's Joseki Dictionary
-### - [ ] advanced features 
+- [ ] advanced features 
   - [ ] load/save analyzed svg
   - [ ] svg2sgf or sgf2svg
   - [ ] opening book of modern Go community?
+- [ ] expand features
   - [ ] random opening
   - [ ] reuse captures by each other
   - [ ] [First Capture Go](https://senseis.xmp.net/?AtariGo)
@@ -71,36 +72,36 @@ Go GUI | Language
   - [ ] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
   - [ ] [1000-Volt-Go](https://senseis.xmp.net/?ElectricGo)
   - [ ] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
-####  - **Be careful**: not the same as [kahv](https://go.kahv.io/) and can be played by KataGo
-### - not merely Go
+> **Be careful**: not the same as [kahv](https://go.kahv.io/) and can be played by KataGo
+- [ ] not merely Go
   - [ ] Five In A Row
-### - not merely Go board and stones
+- [ ] not merely Go board and stones
   - [ ] Chess
 ## How to run "board.jl"?
-### 1. download and install [julia](https://julialang.org/) 
-### 2. run julia in your cmd/shell/terminal and you will enter julia-REPL mode
+1. download and install [julia](https://julialang.org/) 
+2. run julia in your cmd/shell/terminal and you will enter julia-REPL mode
 ```shell
 cmd> julia 
 ```  
-### 3. enter julia-pkg mode
+3. enter julia-pkg mode
 ```julia
 julia> ]
 ```
-### 4. install [PlotlyJS.jl](https://github.com/JuliaPlots/PlotlyJS.jl)
+4. install [PlotlyJS.jl](https://github.com/JuliaPlots/PlotlyJS.jl)
 ```julia
 (@v1.6) pkg> add PlotlyJS
 ```
-### 5. download board.jl file
-### 6. run board.jl
+5. download board.jl file
+6. run board.jl
 ```julia
 julia> include("path/to/fileName.jl") 
 ```
 
 ## Q&A 
-### - Why running board.jl takes so long? 
+- Why running board.jl takes so long? 
   - Julia needs more time to first plot.
   - You can use [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots) to accelerate.
-### - Why Julia?
+- Why Julia?
   - [Evan Miller](https://www.evanmiller.org/why-im-betting-on-julia.html) 
-### - Why Plotly(JS) Dash?
+- Why Plotly(JS) Dash?
   - More interactive features than the others.
