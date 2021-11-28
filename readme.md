@@ -46,11 +46,11 @@ Go GUI | Language
   - [ ] kata-raw-nn SYMMETRY (0,7)+("all")
   - [ ] opening books on 7x7 board
   - [ ] parallel analyze
-- [ ] features from KaTrain
+- features from KaTrain
   - [ ] weak bot 
-- [ ] features from Sabaki
+- features from Sabaki
   - [ ] KataJigo 
-- [ ] features from [waterfire](https://waterfire.us/joseki.htm)
+- features from [waterfire](https://waterfire.us/joseki.htm)
   - [ ] Kogo's Joseki Dictionary
 - [ ] advanced features 
   - [ ] load/save analyzed svg
@@ -72,8 +72,10 @@ Go GUI | Language
   - [ ] [1000-Volt-Go](https://senseis.xmp.net/?ElectricGo)
   - [ ] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
   - **Be careful**: not the same as [kahv](https://go.kahv.io/) and can be played by KataGo
-  - [ ] Five In A Row, not merely Go
-  - [ ] Chess, not merely Go board and stones
+- not merely Go
+  - [ ] Five In A Row
+- not merely Go board and stones
+  - [ ] Chess
 ## How to run "board.jl"?
 1. download and install [julia](https://julialang.org/) 
 2. run julia in your cmd/shell/terminal and you will enter julia-REPL mode
