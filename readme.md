@@ -2,7 +2,7 @@
 
 [myMarkdownCheatSheet](./Markdown.md)
 
-> This is a repo about the game of [Go/WeiQi/Baduk](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Common MarkDown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
+> A repo about the game of [Go/WeiQi/Baduk](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Common MarkDown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
 
 ## Why create this?
 Look at the table:
@@ -57,7 +57,7 @@ Go GUI | Language
   - [ ] load/save analyzed svg
   - [ ] svg2sgf or sgf2svg
   - [ ] opening book of modern Go community?
-- [ ] expand features
+- [ ] expanded features
   - [ ] random opening
   - [ ] reuse captures by each other
   - [ ] [First Capture Go](https://senseis.xmp.net/?AtariGo)
