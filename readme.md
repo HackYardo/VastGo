@@ -4,7 +4,7 @@
 
 > This is a repo about the game of [Go/WeiQi/Baduk](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Common MarkDown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
 
-## Why create this repo?
+## Why create this?
 Look at the table:
 Go GUI | Language
 --- | ---
@@ -17,7 +17,7 @@ Go GUI | Language
 
 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
-## What can this repo do today and tomorrow?
+## What can the repo do today/tomorrow?
 - [ ] basic game features
   - [x] static Go board 19x19
   - [ ] mouse-click event to play stones
