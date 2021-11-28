@@ -15,7 +15,7 @@ Go GUI | Language
 [Lizgoban](https://github.com/kaorahi/lizgoban) | JavaScript
 [Ogatak](https://github.com/rooklift/ogatak) | JavaScript
 
-### 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
+🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
 ## What can this repo do today and tomorrow?
 - [ ] basic game features
@@ -94,7 +94,7 @@ julia> ]
 julia> include("path/to/fileName.jl") 
 ```
 
-### Q&A 
+## Q&A 
 - Why running board.jl takes so long? 
   - Julia needs more time to first plot.
   - You can use [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots) to accelerate.
