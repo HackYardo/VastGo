@@ -5,7 +5,7 @@
 > This is a repo about the game of [Go/WeiQi/Baduk](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Common MarkDown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
 
 ## Why create this?
-### Look at the table:
+Look at the table:
 Go GUI | Language
 --- | ---
 [Sabaki](https://github.com/SabakiHQ/Sabaki) | JavaScript
@@ -77,6 +77,7 @@ Go GUI | Language
   - [ ] Five In A Row
 - [ ] not merely Go board and stones
   - [ ] Chess
+
 ## How to run "board.jl"?
 1. download and install [julia](https://julialang.org/) 
 2. run julia in your cmd/shell/terminal and you will enter julia-REPL mode
