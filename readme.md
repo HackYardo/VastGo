@@ -29,7 +29,7 @@ Go GUI | Language
   - [ ] load/save sgf
   - [ ] time setting
   - [ ] handicap
-- [ ] features from GNUGo   
+- [ ] features from GNUGo    
   - [ ] vertex eyes
   - [ ] attack group
 - [ ] features from modern Go-playing artificial intelligence engines
@@ -41,7 +41,7 @@ Go GUI | Language
   - [ ] scoreLead, ownership, ownershipStdev
   - [ ] boardSize (2x2,19x19) 
   - [ ] boardSize (2x2,29x29)?
-  - [ ] playoutDoublingAdvantage (-3,3), dynmic
+  - [ ] playoutDoublingAdvantage (-3,3), dynamic
   - [ ] wideRootNoise (0,1)
   - [ ] resignThreshold (-1,1), resignMinScoreDifference, resignConsecTurns
   - [ ] kata-raw-nn SYMMETRY (0,7)+("all")
@@ -106,4 +106,4 @@ julia> include("path/to/fileName.jl")
 - Why Julia?
   - [Evan Miller](https://www.evanmiller.org/why-im-betting-on-julia.html) 
 - Why Plotly(JS) Dash?
-  - More interactive features than the others.
+  - More interactive features than the others. [Details](https://docs.juliaplots.org/latest/backends/)
