@@ -16,7 +16,12 @@ Go GUI | Language
 
 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
+## What's new here?
+The structure and the [nonstandard Go](#nonstandard-go).
+![strusture](./structure.md)
+
 ## What can the repo do today/tomorrow?
+#### Standard Go
 - [ ] basic game features
   - [x] static Go board 19x19
   - [ ] mouse-click event to play stones
@@ -69,6 +74,7 @@ Go GUI | Language
   - [ ] select data to analyze
   - [ ] rank, rating, ladder match 
   - [ ] opening book of modern Go community?
+#### Nonstandard Go
 - [ ] expanded features
   - [ ] random opening
   - [ ] reuse captures by each other
@@ -85,6 +91,7 @@ Go GUI | Language
   - [ ] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
   - [ ] [1000-Volt-Go](https://senseis.xmp.net/?ElectricGo)
   - [ ] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
+#### Non Go
 - [ ] not merely Go
   - [ ] Five In A Row
   - [ ] Checkers
