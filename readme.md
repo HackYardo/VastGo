@@ -51,7 +51,7 @@ Go GUI | Language
   - [ ] evalsgf, runownershiptests, analysis 
 - [ ] features from KaTrain
   - [ ] weak bot 
-- [ ] features from SabakiHQ
+- [ ] features from [yishn](https://github.com/yishn)
   - [ ] KataJigo 
 - [ ] features from [waterfire](https://waterfire.us/joseki.htm)
   - [ ] Kogo's Joseki Dictionary
