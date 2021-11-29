@@ -65,7 +65,7 @@ Go GUI | Language
   - [ ] load/save analyzed svg
   - [ ] svg2sgf, sgf2svg
   - [ ] Go games book, pdf
-  - [ ] fuzzy stones placing
+  - [ ] fuzzy stone placement
   - [ ] select data to analyze
   - [ ] rank, rating, ladder match 
   - [ ] opening book of modern Go community?
@@ -91,6 +91,7 @@ Go GUI | Language
   - [ ] Reversi
 - [ ] not merely Go board and stones
   - [ ] Chess with Stockfish 
+
 **Be careful**: avoid repetition to existing site/software, i.e. [kahv](https://go.kahv.io/), and can be played/analyzed by corresponding bot/AI
 
 ## How to run "board.jl"?
