@@ -21,7 +21,7 @@ Go GUI | Language
   - [x] static Go board 19x19
   - [ ] mouse-click event to play stones
   - [ ] dynamic Go board
-  - [ ] responsive
+  - [ ] responsive layout with windowSize
   - [ ] GTP to call Go engines and manage games
   - [ ] judge game-end
   - [ ] completely play games
@@ -58,13 +58,15 @@ Go GUI | Language
   - [ ] Kogo's Joseki Dictionary
 - [ ] advanced features 
   - [ ] navigate, move history
-  - [ ] rank, rating, ladder match 
   - [ ] game tree
   - [ ] games container
   - [ ] multiple boards preview
   - [ ] load/save analyzed svg
-  - [ ] svg2sgf or sgf2svg
+  - [ ] svg2sgf, sgf2svg
   - [ ] Go games book, pdf
+  - [ ] fuzzy stones placing
+  - [ ] select data to analyze
+  - [ ] rank, rating, ladder match 
   - [ ] opening book of modern Go community?
 - [ ] expanded features
   - [ ] random opening
