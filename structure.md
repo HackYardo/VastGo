@@ -1,3 +1,4 @@
+---
 Go | Structure 
 --- | --- | ---
 Rule | Board,Stone
