@@ -59,7 +59,8 @@ Go GUI | Language
   - [ ] navigate, move history
   - [ ] rank, rating, ladder match 
   - [ ] game tree
-  - [ ] games container 
+  - [ ] games container
+  - [ ] multiple board preview
   - [ ] load/save analyzed svg
   - [ ] svg2sgf or sgf2svg
   - [ ] Go games book, pdf
