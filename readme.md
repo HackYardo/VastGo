@@ -19,7 +19,7 @@ Go GUI | Language
 ## What's new here?
 The structure and the [nonstandard Go](#nonstandard-go).
 
-![strusture](./structure.md)
+![struc](./structure.md)
 
 ## What can the repo do today/tomorrow?
 #### Standard Go
