@@ -21,7 +21,6 @@ Go GUI | Language
   - [x] static Go board 19x19
   - [ ] mouse-click event to play stones
   - [ ] dynamic Go board
-  - [ ] responsive layout with windowSize
   - [ ] GTP to call Go engines and manage games
   - [ ] judge game-end
   - [ ] completely play games
@@ -58,6 +57,8 @@ Go GUI | Language
   - [ ] Kogo's Joseki Dictionary
 - [ ] advanced features 
   - [ ] navigate, move history
+  - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
+  - [ ] square board response to windowSize
   - [ ] game tree
   - [ ] games container
   - [ ] multiple boards preview
