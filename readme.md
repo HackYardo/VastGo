@@ -21,6 +21,7 @@ Go GUI | Language
   - [x] static Go board 19x19
   - [ ] mouse-click event to play stones
   - [ ] dynamic Go board
+  - [ ] responsive
   - [ ] GTP to call Go engines and manage games
   - [ ] judge game-end
   - [ ] completely play games
