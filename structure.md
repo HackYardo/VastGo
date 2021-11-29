@@ -1,6 +1,5 @@
----
 Go | Structure 
---- | --- | ---
+--- | --- 
 Rule | Board,Stone
 Player | Judge
 
