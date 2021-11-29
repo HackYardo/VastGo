@@ -91,7 +91,7 @@ Go GUI | Language
   - [ ] Reversi
 - [ ] not merely Go board and stones
   - [ ] Chess with Stockfish 
-> **Be careful**: avoid repetition to existing site/software, i.e. [kahv](https://go.kahv.io/), and can be played/analyzed by corresponding bot/AI
+**Be careful**: avoid repetition to existing site/software, i.e. [kahv](https://go.kahv.io/), and can be played/analyzed by corresponding bot/AI
 
 ## How to run "board.jl"?
 1. download and install [julia](https://julialang.org/) 
