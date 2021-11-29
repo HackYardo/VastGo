@@ -17,7 +17,7 @@ Go GUI | Language
 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
 ## What's new here?
-The [structure](./structure.md) and the [nonstandard Go](#nonstandard-go).
+The [nonstandard Go](#nonstandard-go).
 
 ## What can the repo do today/tomorrow?
 #### Standard Go
@@ -133,4 +133,5 @@ license=license_of([KataGo](https://github.com/lightvector/KataGo/blob/master/LI
 ## Doc
 - [my Markdown Cheat Sheet](./Markdown.md)
 - my GTP Cheat Sheet
+- [Structures of Go, Go APP, VastGo](./structure.md)
 - static Go board state matrix
