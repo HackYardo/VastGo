@@ -17,9 +17,7 @@ Go GUI | Language
 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
 ## What's new here?
-The structure and the [nonstandard Go](#nonstandard-go).
-
-![struc](./structure.md)
+The [structure](./structure.md) and the [nonstandard Go](#nonstandard-go).
 
 ## What can the repo do today/tomorrow?
 #### Standard Go
