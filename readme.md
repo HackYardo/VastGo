@@ -127,6 +127,20 @@ julia> include("path/to/fileName.jl")
 ```shell
 cmd> julia gtp.jl 
 ```
+4. wait until
+```shell
+GTP ready, beginning main protocol loop
+```
+5. type follow strings to play a Go game
+```shell
+play B k10
+genmove W
+showboard
+genmove B
+play W c3
+showboard
+...
+```
 ### play with KataGo in VastGo——run `kata_dash.jl` separately
 1. run `kata_dash.jl`
 ```shell
