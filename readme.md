@@ -17,7 +17,7 @@ Go GUI | Language
 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
 ## What's new here?
-The [nonstandard Go](#nonstandard-go).
+The [nonstandard Go](#nonstandard-go) and their free mixing.
 
 ## What can the repo do today/tomorrow?
 ### Standard Go
@@ -113,7 +113,7 @@ julia> ]
 ```
 4. install [PlotlyJS.jl](https://github.com/JuliaPlots/PlotlyJS.jl)
 ```julia
-(@v1.6) pkg> add PlotlyJS
+(@v1.7) pkg> add PlotlyJS
 ```
 5. download `board.jl` file
 6. run `board.jl`
