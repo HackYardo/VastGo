@@ -1,6 +1,9 @@
 ![easyUI](./easyUI.svg)
+A static Go board ❄️
 ![demo](./demo.gif)
-> A repo about the game of [Go/Baduk/Weiqi](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
+A dynamic Go board 🍃
+
+> The repo is about the game of [Go/Baduk/Weiqi](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
 
 ## Why create this?
 Look at the table:
@@ -131,7 +134,7 @@ cmd> julia gtp.jl
 ```shell
 GTP ready, beginning main protocol loop
 ```
-5. type follow strings to play a Go game
+5. type following strings to play a Go game
 ```shell
 play B k10
 genmove W
