@@ -63,6 +63,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 - [ ] features from [waterfire](https://waterfire.us/joseki.htm)
   - [ ] Kogo's Joseki Dictionary
 - [ ] advanced features 
+  - [ ] cli in web-app 
   - [ ] navigate, move history
   - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
   - [ ] square board response to windowSize
