@@ -1,6 +1,6 @@
 ![easyUI](./easyUI.svg)
-
-> A repo about the game of [Go/WeiQi/Baduk](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
+![demo](./demo.gif)
+> A repo about the game of [Go/Baduk/Weiqi](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc...
 
 ## Why create this?
 Look at the table:
@@ -71,6 +71,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] Go games book, pdf
   - [ ] fuzzy stone placement
   - [ ] select data to analyze
+  - [ ] small to big KataGo models
   - [ ] rank, rating, ladder match 
   - [ ] opening book of modern Go community?
 ### Nonstandard Go
@@ -103,11 +104,11 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 ## Usage
 ### see the static 19x19 board——run `board.jl` separately
 1. download, install and add [julia](https://julialang.org/) into path
-2. run julia in your `cmd/shell/terminal` and you will enter `julia-REPL` mode
+2. run julia in your cmd/shell/terminal and you will enter julia-REPL mode
 ```shell
 cmd> julia 
 ```  
-3. enter `julia-pkg` mode
+3. enter julia-pkg mode
 ```julia
 julia> ]
 ```
@@ -115,14 +116,13 @@ julia> ]
 ```julia
 (@v1.7) pkg> add PlotlyJS
 ```
-5. download `board.jl` file
-6. run `board.jl`
+5. download and run `board.jl`
 ```julia
 julia> include("path/to/fileName.jl") 
 ```
 ### play with KataGo in CLI——run `gtp.jl` separately
 1. download a KataGo [release](https://github.com/lightvector/KataGo/releases/) and a [network](https://katagotraining.org/networks) and `gtp.jl`, then put them in one file fold
-2. edit the first line of `gtp.jl` to indicate the KataGo release, the newwork and the config 
+2. edit the first line of `gtp.jl` to indicate the KataGo release, the network and the config 
 3. run `gtp.jl`
 ```shell
 cmd> julia gtp.jl 
@@ -141,7 +141,7 @@ play W c3
 showboard
 ...
 ```
-### play with KataGo in VastGo——run `kata_dash.jl` separately
+### play with KataGo in browser——run `kata_dash.jl` separately
 1. run `kata_dash.jl`
 ```shell
 cmd> julia kata_dash.jl
@@ -150,7 +150,7 @@ cmd> julia kata_dash.jl
 ```julia
 [ Info: Listening on: 0.0.0.0:8050
 ```
-3. open any browser and type `localhost:8050` in the address bar
+3. open one(**only one**) browser and type `localhost:8050` in the address bar
 
 ## Q&A 
 - Why running board.jl takes so long? 
