@@ -2,9 +2,9 @@ using JSON
 using PlotlyJS
 using Dash, DashHtmlComponents, DashCoreComponents
 
-const KG_X=['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t']
-const KG_Y=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-const KG_XY=[(i,j) for i in KG_X for j in KG_Y]
+const UI_X=['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t']
+const UI_Y=Vector(1:19)
+const UI_XY=[(i,j) for i in reverse(UI_Y) for j in UI_X]
 
 katagoCommand=`katago.exe gtp -config gtp_custom.cfg -model b6\\model.txt.gz`
 katagoProcess=open(katagoCommand,"r+")
@@ -36,19 +36,21 @@ end
 function board_state(paragraph::String)
     #vertex=Matrix{Char}(undef,19,19)
     vertexCol=split(paragraph,"\n")[3:21]
-    xVector::Vector{Char}=[]
-    yVector::Vector{Int8}=[]
+    #xVector::Vector{Char}=[]
+    #yVector::Vector{Int8}=[]
     colorVector::Vector{String}=[]
     for i in range(1,length=length(vertexCol))
         j=1
         for c in vertexCol[i][4:2:40]
-            if c in "XO"
-                xVector=cat(xVector,[KG_X[j]],dims=1)
-                yVector=cat(yVector,[20-i],dims=1)
+            if c in "X.O"
+                #xVector=cat(xVector,[UI_X[j]],dims=1)
+                #yVector=cat(yVector,[20-i],dims=1)
                 if c=='X'
-                    colorVector=cat(colorVector,["rgb(255,255,255)"],dims=1)
+                    colorVector=cat(colorVector,["rgba(0,0,0,1)"],dims=1)
+                elseif c=='O'
+                    colorVector=cat(colorVector,["rgba(255,255,255,1)"],dims=1)
                 else
-                    colorVector=cat(colorVector,["rgb(0,0,0)"],dims=1)
+                    colorVector=cat(colorVector,["rgba(255,255,255,0)"],dims=1)
                 end
             end
             j=j+1
@@ -56,12 +58,14 @@ function board_state(paragraph::String)
     end
     #println(vertex,"\n")
     #println("$xVector\n$yVector\n$colorVector\n")
-    return xVector,yVector,colorVector
+    return colorVector
 end
 
 function cli_web(xyPlayer)
     if xyPlayer==""
-        return [],[],[]
+        query("clear_board")
+        reply()
+        return repeat(["rgba(0,0,0,0)"],361)
     else
         query("play B $xyPlayer")
         reply()
@@ -69,8 +73,7 @@ function cli_web(xyPlayer)
         reply()
         query("showboard")
         paragraph=reply()
-        xVector,yVector,colorVector=board_state(paragraph)
-        return xVector,yVector,colorVector
+        return board_state(paragraph)
     end
 end
 
@@ -126,14 +129,6 @@ starPoint=scatter(
     marker_color="rgb(0,0,0)",
     name="star points"
     )
-vertex=scatter(
-    x=[KG_XY[i][1] for i in range(1,length=19^2)],
-    y=[KG_XY[j][2] for j in range(1,stop=361)],
-    mode="markers",
-    marker_size=1,
-    marker_color="rgba(205,133,63,0)",
-    name="vertex"
-    )
 
 topText="
 ### Hi, welcome to VastGo!
@@ -147,28 +142,27 @@ bottomText="
 bottomMarkdown=dcc_markdown(bottomText)
 
 someIssues="
-### VastGo is on basic testing, there are some issues:
+### VastGo is on basic testing, there are some issues need to solve:
 - [ ] KataGo starts up *twice* (may need to add a `run KataGo` button in Dash APP or thread/coroutines or I/O redicect or import/using *.jl?)
-- [ ] Black stones are white and White stones are black?
 - [ ] You can do nothing except placing **legal** stones and `ctrl+R` to refresh.
+- [ ] Can not run in multiple tabs/browsers (how to know global or local states?)
 "
 
-function plot_board(colLine,rowLine,starPoint,vertex,stone,boardLayout)
+function plot_board(colLine,rowLine,starPoint,stone,boardLayout)
     plot(
         [colLine,
         rowLine,
         starPoint,
-        vertex,
         stone
         ],
         boardLayout
         )
 end
 
-function trace_stones(xVector=[],yVector=[],colorVector=[])
+function trace_stones(colorVector)
     scatter(
-        x=xVector,
-        y=yVector,
+        x=[UI_XY[i][2] for i in range(1,length=19^2)],
+        y=[UI_XY[j][1] for j in range(1,stop=361)],
         mode="markers",
         marker_color=colorVector,
         marker_size=25,
@@ -211,13 +205,12 @@ callback!(
         else
             xyPlayer=""
         end
-        xVector,yVector,colorVector=cli_web(xyPlayer)
+        colorVector=cli_web(xyPlayer)
         return plot_board(
             colLine,
             rowLine,
             starPoint,
-            vertex,
-            trace_stones(xVector,yVector,colorVector),
+            trace_stones(colorVector),
             boardLayout
             )
     end
