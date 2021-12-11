@@ -6,15 +6,22 @@ const UI_X=['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r',
 const UI_Y=Vector(1:19)
 const UI_XY=[(i,j) for i in reverse(UI_Y) for j in UI_X]
 
-katagoCommand=`katago.exe gtp -config gtp_custom.cfg -model b6\\model.txt.gz`
-katagoProcess=open(katagoCommand,"r+")
-
+function run_engine()
+    katagoCommand=`katago.exe gtp -config gtp_custom.cfg -model b6\\model.txt.gz`
+    katagoProcess=open(katagoCommand,"r+")
+    return katagoProcess
+end
+function end_engine()
+    query("quit",engineProcess)
+    reply(engineProcess)
+    close(engineProcess)
+end
 function query(sentence::String)
     while true
         if sentence=="" || "" in split(sentence," ")
             continue
         else
-            println(katagoProcess,sentence)
+            println(engineProcess,sentence)
             break
         end
     end
@@ -22,7 +29,7 @@ end
 function reply()
     paragraph=""
     while true
-        sentence=readline(katagoProcess)
+        sentence=readline(engineProcess)
         if sentence==""
             break
         else 
@@ -32,13 +39,22 @@ function reply()
     #println(paragraph)
     return paragraph::String
 end
-
-function board_state(paragraph::String)
+function board_state()
+    query("showboard")
+    paragraph=reply()
+    query("printsgf")
+    sgf=reply()[3:end]
+    paragraphVector=split(paragraph,"\n")
     #vertex=Matrix{Char}(undef,19,19)
-    vertexCol=split(paragraph,"\n")[3:21]
+    vertexCol=paragraphVector[3:21]
     #xVector::Vector{Char}=[]
     #yVector::Vector{Int8}=[]
     colorVector::Vector{String}=[]
+    moveNumHash=paragraphVector[1][3:end]
+    turn=paragraphVector[22]
+    rule=paragraphVector[23]
+    capturesB=paragraphVector[24]
+    capturesW=paragraphVector[25]
     for i in range(1,length=length(vertexCol))
         j=1
         for c in vertexCol[i][4:2:40]
@@ -58,28 +74,59 @@ function board_state(paragraph::String)
     end
     #println(vertex,"\n")
     #println("$xVector\n$yVector\n$colorVector\n")
-    return colorVector
-end
+    positionInfo="
+    - $turn
+    - $capturesB
+    - $capturesW
+    - $rule
+    - $moveNumHash
 
+    SGF:
+    $sgf
+    "
+    return colorVector,positionInfo
+end
+function gtp_component(sentence)
+    query(sentence)
+    paragraph=reply()
+end
 function cli_web(xyPlayer)
     if xyPlayer==""
         query("clear_board")
         reply()
-        return repeat(["rgba(0,0,0,0)"],361)
     else
         query("play B $xyPlayer")
         reply()
         query("genmove W")
         reply()
-        query("showboard")
-        paragraph=reply()
-        return board_state(paragraph)
     end
+    return board_state()
 end
 
+function plot_board(colLine,rowLine,starPoint,stone,boardLayout)
+    plot(
+        [colLine,
+        rowLine,
+        starPoint,
+        stone
+        ],
+        boardLayout
+        )
+end
 
+function trace_stones(colorVector)
+    scatter(
+        x=[UI_XY[i][2] for i in range(1,length=19^2)],
+        y=[UI_XY[j][1] for j in range(1,stop=361)],
+        mode="markers",
+        marker_color=colorVector,
+        marker_size=25,
+        name="stones"
+        )
+end
 
-boardLayout=Layout(
+function boardLayout()
+    Layout(
     # boardSize are as big as setting
     # aspectmode="manual",aspectratio=1,
     width=930,
@@ -102,6 +149,7 @@ boardLayout=Layout(
         tickvals=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         )
     )
+end
 rowLine=scatter(
     x=['a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t'],
     y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19],
@@ -143,32 +191,14 @@ bottomMarkdown=dcc_markdown(bottomText)
 
 someIssues="
 ### VastGo is on basic testing, there are some issues need to solve:
-- [ ] KataGo starts up *twice* (may need to add a `run KataGo` button in Dash APP or thread/coroutines or I/O redicect or import/using *.jl?)
+- [x] KataGo starts up ***twice*?**(may need to add a `run KataGo` button in Dash APP or thread/coroutines or I/O redicect or import/using *.jl?)
+  - The [reason](https://community.plotly.com/t/why-global-code-runs-twice/12514).
 - [ ] You can do nothing except placing **legal** stones and `ctrl+R` to refresh.
 - [ ] Can not run in multiple tabs/browsers (how to know global or local states?)
+- [ ] Rules, SGF and Click are too long, and have no 'space' to segment.
 "
 
-function plot_board(colLine,rowLine,starPoint,stone,boardLayout)
-    plot(
-        [colLine,
-        rowLine,
-        starPoint,
-        stone
-        ],
-        boardLayout
-        )
-end
-
-function trace_stones(colorVector)
-    scatter(
-        x=[UI_XY[i][2] for i in range(1,length=19^2)],
-        y=[UI_XY[j][1] for j in range(1,stop=361)],
-        mode="markers",
-        marker_color=colorVector,
-        marker_size=25,
-        name="stones"
-        )
-end
+engineProcess=run_engine()
 
 app=dash()
 
@@ -187,31 +217,41 @@ app.layout=html_div() do
         bottomMarkdown, 
         style=(width="100%",display="inline-block",textAlign="right"#=,float="right"=#)
         ),
+    html_div(id="Info"),
     html_div(dcc_markdown(someIssues))
 end
 
 callback!(
     app,
+    Output("Info","children"),
     Output("board","figure"),
     Input("board","clickData"),
     ) do sth
+        sthJSON=JSON.json(sth)
+        sthParse=JSON.parse(sthJSON)
         if sth != nothing
-            sthJSON=JSON.json(sth)
-            sthParse=JSON.parse(sthJSON)
             vector=sthParse["points"][1]
             xPlayer=vector["x"]
             yPlayer=vector["y"]
             xyPlayer="$xPlayer$yPlayer"
+            clickData="$sthJSON"
         else
             xyPlayer=""
+            clickData="null"
         end
-        colorVector=cli_web(xyPlayer)
-        return plot_board(
+        colorVector,positionInfo=cli_web(xyPlayer)
+        info="
+        $positionInfo
+        
+        Click:
+        $clickData
+        "
+        return dcc_markdown(info), plot_board(
             colLine,
             rowLine,
             starPoint,
             trace_stones(colorVector),
-            boardLayout
+            boardLayout()
             )
     end
 
