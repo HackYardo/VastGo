@@ -111,7 +111,10 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 **Be careful**: avoid repetition to existing site/software, i.e. [kahv](https://go.kahv.io/), and can be played/analyzed by corresponding bot/AI
 
 ## Usage
-### see the static 19x19 board——run `board.jl` separately
+
+<details>
+	<summary>see the static 19x19 board——run board.jl</summary>
+  
 1. download, install and add [julia](https://julialang.org/) into path
 2. run julia in your cmd/shell/terminal and you will enter julia-REPL mode
 ```shell
@@ -128,8 +131,12 @@ julia> ]
 5. download and run `board.jl`
 ```julia
 julia> include("path/to/fileName.jl") 
-```
-### play with KataGo in CLI——run `gtp.jl` separately
+```  
+</details>
+
+<details>
+  <summary>play with KataGo in CLI——run gtp.jl</summary>
+
 1. download a KataGo [release](https://github.com/lightvector/KataGo/releases/) and a [network](https://katagotraining.org/networks) and `gtp.jl`, then put them in one file fold
 2. edit the first line of `gtp.jl` to indicate the KataGo release, the network and the config 
 3. run `gtp.jl`
@@ -150,7 +157,11 @@ play W c3
 showboard
 ...
 ```
-### play with KataGo in browser——run `kata_dash.jl` separately
+</details>
+
+<details>
+  <summary>play with KataGo in browser——run kata_dash.jl</summary>
+
 1. run `kata_dash.jl`
 ```shell
 cmd> julia kata_dash.jl
@@ -160,6 +171,7 @@ cmd> julia kata_dash.jl
 [ Info: Listening on: 0.0.0.0:8050
 ```
 3. open one(**only one**) browser and type `localhost:8050` in the address bar
+</details>
 
 ## Q&A 
 - Why running board.jl takes so long? 
