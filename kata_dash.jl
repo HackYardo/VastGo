@@ -17,14 +17,7 @@ function end_engine()
     close(engineProcess)
 end
 function query(sentence::String)
-    while true
-        if sentence=="" || "" in split(sentence," ")
-            continue
-        else
-            println(engineProcess,sentence)
-            break
-        end
-    end
+    println(engineProcess,sentence)
 end
 function reply()
     paragraph=""
@@ -38,6 +31,20 @@ function reply()
     end
     #println(paragraph)
     return paragraph::String
+end
+function gtp_io(sentence)
+    if sentence != "" && !("" in split(sentence," "))
+        if sentence[end]=='.' && sentence[end-1] != ' '
+            sentence=sentence[1:end-1]
+            query(sentence)
+            paragraph=reply()
+            return "$sentence\n$paragraph"
+        else
+            return ""
+        end
+    else
+        return ""
+    end
 end
 function board_state()
     query("showboard")
@@ -196,6 +203,12 @@ someIssues="
 - [ ] You can do nothing except placing **legal** stones and `ctrl+R` to refresh.
 - [ ] Can not run in multiple tabs/browsers (how to know global or local states?)
 - [ ] Rules, SGF and Click are too long, and have no 'space' to segment.
+- [ ] Can not work in new version Dash because 
+  - ArgumentError: PlotlyJS.SyncPlot doesn’t have a defined `StructTypes.StructType`
+  - The repo using old version Dash because DashDaq added
+- [ ] Can not use DashBootstrapComponents to change app layout
+  - Weird syntax and few documents/examples
+  - Auto delete some spaces in GTP-output
 "
 
 engineProcess=run_engine();
@@ -212,7 +225,30 @@ app.layout=html_div() do
             "color"=>"rgba(0,255,0,1)"
             )
         ),
-    dcc_graph(id="board"),
+    html_div(
+        [
+        dcc_graph(id="board"),
+        html_div(
+            [
+            dcc_textarea(
+                id="gtpO",
+                #placeholder = "Enter a value...",
+                #value="This is a TextArea component",
+                style=Dict("width"=>"900px","height"=>"800px")
+                );
+            dcc_input(
+                id="gtpI",
+                placeholder="GTP commands end with a '.'",
+                value="",
+                type="text",
+                style=Dict("width"=>"900px","height"=>"30px")
+                )
+            ],
+            style=Dict("float"=>"right")
+            )
+        ],
+        style=Dict("columnCount"=>"2")
+        ),
     html_div(
         bottomMarkdown, 
         style=(width="100%",display="inline-block",textAlign="right"#=,float="right"=#)
@@ -220,6 +256,14 @@ app.layout=html_div() do
     dcc_markdown(id="Info"),
     html_div(dcc_markdown(someIssues))
 end
+
+callback!(
+    app,
+    Output("gtpO","value"),
+    Input("gtpI","value"),
+    ) do gtpInput
+        gtp_io(gtpInput)
+    end
 
 callback!(
     app,
