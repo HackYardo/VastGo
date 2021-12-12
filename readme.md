@@ -185,6 +185,6 @@ cmd> julia kata_dash.jl
 license=license_of([KataGo](https://github.com/lightvector/KataGo/blob/master/LICENSE)) ∪ license_of([Dash.jl](https://github.com/plotly/Dash.jl/blob/dev/LICENSE))
 ## Doc
 - [my Markdown Cheat Sheet](./Markdown.md)
-- my GTP Cheat Sheet
+- [my GTP Cheat Sheet](./GTP-cheat-sheet.txt)
 - [Structures of Go, Go APP, VastGo](./structure.md)
 - static Go board state matrix
