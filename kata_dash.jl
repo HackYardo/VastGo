@@ -2,9 +2,9 @@ using JSON
 using PlotlyJS
 using Dash, DashHtmlComponents, DashCoreComponents
 
-const UI_X=['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t']
-const UI_Y=Vector(1:19)
-const UI_XY=[(i,j) for i in reverse(UI_Y) for j in UI_X]
+const UI_X=['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t'];
+const UI_Y=Vector(1:19);
+const UI_XY=[(i,j) for i in reverse(UI_Y) for j in UI_X];
 
 function run_engine()
     katagoCommand=`katago.exe gtp -config gtp_custom.cfg -model b6\\model.txt.gz`
@@ -198,7 +198,7 @@ someIssues="
 - [ ] Rules, SGF and Click are too long, and have no 'space' to segment.
 "
 
-engineProcess=run_engine()
+engineProcess=run_engine();
 
 app=dash()
 
@@ -217,7 +217,7 @@ app.layout=html_div() do
         bottomMarkdown, 
         style=(width="100%",display="inline-block",textAlign="right"#=,float="right"=#)
         ),
-    html_div(id="Info"),
+    dcc_markdown(id="Info"),
     html_div(dcc_markdown(someIssues))
 end
 
@@ -227,9 +227,9 @@ callback!(
     Output("board","figure"),
     Input("board","clickData"),
     ) do sth
-        sthJSON=JSON.json(sth)
-        sthParse=JSON.parse(sthJSON)
         if sth != nothing
+            sthJSON=JSON.json(sth)
+            sthParse=JSON.parse(sthJSON)
             vector=sthParse["points"][1]
             xPlayer=vector["x"]
             yPlayer=vector["y"]
@@ -246,7 +246,7 @@ callback!(
         Click:
         $clickData
         "
-        return dcc_markdown(info), plot_board(
+        return info, plot_board(
             colLine,
             rowLine,
             starPoint,
