@@ -65,6 +65,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 - [ ] advanced features 
   - [ ] CLI in web-app 
     - [x] add, behind the Go board
+    - [ ] test all commands
     - [ ] use extra file to store the history and show in TaxtArea
     - [ ] `up/down` to find commands
     - [ ] placehold commands and `tab` to complete commands
