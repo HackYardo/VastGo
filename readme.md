@@ -63,7 +63,11 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 - [ ] features from [waterfire](https://waterfire.us/joseki.htm)
   - [ ] Kogo's Joseki Dictionary
 - [ ] advanced features 
-  - [ ] cli in web-app 
+  - [ ] CLI in web-app 
+    - [x] add, behind board
+    - [ ] use extra file to store the history and show in TaxtArea
+    - [ ] `up/down` to find commands
+    - [ ] placehold commands and `tab` to complete commands
   - [ ] navigate, move history
   - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
   - [ ] square board response to windowSize
@@ -95,6 +99,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
   - [ ] [1000-Volt-Go](https://senseis.xmp.net/?ElectricGo)
   - [ ] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
+  - [ ] [Alice in wonderland](https://www.britannica.com/topic/Alices-Adventures-in-Wonderland) mode(all rules random and need to guess)
 ### Non Go
 - [ ] not merely Go
   - [ ] Five In A Row
