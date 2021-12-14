@@ -69,7 +69,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
     - [ ] use extra file to store the history and show in TaxtArea
     - [ ] `up/down` to find commands
     - [ ] placehold commands and `tab` to complete commands
-  - [ ] navigate, move history
+  - [ ] navigate, move history, autoplay 
   - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
   - [ ] square board response to windowSize
   - [ ] game tree
@@ -95,7 +95,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] [Multi-color Go](https://senseis.xmp.net/?MultiColorGo)
   - [ ] [Pair Go](https://senseis.xmp.net/?PairGo)
   - [ ] [Double Go](https://senseis.xmp.net/?DoubleGo)
-  - [ ] [Quantum Go](https://arxiv.org/abs/1603.04751)
+  - [ ] Quantum Go [1](https://lifein19x19.com/viewtopic.php?f=9&t=18360) [2](https://senseis.xmp.net/?QuantumGo) [3](https://arxiv.org/abs/2007.12186)
   - [ ] [Topological Go](https://senseis.xmp.net/?TopologicalGo)?
   - [ ] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
   - [ ] [1000-Volt-Go](https://senseis.xmp.net/?ElectricGo)
