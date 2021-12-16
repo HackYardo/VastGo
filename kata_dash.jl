@@ -192,7 +192,7 @@ topText="
 "
 
 bottomText="
-*powered by [Plotly Dash](https://dash-julia.plotly.com/), driven by [KataGo](https://katagotraining.org/), written in [Julia](https://julialang.org/)*
+*based on [KataGo](https://katagotraining.org/) and [Dash.jl](https://dash-julia.plotly.com/)*
 "
 bottomMarkdown=dcc_markdown(bottomText)
 
