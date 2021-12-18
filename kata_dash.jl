@@ -1,6 +1,6 @@
 using JSON
 using PlotlyJS
-using Dash, DashHtmlComponents, DashCoreComponents
+using Dash
 
 const UI_X=['a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t'];
 const UI_Y=Vector(1:19);
@@ -111,7 +111,7 @@ function cli_web(xyPlayer)
 end
 
 function plot_board(colLine,rowLine,starPoint,stone,boardLayout)
-    plot(
+    Plot(
         [colLine,
         rowLine,
         starPoint,
@@ -185,15 +185,11 @@ starPoint=scatter(
     name="star points"
     )
 
-topText="
-### Hi, welcome to VastGo!
+topText="### Hi, welcome to VastGo!
+A funny, green, simple, useful tool for the game of Go/Baduk/Weiqi"
 
-> A funny, green, simple, useful tool for the game of Go/Baduk/Weiqi
-"
+bottomText="*Have a nice game!*"
 
-bottomText="
-*based on [KataGo](https://katagotraining.org/) and [Dash.jl](https://dash-julia.plotly.com/)*
-"
 bottomMarkdown=dcc_markdown(bottomText)
 
 someIssues="
@@ -203,9 +199,10 @@ someIssues="
 - [ ] You can do nothing except placing **legal** stones and `ctrl+R` to refresh.
 - [ ] Can not run in multiple tabs/browsers (how to know global or local states?)
 - [ ] Rules, SGF and Click are too long, and have no 'space' to segment.
-- [ ] Can not work in new version Dash because 
+- [x] Can not work in new version Dash because 
   - ArgumentError: PlotlyJS.SyncPlot doesn’t have a defined `StructTypes.StructType`
   - The repo using old version Dash because DashDaq added
+  - The [reason](https://github.com/plotly/Dash.jl/issues/153)
 - [ ] Can not use DashBootstrapComponents to change app layout
   - Weird syntax and few documents/examples
   - Auto delete some spaces in GTP-output
