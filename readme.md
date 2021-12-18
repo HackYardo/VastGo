@@ -182,8 +182,10 @@ cmd> julia kata_dash.jl
   - [Evan Miller](https://www.evanmiller.org/why-im-betting-on-julia.html) 
 - Why Plotly(JS) Dash?
   - More interactive features than the others. [Details](https://docs.juliaplots.org/latest/backends/)
+
 ## LICENSE
-license=license_of([KataGo](https://github.com/lightvector/KataGo/blob/master/LICENSE)) ∪ license_of([Dash.jl](https://github.com/plotly/Dash.jl/blob/dev/LICENSE))
+[LICENSE](./LICENSE.md)
+
 ## Doc
 - [my Markdown Cheat Sheet](./Markdown.md)
 - [my GTP Cheat Sheet](./GTP-cheat-sheet.txt)
