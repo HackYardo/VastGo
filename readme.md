@@ -35,8 +35,8 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] time setting
   - [ ] handicap
 - [ ] features from GTP
-  - [ ] final_score
-  - [ ] final_status_list  
+  - [ ] final_score *(exercise evaluating the ends)*
+  - [ ] final_status_list *(exercise evaluating groups of stones)* 
 - [ ] features from [GNUGo](https://www.gnu.org/software/gnugo/gnugo_19.html#SEC200)    
   - [ ] eval_eye
   - [ ] owl_attack, owl_defend
@@ -47,7 +47,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] visits
 - [ ] features from KataGo [1](https://github.com/lightvector/KataGo/tree/master/cpp/configs) [2](https://github.com/lightvector/KataGo/tree/master/docs)
   - [ ] ruleSet, komi (-150,150)
-  - [ ] scoreLead, ownership, ownershipStdev
+  - [ ] scoreLead, ownership, ownershipStdev *(exercise evaluating positions)*
   - [ ] boardSize (2x2,19x19) 
   - [ ] boardSize (2x2,29x29)?
   - [ ] playoutDoublingAdvantage (-3,3), dynamic
@@ -69,11 +69,11 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
     - [ ] use extra file to store the history and show in TaxtArea
     - [ ] `up/down` to find commands
     - [ ] placehold commands and `tab` to complete commands
-  - [ ] navigate, move history, autoplay 
+  - [ ] navigate, move history, autoplay, guess mode *(exercise memorizing games)* 
   - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
   - [ ] square board response to windowSize
   - [ ] game tree
-  - [ ] games container
+  - [ ] games containe
   - [ ] multiple boards preview
   - [ ] load/save analyzed svg
   - [ ] svg2sgf, sgf2svg
@@ -82,13 +82,14 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] select data to analyze
   - [ ] small to big KataGo models
   - [ ] rank, rating, ladder match 
-  - [ ] opening book of modern Go community?
+  - [ ] opening book of modern Go community? *(exercise opening and dissecting sequences)*
 ### Nonstandard Go
 - [ ] expanded features
-  - [ ] random opening
-  - [ ] reuse captures by each other
-  - [ ] [First Capture Go](https://senseis.xmp.net/?AtariGo)
-  - [ ] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz)
+  - [ ] [Random Start Go](https://senseis.xmp.net/?RandomStartGo), need a moveNumber *(exercise fighting or endgaming)*
+  - [ ] reuse captures by each other, need to limit the number of stones, maybe 180 *(exercise counting liberties)*
+  - [ ] [First Capture Go](https://senseis.xmp.net/?AtariGo) *(exercise capturing)*
+  - [ ] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz) *(exercise making/breaking eye shapes)* 
+  - [ ] [Dots Go](https://senseis.xmp.net/?DotsGo) *(exercise trading or ko fighting)*
   - [ ] [One Color Go](https://senseis.xmp.net/?OneColourGo)
   - [ ] [Blind Go](https://senseis.xmp.net/?BlindGo)
   - [ ] [Fog Of War Go](https://senseis.xmp.net/?FogOfWar)
@@ -109,7 +110,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 - [ ] not merely Go board and stones
   - [ ] Chess with Stockfish 
 
-**Be careful**: avoid repetition to existing site/software, i.e. [kahv](https://go.kahv.io/), and can be played/analyzed by corresponding bot/AI
+**Be careful: avoid repetition to existing site/software, i.e. [kahv](https://go.kahv.io/)/[littlegolem](https://www.littlegolem.net/jsp/main/), and can be played/analyzed by corresponding bot/AI**
 
 ## Usage
 
@@ -139,7 +140,7 @@ julia> include("path/to/fileName.jl")
   <summary>play with KataGo in CLI——run gtp.jl</summary>
 
 1. download a KataGo [release](https://github.com/lightvector/KataGo/releases/) and a [network](https://katagotraining.org/networks) and `gtp.jl`, then put them in one file fold
-2. edit the first line of `gtp.jl` to indicate the KataGo release, the network and the config 
+2. edit the first line of `gtp.jl` to indicate the KataGo release, the network and the config(inside KataGo releases) 
 3. run `gtp.jl`
 ```shell
 cmd> julia gtp.jl 
@@ -157,6 +158,8 @@ genmove B
 play W c3
 showboard
 ...
+final_score
+quit
 ```
 </details>
 
