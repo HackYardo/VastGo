@@ -85,7 +85,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] opening book of modern Go community? *(exercise opening and dissecting sequences)*
 ### Nonstandard Go
 - [ ] expanded features
-  - [ ] [Random Start Go](https://senseis.xmp.net/?RandomStartGo), need a moveNumber *(exercise fighting or endgaming)*
+  - [ ] [Random Start Go](https://senseis.xmp.net/?RandomStartGo), need a moveNumber *(exercise fighting or ending games)*
   - [ ] reuse captures by each other, need to limit the number of stones, maybe 180 *(exercise counting liberties)*
   - [ ] [First Capture Go](https://senseis.xmp.net/?AtariGo) *(exercise capturing)*
   - [ ] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz) *(exercise making/breaking eye shapes)* 
