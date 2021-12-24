@@ -91,6 +91,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz) *(exercise making/breaking eye shapes)* 
   - [ ] [Dots Go](https://senseis.xmp.net/?DotsGo) *(exercise trading or ko fighting)*
   - [ ] [One Color Go](https://senseis.xmp.net/?OneColourGo)
+  - [ ] [Phantom Go](https://senseis.xmp.net/?PhantomGo)
   - [ ] [Blind Go](https://senseis.xmp.net/?BlindGo)
   - [ ] [Fog Of War Go](https://senseis.xmp.net/?FogOfWar)
   - [ ] [Multi-color Go](https://senseis.xmp.net/?MultiColorGo)
