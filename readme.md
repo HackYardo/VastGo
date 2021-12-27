@@ -3,7 +3,7 @@ A static Go board ❄️
 ![dynamic](./dynamic.gif)
 A dynamic Go board 🍃
 
-> The repo is about the game of [Go/Baduk/Weiqi](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
+> The repo is about the game of [Go/Baduk/Weiqi](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Julia](https://julialang.org/),[Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
 
 ## Why create this?
 Look at the table:
@@ -195,3 +195,4 @@ cmd> julia kata_dash.jl
 - [my GTP Cheat Sheet](./GTP-cheat-sheet.txt)
 - [Structures of Go, Go APP, VastGo](./structure.md)
 - static Go board state matrix
+- [Julia Style Cheat Sheet](./JuliaStyleCheatSheet.md)
