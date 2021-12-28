@@ -63,9 +63,11 @@ function trace_line(boardSize)
     rowX=line_fold(xLine,yLine)
     rowY=[yItem for yItem in yLine for j in 1:2]
     #colX=[xItem for xItem in xLine for i in 1:2]
-    colX=cat(['z'],[xItem for xItem in xLine for i in 1:2],[GTP_X[boardSize[1]+2]],dims=1)
+    colX=cat(['z'],[xLine[1]],[xItem for xItem in xLine for i in 1:2],[xLine[end]],[GTP_X[boardSize[1]+2]],dims=1)
     #colY=line_fold(yLine,xLine)
-    colY=cat(["1"],line_fold(yLine,xLine),[boardSize[1]%2==0 ? yLine[1] : yLine[end]],dims=1)
+    #colYLine=cat(line_fold(yLine,xLine),[boardSize[1]%2==0 ? yLine[1] : yLine[end]],dims=1)
+    colYDotLine=cat([0],[nothing],line_fold(yLine,xLine),[nothing],[GTP_Y[boardSize[2]+2]],dims=1)
+    println(colYDotLine)
     rowLine=scatter(
         #x=['a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t'],
         #y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19],
@@ -82,10 +84,12 @@ function trace_line(boardSize)
         #y=[1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19],
         # use (z,1) and (u,19) to widen col margin, if the board is 19x19
         x=colX,
-        y=colY,
+        y=colYDotLine,
         mode="lines",
         line_width=1,
         line_color="rgb(0,0,0)",
+        #marker_size=1,
+        #marker_color="rgb(0,0,0)",
         name="col lines"
         )
     return colLine,rowLine
