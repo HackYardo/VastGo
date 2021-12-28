@@ -1,4 +1,4 @@
-![easyUI](./easyUI.svg)
+![static](./board.svg)
 A static Go board ❄️
 ![dynamic](./dynamic.gif)
 A dynamic Go board 🍃
