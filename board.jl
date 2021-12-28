@@ -64,10 +64,9 @@ function trace_line(boardSize)
     rowY=[yItem for yItem in yLine for j in 1:2]
     #colX=[xItem for xItem in xLine for i in 1:2]
     colX=cat(['z'],[xLine[1]],[xItem for xItem in xLine for i in 1:2],[xLine[end]],[GTP_X[boardSize[1]+2]],dims=1)
-    #colY=line_fold(yLine,xLine)
     #colYLine=cat(line_fold(yLine,xLine),[boardSize[1]%2==0 ? yLine[1] : yLine[end]],dims=1)
     colYDotLine=cat([0],[nothing],line_fold(yLine,xLine),[nothing],[GTP_Y[boardSize[2]+2]],dims=1)
-    println(colYDotLine)
+    #println(colYDotLine)
     rowLine=scatter(
         #x=['a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t'],
         #y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19],
@@ -157,33 +156,33 @@ end
 #boardStone=
     # colors are as many as players: black,white,...
 whiteStone=scatter(
-    x=['k','k'],
-    y=[10,11],
+    x=['k','d','r'],
+    y=[10,16,3],
     mode="markers",
     marker_color="rgb(255,255,255)",
-    marker_size=16,
+    marker_size=30,
     name="White stones"
     )
 blackStone=scatter(
     mode="markers+text",
-    x=['d','r'],
-    y=[3,5],
+    x=['q','d','c'],
+    y=[16,3,6],
     marker=attr(
         color="rgb(0,0,0)",
-        size=16
+        size=30
         ),
-    text=["1","3"],textposition="inside",textfont=attr(color="rgba(255,255,255,1)",size=24),
+    text=["1","361"],textposition="inside",textfont=attr(color="rgba(255,255,255,1)",size=[24,12]),
     name="Black stones"
     )
 
 ownership=scatter(
-    x=['i','k','r'], # i ?
-    y=[10,11,5],
+    x=['q','q','r','k'], # i ?
+    y=[6,16,3,10],
     mode="markers",
     marker=attr(
         symbol="diamond",
-        color=["rgba(127,127,127,0.6)","rgba(255,255,255,0.6)","rgba(0,0,0,0.6)"],
-        size=50,
+        color=["rgba(127,127,127,0.6)","rgba(0,0,0,0.6)","rgba(255,255,255,0.6)","rgba(0,0,0,0.6)"],
+        size=36,
         # opacity=0.6,
         line=attr(
             width=0)
@@ -196,7 +195,10 @@ function plot_board(boardSize)
         [
         trace_line(boardSize)[1],
         trace_line(boardSize)[2],
-        trace_star(boardSize)
+        trace_star(boardSize),
+        whiteStone,
+        blackStone,
+        ownership
         ],
         layout_board()
     )
