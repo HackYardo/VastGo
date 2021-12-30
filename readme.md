@@ -29,14 +29,13 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [x] mouse-click event to play stones
   - [x] dynamic Go board
   - [ ] GTP to call Go engines and manage games
-  - [ ] judge game-end
+  - [ ] final_score *(exercise evaluating the ends)*
+  - [ ] final_status_list *(exercise evaluating groups of stones)* 
+  - [ ] judge game-end, if `RU[]` in sgf is not empty
   - [ ] completely play games
   - [ ] load/save sgf
   - [ ] time setting
   - [ ] handicap
-- [ ] features from GTP
-  - [ ] final_score *(exercise evaluating the ends)*
-  - [ ] final_status_list *(exercise evaluating groups of stones)* 
 - [ ] features from [GNUGo](https://www.gnu.org/software/gnugo/gnugo_19.html#SEC200)    
   - [ ] eval_eye
   - [ ] owl_attack, owl_defend
@@ -70,6 +69,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
     - [ ] `up/down` to find commands
     - [ ] placehold commands and `tab` to complete commands
   - [ ] navigate, move history, autoplay, guess mode *(exercise memorizing games)* 
+  - [ ] exercise mode
   - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
   - [ ] square board response to windowSize
   - [ ] game tree
@@ -111,7 +111,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 - [ ] not merely Go board and stones
   - [ ] Chess with Stockfish 
 
-**Be careful: avoid repetition to existing site/software, i.e. [kahv](https://go.kahv.io/)/[littlegolem](https://www.littlegolem.net/jsp/main/), and can be played/analyzed by corresponding bot/AI**
+***Be careful: avoid repetition to existing site/software, i.e. [boardspace](https://www.boardspace.net/english/index.shtml)/[kahv](https://go.kahv.io/)/[littlegolem](https://www.littlegolem.net/jsp/main/), and can be played/analyzed by corresponding bot/AI***
 
 ## Usage
 
