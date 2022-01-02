@@ -45,9 +45,9 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] order, principal variation 
   - [ ] visits
 - [ ] features from KataGo [1](https://github.com/lightvector/KataGo/tree/master/cpp/configs) [2](https://github.com/lightvector/KataGo/tree/master/docs)
-  - [ ] ruleSet, komi (-150,150)
+  - [x] ruleSet, komi (-150,150)
   - [ ] scoreLead, ownership, ownershipStdev *(exercise evaluating positions)*
-  - [ ] boardSize (2x2,19x19) 
+  - [x] boardSize (2x2,19x19) 
   - [ ] boardSize (2x2,29x29)?
   - [ ] playoutDoublingAdvantage (-3,3), dynamic
   - [ ] wideRootNoise (0,1)
@@ -56,7 +56,8 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] opening books on 7x7 board
   - [ ] evalsgf, runownershiptests, analysis 
 - [ ] features from KaTrain
-  - [ ] weak bot 
+  - [ ] weak bot
+  - [ ] style bot 
 - [ ] features from [yishn](https://github.com/yishn)
   - [ ] KataJigo 
 - [ ] features from [waterfire](https://waterfire.us/joseki.htm)
