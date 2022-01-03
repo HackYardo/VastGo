@@ -69,7 +69,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
     - [ ] use extra file to store the history and show in TaxtArea
     - [ ] `up/down` to find commands
     - [ ] placehold commands and `tab` to complete commands
-  - [ ] navigate, move history, autoplay, guess mode *(exercise memorizing games)* 
+  - [ ] navigate, move history, autoplay, guess mode, to implement **SGF** actually *(exercise memorizing games)* 
   - [ ] exercise mode
   - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
   - [ ] square board response to windowSize
@@ -77,7 +77,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] games containe
   - [ ] multiple boards preview
   - [ ] load/save analyzed svg
-  - [ ] svg2sgf, sgf2svg
+  - [ ] svg2sgf, sgf2svg [Ref1](https://github.com/julianandrews/sgf-render)
   - [ ] Go games book, pdf
   - [ ] fuzzy stone placement
   - [ ] select data to analyze
@@ -189,7 +189,7 @@ cmd> julia kata_dash.jl
   - More interactive features than the others. [Details](https://docs.juliaplots.org/latest/backends/)
 
 ## LICENSE
-[LICENSE](./LICENSE.md)
+[LICENSE](./LICENSE.md) [THIRDPARTY](./THIRDPARTY.md)
 
 ## Doc
 - [my Markdown Cheat Sheet](./Markdown.md)
