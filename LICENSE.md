@@ -10,4 +10,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 end of terms and conditions
 
-Please see [THIRDPARTY.md](./THIRDPARTY.md) for license information for other software used in this project.
+Please see [THIRDPARTY.md](./THIRDPARTY.md) for license information for other software, webpage or document used in this project.
