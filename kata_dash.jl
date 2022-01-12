@@ -59,17 +59,33 @@ function gtp_io(sentence)
     end
 end
 
-function console_game(xyPlayer)
-    if xyPlayer==""
-        query("clear_board")
-        reply()
+function turns_taking(currentColor)
+    if currentColor=="B"
+        return "W"
     else
-        query("play B $xyPlayer")
-        reply()
-        query("genmove W")
-        reply()
+        return "B"
     end
-    return agent_showboard()
+end
+
+function console_game(xyPlayer,colorPlayer)
+    gameState=""
+    engineMove=""
+    nextColor=turns_taking(colorPlayer)
+
+    if xyPlayer in ["a0","b0"]
+        query("play $colorPlayer pass")
+        reply()
+        #println("before pass")
+    else
+        query("play $colorPlayer $xyPlayer")
+        paragraph=reply()
+        if paragraph[1]=='?' gameState="over" end
+    end
+        query("genmove $nextColor")
+        engineMove=reply()[3:end-1]
+        #println("after pass")
+
+    return gameState,engineMove
 end
 
 function checkRule(wholeRule)
@@ -314,16 +330,16 @@ function trace_stones(boardSize,colorVector)
 end
 function trace_synchroboard()
     scatter(
-        x=['b'],
-        y=[0],
+        x=['a','b'],
+        y=[0,0],
         mode="markers+text",
         marker=attr(
-            color="rgb(0,0,0)",
+            color="rgb(205,133,63)",
             size=1
             ),
-        text=["PASS"],
+        text=["PA","SS"],
         textposition="inside",
-        textfont=attr(color="rgba(255,255,255,1)",size=[24]),
+        textfont=attr(color="rgb(255,255,255)",size=25),
         name="button"
         )
 end
@@ -371,8 +387,13 @@ someIssues="
   - Weird syntax and few documents/examples
   - Auto delete some spaces in GTP-output
 - [ ] The board can not refresh autoly after change the size or obstacles.
-  - Use `PASS` in the board plot instead.(need to fix)
-- [ ] The whb in showboard not be displayed now.
+  - Type `clear_board.` in GTP commands input or click `PASS` in the board plot instead.
+- [x] The whb in showboard not be displayed now.
+- [ ] The number of obstacles doesn't fit boardSize.
+- [ ] **asyn**: `reply() != query()`
+  - [ ] KataGo returns answer 2 before answer 1 sonmetimes[?](https://github.com/lightvector/KataGo/blob/master/docs/GTP_Extensions.md)
+  - [ ] Dash.jl sends two commands at once sometimes.
+  - [ ] In PlotlyJS.jl(or figure of Dash.jl), the same clickData does not run `callback!()`.
 "
 #----------------------------------------
 # The up is tab1, the down is tab2
@@ -381,13 +402,13 @@ someIssues="
 whatGameLabel=html_summary("What's the game of Go/Baduk/Weiqi?")
 whatGameInfo=dcc_markdown() do
     "
-    \nA turn-based abstract strategy board game, in which the aim is to control more domains than the opponent.
-    \nIt was invented in China more than **2,500 years** ago and is believed to be the oldest board game continuously played to the present day. ***1 2***
-    \n***Turn-based***: players take turns to play
-    \n***Abstract***: not rely on a theme or simulate the real world
-    \n***Strategy***: players' choices determine the outcome
-    \n***Board Game***: a tabletop game that involves counters or pieces moved or placed on a pre-marked surface or \"board\" 
-    \n***Tabletop Game***: played on a table or other flat surface, such as board games, card games
+    \n>  A turn-based abstract strategy board game, in which the aim is to control more domains than the opponent.
+    \n>  It was invented in China more than **2,500 years** ago and is believed to be the oldest board game continuously played to the present day. ***1 2***
+    \n>***Turn-based***: players take turns to play
+    \n>***Abstract***: not rely on a theme or simulate the real world
+    \n>***Strategy***: players' choices determine the outcome
+    \n>***Board Game***: a tabletop game that involves counters or pieces moved or placed on a pre-marked surface or \"board\" 
+    \n>***Tabletop Game***: played on a table or other flat surface, such as board games, card games
     "
     end
 whatGame=html_details() do
@@ -422,12 +443,12 @@ end
 rulesetChecklists=html_div(style = Dict("columnCount" => 2)) do
     
     html_label("X,Y:",title="Integers indicating the board size."),
-    dcc_input(id="SZ_X",value=19,type="number"),
-    dcc_input(id="SZ_Y",value=19,type="number"),
+    dcc_input(id="SZ_X",value=19,type="number",min=2,step=1,max=19),
+    dcc_input(id="SZ_Y",value=19,type="number",min=2,step=1,max=19),
     dcc_markdown(""),
 
     html_label("Komi:",title="Integer or half-integer indicating compensation given to White for going second."),
-    dcc_input(id="KM",value=7.0,type="number"),
+    dcc_input(id="KM",value=7.0,type="number",min=-150,step=0.5,max=150),
     dcc_markdown(""),
 
     html_label("KoRule:",title="The variant of the rule prohibiting repetition. https://senseis.xmp.net/?KoRules"),
@@ -498,8 +519,9 @@ appendixDiv=dcc_markdown() do
     \n**Appendix A Synonyms**:
     \nseki==symbiotic, handicap==obstacle, grid nodes==vertices
     \n**Appendix B Tips**:
-    \n***a*** If hover over the rule items, more details will be displayed.
-    \n***b*** If modify the obstacles, X, Y, the board will be cleared.
+    \n**a** If hover over the rule items, more details will be displayed.
+    \n**b** If modify the obstacles, X, Y, the board will be cleared.
+    \n**c** Button can't be used in territory-scoring.
     \n**Appendix C References**:
     \n***1*** [A Brief History of Go](https://www.usgo.org/brief-history-go). *American Go Association*, 2022
     \n***2*** Peter Shotwell. [The Game of Go: Speculations on its Origins and Symbolism in Ancient China](https://www.usgo.org/sites/default/files/bh_library/originsofgo.pdf). *American Go Association*, 2008.
@@ -511,8 +533,13 @@ ruleCheck=html_div() do
     dcc_markdown("**Rule Check**:"),
     html_button("SUBMIT",id="submitRule"),
     html_div(),
-    dcc_textarea(placeholder="To check if the whole rule is valid...",
-        id="confirmRule",style=Dict("width"=>"390px","height"=>"360px"))
+    dcc_textarea(
+        placeholder="To check if the whole rule is valid...",
+        id="confirmRule",
+        style=Dict("width"=>"390px","height"=>"360px")
+        ),
+    html_div(),
+    html_button("OK",id="okRule")
 end
 
 startGame=html_div(style = Dict("columnCount" => 2)) do
@@ -523,7 +550,7 @@ startGame=html_div(style = Dict("columnCount" => 2)) do
         \n### Start Now:
         \nJust skip the rule items below and go to the `While` tab to play a game.
         \nOr check the items and click the `SUBMIT` to check the rule before a game.
-        \nA game will over after 1 resign or 2 passes(not include the button-pass), and you will see the outcome.
+        \nA game will over after 1 resign or 2 consecutive passes(not include the button-pass), and you will see the outcome.
         \n***Warning***: If you make a illegal move, the game will over.
         "
         ),
@@ -537,21 +564,22 @@ startGame=html_div(style = Dict("columnCount" => 2)) do
         value = "B"
         ),
 
-    html_label("Nonstandard Go——Color:",title="Search on https://senseis.xmp.net/ for more details"),
+    html_label("Nonstandard Go——Visibility:",title="Search on https://senseis.xmp.net/ for more details"),
     dcc_radioitems(id="colorMode",
         options = [
             Dict("label" => "blind", "value" => "blind"),
             Dict("label" => "phantom", "value" => "phantom"),
-            Dict("label" => "one-color", "value" => "oneColor"),
+            Dict("label" => "war fog", "value" => "warFog"),
+            Dict("label" => "one colour", "value" => "oneColour"),
             Dict("label" => "standard", "value" => "standard")
             ],
         value = "standard"
         ),
 
     html_label("Fixed obstacles:",title="The obstacles are placed on the board on the vertices the GTP prefers, e.g. 2"),
-    dcc_input(id="fObstacle",value="0",type="number"),
+    dcc_input(id="fObstacle",value="0",type="number",min=0,step=1,max=9),
     html_label("Placed obstacles:",title="The obstacles are placed on the board on the vertices the engine prefers, e.g. 2"),
-    dcc_input(id="pObstacles",value="0",type="number"),
+    dcc_input(id="pObstacles",value="0",type="number",min=0,step=1,max=20),
     html_label("Set obstacles:",title="The obstacles are placed on the board on the vertices the player prefers, e.g. k10 q16"),
     dcc_input(id="sObstacles",value="",type="text"),
 
@@ -714,39 +742,76 @@ callback!(
     Output("gtpO","value"),
     Input("gtpI","value"),
     ) do gtpInput
-        gtp_io(gtpInput)
-    end
+    gtp_io(gtpInput)
+end
 
 callback!(
     app,
     Output("Info","value"),
     Output("board","figure"),
     Input("board","clickData"),
-    ) do sth
-        if sth != nothing
-            sthJSON=JSON.json(sth)
-            sthParse=JSON.parse(sthJSON)
-            vector=sthParse["points"][1]
-            xPlayer=vector["x"]
-            yPlayer=vector["y"]
-            xyPlayer="$xPlayer$yPlayer"
-            clickData="$sthJSON"
-        else
-            xyPlayer=""
-            clickData="null"
-        end
-        gameInfoAll=console_game(xyPlayer)
-        colorVector=gameInfoAll["BoardColor"]
-        sgfInfo=gameInfoAll["sgf"]
-        gameInfo=Dict()
-        for k in ["Next player","MoveNum","W stones captured","B stones captured"]
-            push!(gameInfo, k => gameInfoAll[k])
-        end
-        gameInfo=json(gameInfo,2)
-        info=" GameInfo:\n$gameInfo SGF:\n$sgfInfo\nClickInfo:\n$clickData"
-        boardSize=gameInfoAll["BoardSize"]
-        #boardSize=[parse(Int8,split(boardSizeString)[i]) for i in 1:2]
-        return info, plot_board(boardSize,colorVector)
+    Input("okRule","n_clicks"),
+    State("playerColor","value"),
+    ) do sth,clicks,colorPlayer
+    ctx = callback_context()
+
+    if length(ctx.triggered) == 0
+        button_id = "No clicks yet"
+    else
+        button_id = split(ctx.triggered[1].prop_id, ".")[1]
     end
+
+    if sth != nothing
+        sthJSON=JSON.json(sth)
+        sthParse=JSON.parse(sthJSON)
+        vector=sthParse["points"][1]
+        xPlayer=vector["x"]
+        yPlayer=vector["y"]
+        xyPlayer="$xPlayer$yPlayer"
+        clickData="$sthJSON"
+    else
+        xyPlayer=""
+        clickData="null"
+        query("clear_board")
+        reply()
+    end
+
+    gameInfo=Dict()
+
+    if button_id == "board"
+        gameState,engineMove=console_game(xyPlayer,colorPlayer)
+        gameInfo["Engine Move"]=engineMove
+    end
+    if button_id == "okRule" && colorPlayer=="W"
+        query("genmove B")
+        gameInfo["Engine Move"]=reply()[3:end-1]
+    end
+    if button_id == "okRule" && clickData !="null" && colorPlayer=="B"
+        query("genmove W")
+        gameInfo["Engine Move"]=reply()[3:end-1]
+    end
+
+    gameInfoAll=agent_showboard()
+
+    for k in ["Next player","MoveNum","W stones captured","B stones captured"]
+        push!(gameInfo, k => gameInfoAll[k])
+    end
+    whbs="Handicap bonus score"
+    if whbs in keys(gameInfoAll)
+        push!(gameInfo, whbs => gameInfoAll[whbs])
+    end
+
+    gameInfo=json(gameInfo,2)
+
+    sgfInfo=gameInfoAll["sgf"]
+
+    info=" GameInfo:\n$gameInfo SGF:\n$sgfInfo\n ClickInfo:\n$clickData"
+
+    boardSize=gameInfoAll["BoardSize"]
+    #boardSize=[parse(Int8,split(boardSizeString)[i]) for i in 1:2]
+    colorVector=gameInfoAll["BoardColor"]
+
+    return info, plot_board(boardSize,colorVector)
+end
 
 run_server(app, "0.0.0.0", debug=true)
