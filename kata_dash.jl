@@ -29,6 +29,7 @@ function end_engine()
 end
 function query(sentence::String)
     println(engineProcess,sentence)
+    println(sentence)
 end
 function reply()
     paragraph=""
@@ -40,7 +41,7 @@ function reply()
             paragraph="$paragraph$sentence\n"
         end
     end
-    #println(paragraph)
+    println(paragraph)
     return paragraph::String
 end
 
@@ -72,18 +73,23 @@ function console_game(xyPlayer,colorPlayer)
     engineMove=""
     nextColor=turns_taking(colorPlayer)
 
-    if xyPlayer in ["a0","b0"]
-        query("play $colorPlayer pass")
-        reply()
-        #println("before pass")
+    if xyPlayer=="d0"
+        gameState="over"
     else
-        query("play $colorPlayer $xyPlayer")
-        paragraph=reply()
-        if paragraph[1]=='?' gameState="over" end
+        if xyPlayer in ["a0","b0"]
+            query("play $colorPlayer pass")
+            reply()
+            #println("before pass")
+        else
+            query("play $colorPlayer $xyPlayer")
+            paragraph=reply()
+            if paragraph[1]=='?' gameState="over" end
+        end
+    query("genmove $nextColor")
+    engineMove=reply()[3:end-1]
+    #println("after pass")
+    if engineMove=="resign" gameState="ovr" end
     end
-        query("genmove $nextColor")
-        engineMove=reply()[3:end-1]
-        #println("after pass")
 
     return gameState,engineMove
 end
@@ -218,6 +224,7 @@ function plot_board(boardSize,stones)
         trace_line(boardSize)[2],
         trace_star(boardSize),
         trace_synchroboard(),
+        trace_resign(),
         trace_stones(boardSize,stones)
         ],
         layout_board()
@@ -340,17 +347,33 @@ function trace_synchroboard()
         text=["PA","SS"],
         textposition="inside",
         textfont=attr(color="rgb(255,255,255)",size=25),
-        name="button"
+        name="buttons"
+        )
+end
+function trace_resign()
+    scatter(
+        x=['d'],
+        y=[0],
+        mode="markers+text",
+        marker=attr(
+            color="rgb(205,133,63)",
+            size=1
+            ),
+        text=["Resign"],
+        textposition="inside",
+        textfont=attr(color="rgb(0,0,0)",size=25),
+        name="resign"
         )
 end
 function layout_board()
     Layout(
     width=930,
     height=836,
+    #aspectratio=attr(x=1,y=1),
     paper_bgcolor="rgb(0,255,127)",
     plot_bgcolor="rgb(205,133,63)",
-    xaxis_showgrid=false,
     xaxis=attr(
+        showgrid=false,
         ticktext=UI_X,
         tickvals=GTP_X
         ),
@@ -363,8 +386,8 @@ function layout_board()
     )
 end
 
-topText="### Hi, welcome to VastGo!
-A funny, green, simple, useful tool for the game of Go/Baduk/Weiqi"
+topText="**Hi, welcome to VastGo!**
+\n\nA funny, green, simple, useful tool for the game of Go/Baduk/Weiqi"
 
 bottomText="*Have a nice game!*"
 
@@ -393,7 +416,7 @@ someIssues="
 - [ ] **asyn**: `reply() != query()`
   - [ ] KataGo returns answer 2 before answer 1 sonmetimes[?](https://github.com/lightvector/KataGo/blob/master/docs/GTP_Extensions.md)
   - [ ] Dash.jl sends two commands at once sometimes.
-  - [ ] In PlotlyJS.jl(or figure of Dash.jl), the same clickData does not run `callback!()`.
+  - [ ] The same two `clickData` does not run `callback!()` twice.
 "
 #----------------------------------------
 # The up is tab1, the down is tab2
@@ -630,6 +653,7 @@ playGame=html_div() do
         style=(width="100%",display="inline-block",textAlign="right"#=,float="right"=#)
         ),
     dcc_textarea(id="Info",style=Dict("width"=>"900px","height"=>"300px",#="cols"=>2=#)),
+    dcc_confirmdialog(id="finalDialog",message="",displayed=false),
     html_div(dcc_markdown(someIssues))
 end
 
@@ -747,6 +771,8 @@ end
 
 callback!(
     app,
+    Output("finalDialog","message"),
+    Output("finalDialog","displayed"),
     Output("Info","value"),
     Output("board","figure"),
     Input("board","clickData"),
@@ -777,7 +803,9 @@ callback!(
     end
 
     gameInfo=Dict()
-
+    gameState=""
+    finalScore=""
+    dialogDisplay=false
     if button_id == "board"
         gameState,engineMove=console_game(xyPlayer,colorPlayer)
         gameInfo["Engine Move"]=engineMove
@@ -792,6 +820,14 @@ callback!(
     end
 
     gameInfoAll=agent_showboard()
+
+    if gameState=="over" || occursin("RE[",gameInfoAll["sgf"])
+        query("final_score")
+        finalScore=reply()[3:end-1]
+        dialogDisplay=true
+        #query("final_status_list dead,seki")
+        #finalStatus=reply()[3:end-1]
+    end
 
     for k in ["Next player","MoveNum","W stones captured","B stones captured"]
         push!(gameInfo, k => gameInfoAll[k])
@@ -811,7 +847,7 @@ callback!(
     #boardSize=[parse(Int8,split(boardSizeString)[i]) for i in 1:2]
     colorVector=gameInfoAll["BoardColor"]
 
-    return info, plot_board(boardSize,colorVector)
+    return finalScore,dialogDisplay,info, plot_board(boardSize,colorVector)
 end
 
 run_server(app, "0.0.0.0", debug=true)
