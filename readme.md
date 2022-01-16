@@ -29,10 +29,10 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [x] mouse-click event to play stones
   - [x] dynamic Go board
   - [ ] GTP to call Go engines and manage games
-  - [ ] final_score *(exercise evaluating the ends)*
+  - [x] final_score *(exercise evaluating the ends)*
   - [ ] final_status_list *(exercise evaluating groups of stones)* 
-  - [ ] judge game-end, if `RU[]` in sgf is not empty
-  - [ ] completely play games
+  - [x] judge game-end, if `RE[` in sgf is not empty
+  - [X] completely play games
   - [ ] load/save sgf
   - [ ] time setting
   - [ ] handicap
