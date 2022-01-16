@@ -69,6 +69,7 @@ function turns_taking(currentColor)
 end
 
 function console_game(xyPlayer,colorPlayer)
+    #gameInfoAll=agent_showboard()
     gameState=""
     engineMove=""
     nextColor=turns_taking(colorPlayer)
@@ -85,12 +86,11 @@ function console_game(xyPlayer,colorPlayer)
             paragraph=reply()
             if paragraph[1]=='?' gameState="over" end
         end
-    query("genmove $nextColor")
-    engineMove=reply()[3:end-1]
-    #println("after pass")
-    if engineMove=="resign" gameState="ovr" end
+        query("genmove $nextColor")
+        #println("after pass")
+        engineMove=reply()[3:end-1]
+        if engineMove=="resign" gameState="over" end
     end
-
     return gameState,engineMove
 end
 
@@ -114,6 +114,33 @@ function checkRule(wholeRule)
     return checkBoard
 end
 
+function mode_color(colorVector,colorPlayer,modeColor)
+    if modeColor=="blind"
+        colorVector=["rgba(0,0,0,0)" for v in 1:length(colorVector)]
+    elseif modeColor=="phantom"
+        if colorPlayer=="B"
+            for i in 1:length(colorVector)
+                if colorVector[i] == "rgba(255,255,255,1)"
+                    colorVector[i]="rgba(255,255,255,0)"
+                end
+            end
+        else
+            for j in 1:length(colorVector)
+                if colorVector[j] == "rgba(0,0,0,1)"
+                    colorVector[j]="rgba(0,0,0,0)"
+                end
+            end
+        end
+    elseif modeColor=="oneColour"
+        for k in 1:length(colorVector)
+            if colorVector[k] =="rgba(255,255,255,1)"
+                colorVector[k]="rgba(0,0,0,1)"
+            end
+        end
+    else
+    end
+    return colorVector
+end
 function color_stones(board)
     colorStones::Vector{String}=[]
     for vertex in board
@@ -777,8 +804,9 @@ callback!(
     Output("board","figure"),
     Input("board","clickData"),
     Input("okRule","n_clicks"),
-    State("playerColor","value"),
-    ) do sth,clicks,colorPlayer
+    Input("playerColor","value"),
+    Input("colorMode","value"),
+    ) do sth,clicks,colorPlayer,modeColor
     ctx = callback_context()
 
     if length(ctx.triggered) == 0
@@ -803,30 +831,33 @@ callback!(
     end
 
     gameInfo=Dict()
+    #gameInfo["Engine Move"]=""
     gameState=""
     finalScore=""
     dialogDisplay=false
+    if button_id=="playerColor"
+        if colorPlayer=="B"
+            query("genmove W")
+        else
+            query("genmove B")
+        end
+        engineMove=reply()[3:end-1]
+        gameInfo["Engine Move"]=engineMove
+        if engineMove=="resign" gameState="over" end
+    end
     if button_id == "board"
         gameState,engineMove=console_game(xyPlayer,colorPlayer)
         gameInfo["Engine Move"]=engineMove
     end
-    if button_id == "okRule" && colorPlayer=="W"
-        query("genmove B")
-        gameInfo["Engine Move"]=reply()[3:end-1]
-    end
-    if button_id == "okRule" && clickData !="null" && colorPlayer=="B"
-        query("genmove W")
-        gameInfo["Engine Move"]=reply()[3:end-1]
-    end
-
+    
     gameInfoAll=agent_showboard()
-
     if gameState=="over" || occursin("RE[",gameInfoAll["sgf"])
         query("final_score")
         finalScore=reply()[3:end-1]
         dialogDisplay=true
         #query("final_status_list dead,seki")
         #finalStatus=reply()[3:end-1]
+        #gameInfo["Final Score"]=finalScore
     end
 
     for k in ["Next player","MoveNum","W stones captured","B stones captured"]
@@ -837,15 +868,21 @@ callback!(
         push!(gameInfo, whbs => gameInfoAll[whbs])
     end
 
+    boardSize=gameInfoAll["BoardSize"]
+    #boardSize=[parse(Int8,split(boardSizeString)[i]) for i in 1:2]
+    colorVector=gameInfoAll["BoardColor"]
+    if modeColor != "standard"
+        if "Engine Move" in keys(gameInfo) && gameInfo["Engine Move"] != "" && modeColor in ["phantom","warFog"]
+            gameInfo["Engine Move"]=""
+        end
+        colorVector=mode_color(colorVector,colorPlayer,modeColor)
+    end
+
     gameInfo=json(gameInfo,2)
 
     sgfInfo=gameInfoAll["sgf"]
 
     info=" GameInfo:\n$gameInfo SGF:\n$sgfInfo\n ClickInfo:\n$clickData"
-
-    boardSize=gameInfoAll["BoardSize"]
-    #boardSize=[parse(Int8,split(boardSizeString)[i]) for i in 1:2]
-    colorVector=gameInfoAll["BoardColor"]
 
     return finalScore,dialogDisplay,info, plot_board(boardSize,colorVector)
 end
