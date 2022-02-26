@@ -1,8 +1,7 @@
 # My Markdown Cheat Sheet
 Markdown | a text makeup language
 --- | ---
-`#` | header 1
-`#^n ` | header n
+`#^(1-6) ` | header 1-6
 `num.` | order list
 `- ` | inorder list
 `- [x]` | task list 
@@ -22,7 +21,7 @@ Markdown | a text makeup language
 `:bomb: :heart: :joy: :smile: :sparkles: :tada: :vs: :warning: :zap: :+1:` | :bomb: :heart: :joy: :smile: :sparkles: :tada: :vs: :warning: :zap: :+1:
 
 ---
-*How to take notes? In .txt .word Onenote HTML? Try Common/Github Markdown!*
+*How to take notes? In .txt .word Onenote HTML? Try Markdown!*
 ---
 
 **Glossary**
@@ -44,50 +43,13 @@ Markdown | a text makeup language
 - underscore _
 - backslash \
 ---
+
 # [CommonMark](http://commonmark.org/)
 ## [60 Second Markdown Tutorial](http://commonmark.org/help/)
-`# heading 1`			
-# heading 1
-`## heading 2`
-## heading 2
-...
-###### heading 6
-...
-`- list`		
-- list
-
-`1. one`
-1. one
-
-`[link](url)`	[link](url)
-`![image](url)`	![image](url)
-`*italic*`		*itelic*
-`**bold**` 		**bold**
-\`inline code\` with 1-1 backticks	`inlinecode`
-\`\`\`code block\`\`\` with 3-3 backticks
-```
-# code block
-print '3 backticks or'
-print 'indent 4 spaces'
-```
-```java
-print()
-```
-```julia
-println()
-```
-`> blockquote`
->blockqote
-
-`---`
----
-`___`
-___
 ## [600 Second Markdown Tutorial](http://commonmark.org/help/tutorial/)
 ___
-# Github Markdown
+# [Github: Communicating using Markdown](https://lab.github.com/githubtraining/communicating-using-markdown) A Note
 ## Create a Task List
-```julia
 - [ ] @jlsf
 	- [ ] <del>skdjjk</del> 
 	- [x] #1 
@@ -95,52 +57,10 @@ ___
 	- [ ] ![image](https:\\news.com)
 		- [ ] *sdkjf*
 		- [x] **sdjf**
-```
-- [ ] @jlsf
-	- [ ] <del>skdjjk</del> 
-	- [x] #1 
-- [x] [link](https:\\github.com)
-	- [ ] ![image](https:\\news.com)
-		- [ ] *sdkjf*
-		- [x] **sdjf**
-## Turn on Github Pages
-in github settings
-## Add headers
+
+turn on Github Pages in github settings
 create a **pull request**
 **edit** the file in pull request's **files changed**
-h6 is the smallest header
 **commit** your changes
-## Merge your headers
 **merge** branch in pull request's **conversation**
 **delete** the branch
-## Add a image
-## Add a link
-## Add a list
-<details>
-	<summary>Emoji, Ordered Lists, Unorderes Lists</summary>
-
-### emoji
-`:+1:` :+1:
-`:heart:` :heart:
-`:smile:` :smile:
-`:sparkles:` :sparkles:
-`:tada:` :tada:
-`:joy:` :joy:
-`:bomb:` :bomb:
-`:zap:` :zap:
-`:warning:` :warning:
-`:vs:` :vs:
-</details>
-
-## Use Emphasis
-## Tables
-```sh
-first header | second header
---- | ---
-cell 1 | cell 2
-first column | second column
-```
-first header | second header
---- | ---
-cell 1 | cell 2
-first column | second column
