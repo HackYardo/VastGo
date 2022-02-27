@@ -193,7 +193,7 @@ cmd> julia kata_dash.jl
 
 ## Doc
 - [my Markdown Cheat Sheet](./Markdown.md)
-- [my GTP Cheat Sheet](./GTP-check-list.txt)
+- [GTP Check list](./GTP-check-list.txt)
 - [Structures of Go, Go APP, VastGo](./structure.md)
 - static Go board state matrix
 - [Julia Style Cheat Sheet](./JuliaStyleCheatSheet.md)
