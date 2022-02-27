@@ -440,6 +440,9 @@ someIssues="
   - Type `clear_board.` in GTP commands input or click `PASS` in the board plot instead.
 - [x] The whb in showboard not be displayed now.
 - [ ] The number of obstacles doesn't fit boardSize.
+- [x] Can not pass more than one time.
+  - Reason: Dash.jl's clickEvent doesn't response to it.
+  - There are two pass buttons, **PA** and **SS**.
 - [ ] **asyn**: `reply() != query()`
   - [ ] KataGo returns answer 2 before answer 1 sonmetimes[?](https://github.com/lightvector/KataGo/blob/master/docs/GTP_Extensions.md)
   - [ ] Dash.jl sends two commands at once sometimes.
