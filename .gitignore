@@ -4,7 +4,7 @@
 *.pem
 README.txt
 */
-
+/katago
 
 
 # Julia.gitignore
