@@ -1,6 +1,6 @@
 using JSON
 using PlotlyJS
-using Dash, DashHtmlComponents, DashCoreComponents
+using Dash
 
 const SGF_X=['a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t']
 const SGF_Y=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]

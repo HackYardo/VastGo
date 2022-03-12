@@ -18,7 +18,7 @@ end
 const SGF_X,SGF_Y,SGF_XY,GTP_X,GTP_Y,GTP_XY,UI_X,UI_Y,UI_XY=const_generate()
 
 function run_engine()
-    katagoCommand=`katago.exe gtp -config gtp_custom.cfg -model b6\\model.txt.gz`
+    katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
     katagoProcess=open(katagoCommand,"r+")
     return katagoProcess
 end

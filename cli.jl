@@ -1,6 +1,6 @@
-using Dash, DashHtmlComponents, DashCoreComponents
+using Dash
 
-katagoCommand=`katago.exe gtp -config gtp_custom.cfg -model b6\\model.txt.gz`
+katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
 katagoProcess=open(katagoCommand,"r+")
 engineProcess=katagoProcess
 
