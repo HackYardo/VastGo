@@ -26,7 +26,7 @@ function abc_num(color,vertex,boardSizeY) # move: gtp & num
         end
         vertex = string(GTP_X[vertex[2]+1],boardSizeY+1-vertex[1])
     else
-        if color == 'B'
+        if color in ['B','b']
             color = -1
         else
             color = 1
@@ -36,7 +36,7 @@ function abc_num(color,vertex,boardSizeY) # move: gtp & num
             i = i+1
         end
         i = i-1
-        vertex = [boardSizeY+1-parse(Int,vertex[2]),i]
+        vertex = [boardSizeY+1-parse(Int,vertex[2:end]),i]
     end
     return color,vertex
 end
@@ -275,7 +275,7 @@ function magnet_stones(color,magnetLines)
 end
 
 function magnet_order(magnetStones)
-    if magnetStones[1,1] != 0
+    if string(typeof(magnetStones)) == "Vector{Int64}"
         newMagnetStones = magnetStones
     else    
         i = 1
@@ -335,7 +335,7 @@ function magnet_act(position,vertex,magnetStones)
     # println(positionString)
     query("set_position $positionString") # auto clear_board before set_position
     reply()
-    if magnetStones[1,1] == 1
+    if string(typeof(magnetStones)) == "Vector{Int64}"
         color = magnetStones[4,1]
         xy = vertex
         colorPlayer,xyPlayer = abc_num(color,xy,size(position)[2])
@@ -381,7 +381,7 @@ function main()
     # vertex = [rand(1:boardSize[1]),rand(1:boardSize[2])]
     # color = rand([-1,1], 1)[1]
     while true
-        colorPlayer = readline()
+        colorPlayer = readline()[1]
         if colorPlayer == 'q'
             break
         end
