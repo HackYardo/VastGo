@@ -159,7 +159,7 @@ function agent_showboard()
         end
     end
     m=3
-    b=Vector{Int8}()
+    b=[]
     while paragraphVector[m][1] in "1 "
         for c in paragraphVector[m]
             if c=='X'
@@ -176,6 +176,7 @@ function agent_showboard()
     end
     colorStones=color_stones(b)
     boardInfo["Board"]=b
+    println(b)
     boardInfo["BoardColor"]=colorStones
     boardInfo["BoardSize"]=[n,m-3]
     for line in cat([paragraphVector[1]],paragraphVector[m:end],dims=1)
@@ -221,7 +222,7 @@ function magnet_lines(vertex,position)
     if vertex[2]+1 <= size(position)[2]
         magnetLines[2] = position[vertex[1],vertex[2]+1:end]
     end
-    # print_dict(magnetLines)
+     print_dict(magnetLines)
     return magnetLines
 end
 
@@ -300,7 +301,7 @@ function magnet_order(magnetStones)
     return newMagnetStones
 end
 
-function magnet_act(position,vertex,magnetStones)
+function magnet_act(position,color,vertex,magnetStones)
     j = 1
     while magnetStones[1,j] == 0
         if magnetStones[2,j] == 1
@@ -333,19 +334,19 @@ function magnet_act(position,vertex,magnetStones)
     end
     positionString = positionString[2:end]
     # println(positionString)
-    if j == 1
+    if j != 1
         query("set_position $positionString") # auto clear_board before set_position
         reply()
     end
     if string(typeof(magnetStones)) == "Vector{Int64}"
-        color = magnetStones[4,j]
+        # color = magnetStones[4,j]
         xy = vertex
         colorPlayer,xyPlayer = abc_num(color,xy,size(position)[2])
         query("play $colorPlayer $xyPlayer")
         reply()        
     else
         while j <= size(magnetStones)[2]
-            color = magnetStones[4,j]
+            # color = magnetStones[4,j]
             xy = ""
             if magnetStones[2,j] == 1
                 xy = [vertex[1]+magnetStones[3,j],vertex[2]]
@@ -362,41 +363,40 @@ function magnet_act(position,vertex,magnetStones)
             j = j+1
         end
     end
-    query("showboard")
-    reply()
     println("magnet_act done")
-    position
 end
 
 function magnet_turn(color,vertex,position)
     magnetLines = magnet_lines(vertex,position)
     magnetStones = magnet_stones(color,magnetLines)
     newMagnetStones = magnet_order(magnetStones)
-    magnet_act(position,vertex,newMagnetStones)
+    magnet_act(position,color,vertex,newMagnetStones)
 end
 
 function main()
-    gameInfoAll = agent_showboard()
-    boardSize = gameInfoAll["BoardSize"]
-    position = reshape(gameInfoAll["Board"],boardSize[1],:)
-    # position = rand([-1,0,1], (boardSize[1],boardSize[2]))
-    # print_matrix(position)
-    # positionReverseY = reverse(position', dims=2)'
-    # print_matrix(positionReverseY)
-    # vertex = [rand(1:boardSize[1]),rand(1:boardSize[2])]
-    # color = rand([-1,1], 1)[1]
     while true
-        colorPlayer = readline()[1]
+        gameInfoAll = agent_showboard()
+        boardSize = gameInfoAll["BoardSize"]
+        position = reshape(gameInfoAll["Board"],boardSize[1],:)
+        # position = rand([-1,0,1], (boardSize[1],boardSize[2]))
+        # print_matrix(position)
+        # positionReverseY = reverse(position', dims=2)'
+        # print_matrix(positionReverseY)
+        # vertex = [rand(1:boardSize[1]),rand(1:boardSize[2])]
+        # color = rand([-1,1], 1)[1]
+    # while true
+        colorPlayer = readline()[1] 
+        # [1]: typeof(readline()) == String, != Char
         if colorPlayer == 'q'
             query("quit")
             reply()
             break
         end
-        xyPlayer = readline()    
+        xyPlayer = readline() 
         color,vertex = abc_num(colorPlayer,xyPlayer,boardSize[2])
         move = cat(color,vertex, dims=1)
         # println(move)
-        position = magnet_turn(color,vertex,position)
+        magnet_turn(color,vertex,position)
     end
 end
 
