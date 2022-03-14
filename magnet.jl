@@ -17,7 +17,7 @@ end
 
 const SGF_X,SGF_Y,SGF_XY,GTP_X,GTP_Y,GTP_XY,UI_X,UI_Y,UI_XY=const_generate()
 
-function abc_num(color,vertex,boardSizeY) # move: gtp & num
+function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
     if color in [-1,1]
         if color == -1
             color = 'B'
@@ -333,10 +333,12 @@ function magnet_act(position,vertex,magnetStones)
     end
     positionString = positionString[2:end]
     # println(positionString)
-    query("set_position $positionString") # auto clear_board before set_position
-    reply()
+    if j == 1
+        query("set_position $positionString") # auto clear_board before set_position
+        reply()
+    end
     if string(typeof(magnetStones)) == "Vector{Int64}"
-        color = magnetStones[4,1]
+        color = magnetStones[4,j]
         xy = vertex
         colorPlayer,xyPlayer = abc_num(color,xy,size(position)[2])
         query("play $colorPlayer $xyPlayer")
@@ -360,7 +362,10 @@ function magnet_act(position,vertex,magnetStones)
             j = j+1
         end
     end
+    query("showboard")
+    reply()
     println("magnet_act done")
+    position
 end
 
 function magnet_turn(color,vertex,position)
@@ -383,13 +388,15 @@ function main()
     while true
         colorPlayer = readline()[1]
         if colorPlayer == 'q'
+            query("quit")
+            reply()
             break
         end
         xyPlayer = readline()    
         color,vertex = abc_num(colorPlayer,xyPlayer,boardSize[2])
         move = cat(color,vertex, dims=1)
         # println(move)
-        magnet_turn(color,vertex,position)
+        position = magnet_turn(color,vertex,position)
     end
 end
 
