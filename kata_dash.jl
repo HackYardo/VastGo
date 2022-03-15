@@ -140,6 +140,7 @@ function play_mode(color,vertex,position,mode)
     elseif mode == "magnet"
         query("undo")
         reply()
+        color,vertex = abc_num(color,vertex,size(position)[2])
         magnet_turn(color,vertex,position)
     else
     end
@@ -148,11 +149,12 @@ end
 
 function genmove_mode(color,position,mode)
     query("genmove $color")
-    vertexEngine = reply()[3:end-1]
+    vertex = reply()[3:end-1]
     if mode == "magnet"
         query("undo")
         reply()
-        magnet_turn(color,vertexEngine,position)
+        color,vertex = abc_num(color,vertex,size(position)[2])
+        magnet_turn(color,vertex,position)
     else
     end
     return vertexEngine
@@ -174,7 +176,7 @@ function magnet_lines(vertex,position)
     if vertex[2]+1 <= size(position)[2]
         magnetLines[2] = position[vertex[1],vertex[2]+1:end]
     end
-     print_dict(magnetLines)
+    # print_dict(magnetLines)
     return magnetLines
 end
 
@@ -221,7 +223,7 @@ function magnet_stones(color,magnetLines)
                 end
             end
         end
-        println(direct,' ',first,' ',i)
+        # println(direct,' ',first,' ',i)
     end
     # print_matrix(magnetStones)
     return magnetStones
@@ -249,7 +251,7 @@ function magnet_order(magnetStones)
         end
         newMagnetStones = cat(foreMagnetStones,backMagnetStones, dims=2)
     end
-     print_matrix(newMagnetStones)
+    # print_matrix(newMagnetStones)
     return newMagnetStones
 end
 
@@ -315,7 +317,7 @@ function magnet_act(position,vertex,magnetStones)
             j = j+1
         end
     end
-    println("magnet_act done")
+    # println("magnet_act done")
 end
 
 function magnet_turn(color,vertex,position)
@@ -848,6 +850,17 @@ startGame=html_div(style = Dict("columnCount" => 2)) do
         value = "B"
         ),
 
+    html_label("Nonstandard Go, Move&Position:",title="Search on https://senseis.xmp.net/ for more details"),
+    dcc_radioitems(id="moveMode",
+        options = [
+        Dict("label" => "magnet", "value" => "magnet"),
+        Dict("label" => "quantum", "value" => "quantum"),
+        Dict("label" => "lucky", "value" => "lucky"),
+        Dict("label" => "standard", "value" => "standard")
+        ],
+        value = "standard"
+        ),
+
     html_label("Nonstandard Go——Visibility:",title="Search on https://senseis.xmp.net/ for more details"),
     dcc_radioitems(id="colorMode",
         options = [
@@ -919,6 +932,8 @@ playGame=html_div() do
 end
 
 engineProcess=run_engine()
+
+# positions = rand([0],(19,19))
 
 app=dash()
 
@@ -1030,8 +1045,6 @@ callback!(
     gtp_io(gtpInput)
 end
 
-positions = rand([0],(19,19))
-
 callback!(
     app,
     Output("finalDialog","message"),
@@ -1071,6 +1084,7 @@ callback!(
     gameState=""
     finalScore=""
     dialogDisplay=false
+    global positions = rand([0],(19,19))
     if button_id == "playerColor"
         nextColor = turns_taking(colorPlayer)
         vertexEngine = genmove_mode(nextColor,positions[:,:,end],modeMove)
@@ -1081,9 +1095,8 @@ callback!(
         gameState,engineMove = console_game(colorPlayer,xyPlayer,positions[:,:,end],modeMove)
         gameInfo["Engine Move"] = engineMove
     end
-    color,vertex = abc_num(colorPlayer,xyPlayer,boardSize[2])
     gameInfoAll = agent_showboard()
-    positions = cat(positions,reshape(gameInfoAll["board"],gameInfoAll["BoardSize"][1],:)', dims=3)
+    positions = cat(positions,reshape(gameInfoAll["Board"],gameInfoAll["BoardSize"][1],:)', dims=3)
     if gameState=="over" || occursin("RE[",gameInfoAll["sgf"])
         query("final_score")
         finalScore=reply()[3:end-1]
