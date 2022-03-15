@@ -17,6 +17,47 @@ end
 
 const SGF_X,SGF_Y,SGF_XY,GTP_X,GTP_Y,GTP_XY,UI_X,UI_Y,UI_XY=const_generate()
 
+function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
+    if color in [-1,1]
+        if color == -1
+            color = 'B'
+        else
+            color = 'W'
+        end
+        vertex = string(GTP_X[vertex[2]+1],boardSizeY+1-vertex[1])
+    else
+        if color in ['B','b']
+            color = -1
+        else
+            color = 1
+        end
+        i = 2
+        while GTP_X[i] != vertex[1]
+            i = i+1
+        end
+        i = i-1
+        vertex = [boardSizeY+1-parse(Int,vertex[2:end]),i]
+    end
+    return color,vertex
+end
+
+function print_matrix(matrix)
+    println(size(matrix),' ',typeof(matrix))
+    for i in 1:size(matrix)[1]
+        for j in matrix[i,:]
+            print(j,'\t')
+        end
+        println()
+    end
+end
+
+function print_dict(dictionary)
+    println(typeof(dictionary))
+    for (key,value) in pairs(dictionary) # or: for entry in dictionary
+        println(typeof(key),':',typeof(value)," | ",key," => ",value)
+    end
+end
+
 function run_engine()
     katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
     katagoProcess=open(katagoCommand,"r+")
@@ -68,30 +109,220 @@ function turns_taking(currentColor)
     end
 end
 
-function console_game(xyPlayer,colorPlayer)
+function console_game(colorPlayer,vertexPlayer,position,mode)
     #gameInfoAll=agent_showboard()
-    gameState=""
-    engineMove=""
-    nextColor=turns_taking(colorPlayer)
+    gameState = ""
+    vertexEngine = ""
+    nextColor = turns_taking(colorPlayer)
 
-    if xyPlayer=="d0"
-        gameState="over"
+    if xyPlayer == "d0"
+        gameState = "over"
     else
         if xyPlayer in ["a0","b0"]
             query("play $colorPlayer pass")
             reply()
-            #println("before pass")
         else
-            query("play $colorPlayer $xyPlayer")
-            paragraph=reply()
-            if paragraph[1]=='?' gameState="over" end
+            gameState = play_mode(colorPlayer,vertexPlayer,position,mode)
         end
-        query("genmove $nextColor")
-        #println("after pass")
-        engineMove=reply()[3:end-1]
-        if engineMove=="resign" gameState="over" end
+        vertexEngine = genmove_mode(nextColor,position,mode)
+        if vertexEngine == "resign" gameState="over" end
     end
-    return gameState,engineMove
+
+    return gameState,vertexEngine
+end
+
+function play_mode(color,vertex,position,mode)
+    gameState = ""
+    query("play $color $vertex")
+    paragraph = reply()[1]
+    if paragraph == '?' 
+        gameState = "over" 
+    elseif mode == "magnet"
+        query("undo")
+        reply()
+        magnet_turn(color,vertex,position)
+    else
+    end
+    return gameState
+end
+
+function genmove_mode(color,position,mode)
+    query("genmove $color")
+    vertexEngine = reply()[3:end-1]
+    if mode == "magnet"
+        query("undo")
+        reply()
+        magnet_turn(color,vertexEngine,position)
+    else
+    end
+    return vertexEngine
+end
+
+function magnet_lines(vertex,position)
+    magnetLines = Dict() 
+    # key,value: direction,line
+    # direction: see magnet_stones()
+    if vertex[1]+1 <= size(position)[1]
+        magnetLines[1] = position[vertex[1]+1:end,vertex[2]]
+    end
+    if vertex[1]-1 >= 1
+        magnetLines[3] = reverse(position[1:vertex[1]-1,vertex[2]])
+    end
+    if vertex[2]-1 >= 1
+        magnetLines[4] = reverse(position[vertex[1],1:vertex[2]-1])
+    end
+    if vertex[2]+1 <= size(position)[2]
+        magnetLines[2] = position[vertex[1],vertex[2]+1:end]
+    end
+     print_dict(magnetLines)
+    return magnetLines
+end
+
+function magnet_stones(color,magnetLines)
+    magnetStones = [1,0,0,color] 
+    # 1st: 0 => "to remove", 1 => "to play"
+    # 2nd: direcion, 0 => "no direction", 1-4 => "down,right,up,left" 
+    # 3rd: distance  
+    for (direct,line) in pairs(magnetLines)
+        i = 1
+        first = true
+        for point in line
+            if point == 0
+                i = i+1
+                if i > length(line) && !first
+                    magnetStones = cat(magnetStones,[1,direct,i-1,color], dims=2)
+                    break
+                end
+            elseif point == -color
+                if i == 1
+                    break
+                elseif first 
+                    magnetStones = cat([0,direct,i,-color],magnetStones, dims=2)
+                    magnetStones = cat(magnetStones,[1,direct,1,-color], dims=2)
+                    break
+                else
+                    magnetStones = cat(magnetStones,[1,direct,i-1,color], dims=2)
+                    break
+                end
+            else
+                if first
+                    if i == length(line) 
+                        break
+                    elseif line[i+1] !=0
+                        break
+                    else
+                        magnetStones = cat([0,direct,i,color],magnetStones, dims=2)
+                        first = false  
+                        i = i+1
+                    end
+                else    
+                    magnetStones = cat(magnetStones,[1,direct,i-1,color], dims=2)
+                    break
+                end
+            end
+        end
+        println(direct,' ',first,' ',i)
+    end
+    # print_matrix(magnetStones)
+    return magnetStones
+end
+
+function magnet_order(magnetStones)
+    if string(typeof(magnetStones)) == "Vector{Int64}"
+        newMagnetStones = magnetStones
+    else    
+        i = 1
+        while magnetStones[1,i] == 0
+            i = i+1
+        end
+        color = magnetStones[end,i]
+        foreMagnetStones = magnetStones[:,1:i-1]
+        backMagnetStones = magnetStones[:,i]
+        i = i+1
+        for c in magnetStones[end,i:end]
+            if c == color
+                foreMagnetStones = cat(foreMagnetStones,magnetStones[:,i], dims=2)
+            else
+                backMagnetStones = cat(backMagnetStones,magnetStones[:,i], dims=2)
+            end
+            i = i+1
+        end
+        newMagnetStones = cat(foreMagnetStones,backMagnetStones, dims=2)
+    end
+     print_matrix(newMagnetStones)
+    return newMagnetStones
+end
+
+function magnet_act(position,vertex,magnetStones)
+    j = 1
+    while magnetStones[1,j] == 0
+        if magnetStones[2,j] == 1
+            position[vertex[1]+magnetStones[3,j],vertex[2]] = 0
+        elseif magnetStones[2,j] == 2
+            position[vertex[1],vertex[2]+magnetStones[3,j]] = 0
+        elseif magnetStones[2,j] == 3
+            position[vertex[1]-magnetStones[3,j],vertex[2]] = 0
+        else
+            position[vertex[1],vertex[2]-magnetStones[3,j]] = 0
+        end
+        j = j+1
+    end
+    m = 1
+    n = 1
+    positionString = ""
+    for m in 1:size(position)[1]
+        for n in 1:size(position)[2]
+            if position[m,n] == 0
+                continue
+            else
+                if position[m,n] == 1
+                    colorPlayer,xyPlayer = abc_num(1,[m,n],size(position)[2])
+                else
+                    colorPlayer,xyPlayer = abc_num(-1,[m,n],size(position)[2])
+                end
+                positionString = string(positionString,' ',colorPlayer,' ',xyPlayer)
+            end
+        end
+    end
+    positionString = positionString[2:end]
+    # println(positionString)
+    if j != 1
+        query("set_position $positionString") # auto clear_board before set_position
+        reply()
+    end
+    if string(typeof(magnetStones)) == "Vector{Int64}"
+        color = magnetStones[4,j]
+        xy = vertex
+        colorPlayer,xyPlayer = abc_num(color,xy,size(position)[2])
+        query("play $colorPlayer $xyPlayer")
+        reply()        
+    else
+        while j <= size(magnetStones)[2]
+            color = magnetStones[4,j]
+            xy = ""
+            if magnetStones[2,j] == 1
+                xy = [vertex[1]+magnetStones[3,j],vertex[2]]
+            elseif magnetStones[2,j] == 2
+                xy = [vertex[1],vertex[2]+magnetStones[3,j]]
+            elseif magnetStones[2,j] == 3
+                xy = [vertex[1]-magnetStones[3,j],vertex[2]]
+            else
+                xy = [vertex[1],vertex[2]-magnetStones[3,j]]
+            end
+            colorPlayer,xyPlayer = abc_num(color,xy,size(position)[2])
+            query("play $colorPlayer $xyPlayer")
+            reply()
+            j = j+1
+        end
+    end
+    println("magnet_act done")
+end
+
+function magnet_turn(color,vertex,position)
+    magnetLines = magnet_lines(vertex,position)
+    magnetStones = magnet_stones(color,magnetLines)
+    newMagnetStones = magnet_order(magnetStones)
+    magnet_act(position,vertex,newMagnetStones)
 end
 
 function checkRule(wholeRule)
@@ -799,6 +1030,8 @@ callback!(
     gtp_io(gtpInput)
 end
 
+positions = rand([0],(19,19))
+
 callback!(
     app,
     Output("finalDialog","message"),
@@ -809,7 +1042,8 @@ callback!(
     Input("okRule","n_clicks"),
     Input("playerColor","value"),
     Input("colorMode","value"),
-    ) do sth,clicks,colorPlayer,modeColor
+    Input("moveMode","value"),
+    ) do sth,clicks,colorPlayer,modeColor,modeMove
     ctx = callback_context()
 
     if length(ctx.triggered) == 0
@@ -834,26 +1068,22 @@ callback!(
     end
 
     gameInfo=Dict()
-    #gameInfo["Engine Move"]=""
     gameState=""
     finalScore=""
     dialogDisplay=false
-    if button_id=="playerColor"
-        if colorPlayer=="B"
-            query("genmove W")
-        else
-            query("genmove B")
-        end
-        engineMove=reply()[3:end-1]
-        gameInfo["Engine Move"]=engineMove
-        if engineMove=="resign" gameState="over" end
+    if button_id == "playerColor"
+        nextColor = turns_taking(colorPlayer)
+        vertexEngine = genmove_mode(nextColor,positions[:,:,end],modeMove)
+        gameInfo["Engine Move"] = vertexEngine
+        if vertexEngine == "resign" gameState = "over" end
     end
     if button_id == "board"
-        gameState,engineMove=console_game(xyPlayer,colorPlayer)
-        gameInfo["Engine Move"]=engineMove
+        gameState,engineMove = console_game(colorPlayer,xyPlayer,positions[:,:,end],modeMove)
+        gameInfo["Engine Move"] = engineMove
     end
-    
-    gameInfoAll=agent_showboard()
+    color,vertex = abc_num(colorPlayer,xyPlayer,boardSize[2])
+    gameInfoAll = agent_showboard()
+    positions = cat(positions,reshape(gameInfoAll["board"],gameInfoAll["BoardSize"][1],:)', dims=3)
     if gameState=="over" || occursin("RE[",gameInfoAll["sgf"])
         query("final_score")
         finalScore=reply()[3:end-1]
