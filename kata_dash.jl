@@ -63,24 +63,21 @@ end
 function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
     if color in [-1,1]
         if color == -1
-            color = 'B'
+            color = "B"
         else
-            color = 'W'
+            color = "W"
         end
         vertex = string(GTP_X[vertex[2]+1],boardSizeY+1-vertex[1])
     else
-        if color in ['B','b']
+        if color in ["B","b"]
             color = -1
         else
             color = 1
         end
         i = 2
         while true
-            if string(GTP_X[i]) == string(vertex[1]) 
+            if GTP_X[i] == vertex[1] || uppercase(GTP_X[i]) == vertex[1]
                 break
-            elseif string(UI_X[i]) == string(vertex[1])
-                break
-            else
             end
             # println(GTP_X[i],' ',UI_X[i],' ',vertex[1])
             i = i+1
@@ -109,7 +106,7 @@ function print_dict(dictionary)
 end
 
 function turns_taking(currentColor)
-    if currentColor=="B"
+    if currentColor in ["B","b"]
         return "W"
     else
         return "B"
@@ -131,7 +128,9 @@ function console_game(colorPlayer,vertexPlayer,position,mode)
         else
             gameState = play_mode(colorPlayer,vertexPlayer,position,mode)
         end
-        vertexEngine = genmove_mode(nextColor,position,mode)
+        gameInfoAll = agent_showboard()
+        global positions = cat(positions,reshape(gameInfoAll["Board"],gameInfoAll["BoardSize"][1],:)', dims=(2,3))
+        vertexEngine = genmove_mode(nextColor,positions[:,:,end],mode)
         if vertexEngine == "resign" gameState="over" end
     end
 
@@ -332,6 +331,7 @@ function magnet_turn(color,vertex,position)
     magnetStones = magnet_stones(color,magnetLines)
     newMagnetStones = magnet_order(magnetStones)
     magnet_act(position,vertex,newMagnetStones)
+    # print_matrix(newMagnetStones)
 end
 
 function checkRule(wholeRule)
@@ -1063,7 +1063,9 @@ callback!(
     Input("playerColor","value"),
     Input("colorMode","value"),
     Input("moveMode","value"),
-    ) do sth,clicks,colorPlayer,modeColor,modeMove
+    Input("SZ_X","value"),
+    Input("SZ_Y","value"),
+    ) do sth,clicks,colorPlayer,modeColor,modeMove,bx,by
     ctx = callback_context()
 
     if length(ctx.triggered) == 0
@@ -1080,9 +1082,11 @@ callback!(
         yPlayer=vector["y"]
         xyPlayer="$xPlayer$yPlayer"
         clickData="$sthJSON"
+
     else
-        xyPlayer=""
-        clickData="null"
+        xyPlayer = ""
+        clickData = "null"
+        global positions = zeros(by,bx)
         query("clear_board")
         reply()
     end
@@ -1091,7 +1095,6 @@ callback!(
     gameState=""
     finalScore=""
     dialogDisplay=false
-    global positions = rand([0],(19,19))
     if button_id == "playerColor"
         nextColor = turns_taking(colorPlayer)
         vertexEngine = genmove_mode(nextColor,positions[:,:,end],modeMove)
@@ -1103,7 +1106,9 @@ callback!(
         gameInfo["Engine Move"] = engineMove
     end
     gameInfoAll = agent_showboard()
-    positions = cat(positions,reshape(gameInfoAll["Board"],gameInfoAll["BoardSize"][1],:)', dims=3)
+
+    global positions = cat(positions,reshape(gameInfoAll["Board"],gameInfoAll["BoardSize"][1],:)', dims=(2,3))
+
     if gameState=="over" || occursin("RE[",gameInfoAll["sgf"])
         query("final_score")
         finalScore=reply()[3:end-1]
