@@ -17,47 +17,6 @@ end
 
 const SGF_X,SGF_Y,SGF_XY,GTP_X,GTP_Y,GTP_XY,UI_X,UI_Y,UI_XY=const_generate()
 
-function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
-    if color in [-1,1]
-        if color == -1
-            color = 'B'
-        else
-            color = 'W'
-        end
-        vertex = string(GTP_X[vertex[2]+1],boardSizeY+1-vertex[1])
-    else
-        if color in ['B','b']
-            color = -1
-        else
-            color = 1
-        end
-        i = 2
-        while GTP_X[i] != vertex[1]
-            i = i+1
-        end
-        i = i-1
-        vertex = [boardSizeY+1-parse(Int,vertex[2:end]),i]
-    end
-    return color,vertex
-end
-
-function print_matrix(matrix)
-    println(size(matrix),' ',typeof(matrix))
-    for i in 1:size(matrix)[1]
-        for j in matrix[i,:]
-            print(j,'\t')
-        end
-        println()
-    end
-end
-
-function print_dict(dictionary)
-    println(typeof(dictionary))
-    for (key,value) in pairs(dictionary) # or: for entry in dictionary
-        println(typeof(key),':',typeof(value)," | ",key," => ",value)
-    end
-end
-
 function run_engine()
     katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
     katagoProcess=open(katagoCommand,"r+")
@@ -101,6 +60,54 @@ function gtp_io(sentence)
     end
 end
 
+function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
+    if color in [-1,1]
+        if color == -1
+            color = 'B'
+        else
+            color = 'W'
+        end
+        vertex = string(GTP_X[vertex[2]+1],boardSizeY+1-vertex[1])
+    else
+        if color in ['B','b']
+            color = -1
+        else
+            color = 1
+        end
+        i = 2
+        while true
+            if string(GTP_X[i]) == string(vertex[1]) 
+                break
+            elseif string(UI_X[i]) == string(vertex[1])
+                break
+            else
+            end
+            # println(GTP_X[i],' ',UI_X[i],' ',vertex[1])
+            i = i+1
+        end
+        i = i-1
+        vertex = [boardSizeY+1-parse(Int,vertex[2:end]),i]
+    end
+    return color,vertex
+end
+
+function print_matrix(matrix)
+    println(size(matrix),' ',typeof(matrix))
+    for i in 1:size(matrix)[1]
+        for j in matrix[i,:]
+            print(j,'\t')
+        end
+        println()
+    end
+end
+
+function print_dict(dictionary)
+    println(typeof(dictionary))
+    for (key,value) in pairs(dictionary) # or: for entry in dictionary
+        println(typeof(key),':',typeof(value)," | ",key," => ",value)
+    end
+end
+
 function turns_taking(currentColor)
     if currentColor=="B"
         return "W"
@@ -115,10 +122,10 @@ function console_game(colorPlayer,vertexPlayer,position,mode)
     vertexEngine = ""
     nextColor = turns_taking(colorPlayer)
 
-    if xyPlayer == "d0"
+    if vertexPlayer == "d0"
         gameState = "over"
     else
-        if xyPlayer in ["a0","b0"]
+        if vertexPlayer in ["a0","b0"]
             query("play $colorPlayer pass")
             reply()
         else
@@ -149,11 +156,11 @@ end
 
 function genmove_mode(color,position,mode)
     query("genmove $color")
-    vertex = reply()[3:end-1]
+    vertexEngine = reply()[3:end-1]
     if mode == "magnet"
         query("undo")
         reply()
-        color,vertex = abc_num(color,vertex,size(position)[2])
+        color,vertex = abc_num(color,vertexEngine,size(position)[2])
         magnet_turn(color,vertex,position)
     else
     end
@@ -855,7 +862,7 @@ startGame=html_div(style = Dict("columnCount" => 2)) do
         options = [
         Dict("label" => "magnet", "value" => "magnet"),
         Dict("label" => "quantum", "value" => "quantum"),
-        Dict("label" => "lucky", "value" => "lucky"),
+        Dict("label" => "skid", "value" => "skid"),
         Dict("label" => "standard", "value" => "standard")
         ],
         value = "standard"
@@ -933,7 +940,7 @@ end
 
 engineProcess=run_engine()
 
-# positions = rand([0],(19,19))
+positions = []
 
 app=dash()
 
