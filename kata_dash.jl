@@ -113,7 +113,7 @@ function turns_taking(currentColor)
     end
 end
 
-function console_game(colorPlayer,vertexPlayer,position,mode)
+function console_game(colorPlayer,vertexPlayer,mode)
     #gameInfoAll=agent_showboard()
     gameState = ""
     vertexEngine = ""
@@ -126,18 +126,15 @@ function console_game(colorPlayer,vertexPlayer,position,mode)
             query("play $colorPlayer pass")
             reply()
         else
-            gameState = play_mode(colorPlayer,vertexPlayer,position,mode)
+            gameState = play_mode(colorPlayer,vertexPlayer,mode)
         end
-        gameInfoAll = agent_showboard()
-        global positions = cat(positions,reshape(gameInfoAll["Board"],gameInfoAll["BoardSize"][1],:)', dims=(2,3))
-        vertexEngine = genmove_mode(nextColor,positions[:,:,end],mode)
-        if vertexEngine == "resign" gameState="over" end
+        vertexEngine = genmove_mode(nextColor,mode)
     end
 
     return gameState,vertexEngine
 end
 
-function play_mode(color,vertex,position,mode)
+function play_mode(color,vertex,mode)
     gameState = ""
     query("play $color $vertex")
     paragraph = reply()[1]
@@ -146,6 +143,7 @@ function play_mode(color,vertex,position,mode)
     elseif mode == "magnet"
         query("undo")
         reply()
+        position = agent_showboard()["Position"]
         color,vertex = abc_num(color,vertex,size(position)[2])
         magnet_turn(color,vertex,position)
     else
@@ -153,17 +151,24 @@ function play_mode(color,vertex,position,mode)
     return gameState
 end
 
-function genmove_mode(color,position,mode)
+function genmove_mode(color,mode)
+    gameState = ""
     query("genmove $color")
-    vertexEngine = reply()[3:end-1]
-    if mode == "magnet"
+    vertex = reply()[3:end-1]
+    if vertex == "resign" 
+        gameState = "over" 
+    elseif vertex == "pass"
+        gameState = "over"
+    else
+        if mode == "magnet"
         query("undo")
         reply()
-        color,vertex = abc_num(color,vertexEngine,size(position)[2])
+        position = agent_showboard()["Position"]
         magnet_turn(color,vertex,position)
-    else
+        else
+        end
     end
-    return vertexEngine
+    return vertex,gameState
 end
 
 function magnet_lines(vertex,position)
@@ -326,12 +331,18 @@ function magnet_act(position,vertex,magnetStones)
     # println("magnet_act done")
 end
 
-function magnet_turn(color,vertex,position)
+function magnet_turn(color::Int64,vertex,position)
     magnetLines = magnet_lines(vertex,position)
     magnetStones = magnet_stones(color,magnetLines)
     newMagnetStones = magnet_order(magnetStones)
     magnet_act(position,vertex,newMagnetStones)
     # print_matrix(newMagnetStones)
+    return newMagnetStones
+end
+
+function magnet_turn(color::String,vertex,position)
+    color,vertex = abc_num(color,vertex,size(position)[2])
+    magnet_turn(color,vertex,position)
 end
 
 function checkRule(wholeRule)
@@ -471,7 +482,8 @@ function agent_showboard()
         m=m+1
     end
     colorStones=color_stones(b)
-    boardInfo["Board"]=b
+    boardInfo["Board"] = b
+    boardInfo["Position"] = reshape(b,n,:)'
     boardInfo["BoardColor"]=colorStones
     boardInfo["BoardSize"]=[n,m-3]
     for line in cat([paragraphVector[1]],paragraphVector[m:end],dims=1)
@@ -940,8 +952,6 @@ end
 
 engineProcess=run_engine()
 
-positions = []
-
 app=dash()
 
 app.layout = html_div() do
@@ -1086,7 +1096,6 @@ callback!(
     else
         xyPlayer = ""
         clickData = "null"
-        global positions = zeros(by,bx)
         query("clear_board")
         reply()
     end
@@ -1095,19 +1104,20 @@ callback!(
     gameState=""
     finalScore=""
     dialogDisplay=false
+
     if button_id == "playerColor"
         nextColor = turns_taking(colorPlayer)
-        vertexEngine = genmove_mode(nextColor,positions[:,:,end],modeMove)
+        vertexEngine = genmove_mode(nextColor,modeMove)
         gameInfo["Engine Move"] = vertexEngine
         if vertexEngine == "resign" gameState = "over" end
     end
+
     if button_id == "board"
-        gameState,engineMove = console_game(colorPlayer,xyPlayer,positions[:,:,end],modeMove)
+        gameState,engineMove = console_game(colorPlayer,xyPlayer,modeMove)
         gameInfo["Engine Move"] = engineMove
     end
-    gameInfoAll = agent_showboard()
 
-    global positions = cat(positions,reshape(gameInfoAll["Board"],gameInfoAll["BoardSize"][1],:)', dims=(2,3))
+    gameInfoAll = agent_showboard()
 
     if gameState=="over" || occursin("RE[",gameInfoAll["sgf"])
         query("final_score")
@@ -1129,6 +1139,7 @@ callback!(
     boardSize=gameInfoAll["BoardSize"]
     #boardSize=[parse(Int8,split(boardSizeString)[i]) for i in 1:2]
     colorVector=gameInfoAll["BoardColor"]
+    
     if modeColor != "standard"
         if "Engine Move" in keys(gameInfo) && gameInfo["Engine Move"] != "" && modeColor in ["phantom","warFog"]
             gameInfo["Engine Move"]=""
