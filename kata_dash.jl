@@ -660,7 +660,8 @@ function layout_board()
         zeroline=false,
         ticktext=UI_Y,
         tickvals=GTP_Y
-        )
+        ),
+    transition_duration = 500
     )
 end
 
@@ -685,20 +686,21 @@ someIssues="
   - The repo using old version Dash because DashDaq added
   - The [reason](https://github.com/plotly/Dash.jl/issues/153)
 - [ ] Can not use DashBootstrapComponents to change app layout
-  - Weird syntax and few documents/examples
+  - Weird syntax and not many documents/examples
   - Auto delete some spaces in GTP-output
-- [ ] The board can not refresh autoly after change the size or obstacles.
+- [x] The board can not refresh autoly after change the size or obstacles.
   - Type `clear_board.` in GTP commands input or click `PASS` in the board plot instead.
+  - Just add a `callback! Input`.
 - [x] The whb in showboard not be displayed now.
 - [ ] The number of obstacles doesn't fit boardSize.
 - [x] Can not pass more than one time.
-  - Reason: Dash.jl's clickEvent doesn't response to it.
+  - Reason: `Dash.jl`'s clickEvent doesn't response to it.
   - There are two pass buttons, **PA** and **SS**.
 - [ ] **asyn**: `reply() != query()`
   - [ ] KataGo returns answer 2 before answer 1 sonmetimes[?](https://github.com/lightvector/KataGo/blob/master/docs/GTP_Extensions.md)
-  - [ ] Dash.jl sends two commands at once sometimes.
-  - [ ] The same two `clickData` does not run `callback!()` twice.
-"
+  - [ ] `Dash.jl` sends two commands at once sometimes.
+  - [x] The same two `clickData` does not run `callback!()` twice.
+      - It's a Dash's feature and doesn't need to solve."
 #----------------------------------------
 # The up is tab1, the down is tab2
 #----------------------------------------
@@ -707,7 +709,7 @@ whatGameLabel=html_summary("What's the game of Go/Baduk/Weiqi?")
 whatGameInfo=dcc_markdown() do
     "
     \n>  A turn-based abstract strategy board game, in which the aim is to control more domains than the opponent.
-    \n>  It was invented in China more than **2,500 years** ago and is believed to be the oldest board game continuously played to the present day. ***1 2***
+    \n>  It was invented in China more than **2,500 years** ago and is believed to be the oldest board game continuously played to the present day.¹⁻²
     \n>***Turn-based***: players take turns to play
     \n>***Abstract***: not rely on a theme or simulate the real world
     \n>***Strategy***: players' choices determine the outcome
@@ -723,7 +725,15 @@ whatGame=html_details() do
 howPlayLabel=html_summary("How to play?")
 howPlayInfo=dcc_markdown() do #TODO
     "
-    \nJust try!
+    \n>***Approach 1***: Just try!
+    \n>***Approach 2***: Checkout Reference 3.
+    \n>***Approach 3***: *How to play Go in 30sec:*
+    \n>A Go game is played in a 2D space.
+    \n>Players take turns to color a space point.
+    \n>A point surrounded by other color points will gone.
+    \n>It is illegal to repeat an artwork in the games' history.
+    \n>Players can pass or resign whenever they want.
+    \n>The player who 
     "
     end
 howPlay=html_details() do
@@ -732,7 +742,7 @@ howPlay=html_details() do
     end
 
 rulesetReference=dcc_markdown() do
-    "**Rule Sets** ***3***:"
+    "**Rule Sets**³:"
 end
 rulesetButtons=html_div(style = Dict("columnCount" => 4)) do
     html_button("Fuzhou-like Rules",id="fRule"),
@@ -821,15 +831,16 @@ end
 appendixDiv=dcc_markdown() do
     "
     \n**Appendix A Synonyms**:
-    \nseki==symbiotic, handicap==obstacle, grid nodes==vertices
+    \nsituation==position+turn, position==board+stones, ko==repeat, seki==symbiotic, handicap==obstacle, grid nodes==vertices
     \n**Appendix B Tips**:
     \n**a** If hover over the rule items, more details will be displayed.
     \n**b** If modify the obstacles, X, Y, the board will be cleared.
     \n**c** Button can't be used in territory-scoring.
+    \n**d** There are two pass buttons, **PA** and **SS**, used for consecutive passes.
     \n**Appendix C References**:
     \n***1*** [A Brief History of Go](https://www.usgo.org/brief-history-go). *American Go Association*, 2022
     \n***2*** Peter Shotwell. [The Game of Go: Speculations on its Origins and Symbolism in Ancient China](https://www.usgo.org/sites/default/files/bh_library/originsofgo.pdf). *American Go Association*, 2008.
-    \n***3*** David J Wu. KataGo's Supported Go Rules (Version 2), 2021. https://lightvector.github.io/KataGo/rules.html. (not include the Fuzhou-button)
+    \n***3*** David J Wu. KataGo's Supported Go Rules (Version 2), 2021. https://lightvector.github.io/KataGo/rules.html. (not include the Fuzhou-like Rules)
     "
 end
 
@@ -854,8 +865,7 @@ startGame=html_div(style = Dict("columnCount" => 2)) do
         \n### Start Now:
         \nJust skip the rule items below and go to the `While` tab to play a game.
         \nOr check the items and click the `SUBMIT` to check the rule before a game.
-        \nA game will over after 1 resign or 2 consecutive passes(not include the button-pass), and you will see the outcome.
-        \n***Warning***: If you make a illegal move, the game will over.
+        \nA game will over after 1 resign or 2 consecutive passes*(not include the button-pass)*, and you will see the outcome.
         "
         ),
 
