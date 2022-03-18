@@ -23,8 +23,8 @@ function run_engine()
     return katagoProcess
 end
 function end_engine()
-    query("quit",engineProcess)
-    reply(engineProcess)
+    query("quit")
+    reply()
     close(engineProcess)
 end
 function query(sentence::String)
@@ -158,7 +158,6 @@ function genmove_mode(color,mode)
     if vertex == "resign" 
         gameState = "over" 
     elseif vertex == "pass"
-        gameState = "over"
     else
         if mode == "magnet"
         query("undo")
