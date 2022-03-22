@@ -725,15 +725,7 @@ whatGame=html_details() do
 howPlayLabel=html_summary("How to play?")
 howPlayInfo=dcc_markdown() do #TODO
     "
-    \n>***Approach 1***: Just try!
-    \n>***Approach 2***: Checkout Reference 3.
-    \n>***Approach 3***: *How to play Go in 30sec:*
-    \n>A Go game is played in a 2D space.
-    \n>Players take turns to color a space point.
-    \n>A point surrounded by other color points will gone.
-    \n>It is illegal to repeat an artwork in the games' history.
-    \n>Players can pass or resign whenever they want.
-    \n>The player who 
+    \n>Just try!
     "
     end
 howPlay=html_details() do
