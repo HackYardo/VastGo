@@ -101,7 +101,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] Quantum Go [1](https://lifein19x19.com/viewtopic.php?f=9&t=18360) [2](https://senseis.xmp.net/?QuantumGo) [3](https://arxiv.org/abs/2007.12186)
   - [ ] [Topological Go](https://senseis.xmp.net/?TopologicalGo)?
   - [ ] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
-  - [ ] [Magnet Go](https://senseis.xmp.net/?ElectricGo)
+  - [x] [Magnet Go](https://senseis.xmp.net/?ElectricGo)
   - [ ] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
   - [ ] [Alice in Wonderland](https://www.britannica.com/topic/Alices-Adventures-in-Wonderland) mode(all rules random and need to guess)
 ### Non Go
