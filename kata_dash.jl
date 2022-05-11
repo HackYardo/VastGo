@@ -666,9 +666,9 @@ function layout_board()
 end
 
 topText="**Hi, welcome to VastGo!**
-\n\nA funny, green, simple, useful tool for the game of Go/Baduk/Weiqi"
+\n\nHave a nice game!"
 
-bottomText="*Have a nice game!*"
+bottomText=""
 
 bottomMarkdown=dcc_markdown(bottomText)
 
@@ -954,6 +954,8 @@ end
 engineProcess=run_engine()
 
 app=dash()
+
+app.title = "VastGo | A funny,green,simple,useful tool for the game of Go/Baduk/Weiqi!"
 
 app.layout = html_div() do
     dcc_tabs(
