@@ -1,9 +1,23 @@
+## About VastGo 
 ![static](./board.svg)
 A static Go board ❄️
 ![dynamic](./dynamic.gif)
-A dynamic Go board 🍃
+A dynamic Go board 
 
 > The repo is about the game of [Go/Baduk/Weiqi](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Julia](https://julialang.org/),[Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
+
+            DATA
+Players <<<======>>> components
+             ||          /\
+            c||b         ||
+            a||a        c||b
+            l||c        a||a
+            l||k        l||c
+             ||s        l||k
+             ||          ||s
+             \/          ||
+          functions <<<======>>> Bots
+                        DATA
 
 ## Why create this?
 Look at the table:
