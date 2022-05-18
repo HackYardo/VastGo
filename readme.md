@@ -6,6 +6,7 @@ A dynamic Go board
 
 > The repo is about the game of [Go/Baduk/Weiqi](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Julia](https://julialang.org/),[Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
 
+```
             DATA
 Players <<<======>>> components
              ||          /\
@@ -18,6 +19,7 @@ Players <<<======>>> components
              \/          ||
           functions <<<======>>> Bots
                         DATA
+```
 
 ## Why create this?
 Look at the table:
