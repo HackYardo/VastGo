@@ -1,11 +1,18 @@
-## About VastGo 
 ![static](./board.svg)
 A static Go board ❄️
 ![dynamic](./dynamic.gif)
 A dynamic Go board 
 
-> The repo is about the game of [Go/Baduk/Weiqi](https://senseis.xmp.net/?Weiqi), [KataGo](https://katagotraining.org/), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [Markdown](https://commonmark.org/), [Julia](https://julialang.org/),[Plotly(JS)](https://plotly.com/julia/)/[Dash.jl](https://dash-julia.plotly.com/), [ScalableVectorGraphics(.svg)](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
+## About
 
+> The repo is about the game of [Go/Baduk/Weiqi](https://www.usgo.org/learn-play), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
+
+VastGo is
+- A cross-platform Go GUI that can run on Windows, Linux, Android and perhaps FreeBSD, MacOS, IOS, HarmonyOS. 
+- Based on Dash.jl, PlotlyJS.jl, JSON.jl and modern or classic GTP engines.
+- Written in pure julia and under the MIT [license](#license).
+
+Top-level design:
 ```
             DATA
 Players <<<======>>> components
@@ -21,8 +28,18 @@ Players <<<======>>> components
                         DATA
 ```
 
+Several funny, green, simple and useful ideas:
+
+Ideas | Details
+--- | ---
+funny | nonstandard Go , *BEAT AI RIGHT NOW*
+green | some Go GUIs play once and then review once, some review forever if no pause command, some save reviews but not load, *LESS EXCESSIVE COMPUTING LESS CO₂* 
+simple | don't know Go, use GTP command `showboard`, *LESS CODE LESS GOTCHA*
+useful | rich and powerful plot
+
 ## Why create this?
 Look at the table:
+
 Go GUI | Language
 --- | ---
 [Sabaki](https://sabaki.yichuanshen.de/) | JavaScript
