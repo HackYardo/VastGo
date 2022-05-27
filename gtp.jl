@@ -1,6 +1,6 @@
-katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
-katagoProcess=open(katagoCommand,"r+")
-
+#katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
+#engineProcess=open(katagoCommand,"r+")
+#=
 function query()
     sentence=""
     while true
@@ -8,17 +8,17 @@ function query()
         if sentence=="" || "" in split(sentence," ")
             continue
         else
-            println(katagoProcess,sentence)
+            println(engineProcess,sentence)
             break
         end
     end
     return sentence::String
 end
-
+=#
 function reply()
     paragraph=""
     while true
-        sentence=readline(katagoProcess)
+        sentence=readline(engineProcess)
         if sentence==""
             break
         else 
@@ -126,8 +126,4 @@ function play()
     end
 end
 
-function main()
-    play()
-end
-
-main()
+#play()

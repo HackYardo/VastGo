@@ -1,22 +1,5 @@
 using JSON
 
-function const_generate()
-    sgfX=cat(Vector('a' : 'k'),Vector('m' : 't'),dims=1)
-    sgfY=[c for c in reverse(sgfX)]
-    sgfXY=[string(sgfX[i],sgfY[j]) for j in 1:19 for i in 1:19]
-
-    gtpX=cat(['z'],Vector('a' : 'h'),Vector('j' : 'u'),dims=1)
-    gtpY=Vector(0:20)
-    gtpXY=["$j$i" for i in reverse(gtpY) for j in gtpX]
-
-    uiX=[uppercase(gtpX[i]) for i in 1:length(gtpX)]
-    uiY=[string(gtpY[j]) for j in 1:length(gtpY)]
-    uiXY=[(j,i) for i in reverse(uiY) for j in uiX]
-    return sgfX,sgfY,sgfXY,gtpX,gtpY,gtpXY,uiX,uiY,uiXY
-end
-
-const SGF_X,SGF_Y,SGF_XY,GTP_X,GTP_Y,GTP_XY,UI_X,UI_Y,UI_XY=const_generate()
-
 function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
     if color in [-1,1]
         if color == -1
@@ -32,7 +15,11 @@ function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
             color = 1
         end
         i = 2
-        while GTP_X[i] != vertex[1]
+        while true
+            if GTP_X[i] == vertex[1] || uppercase(GTP_X[i]) == vertex[1]
+                break
+            end
+            # println(GTP_X[i],' ',UI_X[i],' ',vertex[1])
             i = i+1
         end
         i = i-1
@@ -41,41 +28,8 @@ function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
     return color,vertex
 end
 
-function run_engine()
-    katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
-    katagoProcess=open(katagoCommand,"r+")
-    return katagoProcess
-end
-
-function query(sentence::String)
-    println(engineProcess,sentence)
-    println(sentence)
-end
-
-function reply()
-    paragraph=""
-    while true
-        sentence=readline(engineProcess)
-        if sentence==""
-            break
-        else 
-            paragraph="$paragraph$sentence\n"
-        end
-    end
-    println(paragraph)
-    return paragraph::String
-end
-
-function turns_taking(currentColor)
-    if currentColor=="B"
-        return "W"
-    else
-        return "B"
-    end
-end
-
 function console_game(xyPlayer,colorPlayer)
-    #gameInfoAll=agent_showboard()
+    #gameInfoAll=showboard_magnet()
     gameState=""
     engineMove=""
     nextColor=turns_taking(colorPlayer)
@@ -100,54 +54,7 @@ function console_game(xyPlayer,colorPlayer)
     return gameState,engineMove
 end
 
-function color_stones(board)
-    colorStones::Vector{String}=[]
-    for vertex in board
-        if vertex == 0
-            colorStones=cat(colorStones,["rgba(0,0,0,0)"],dims=1)
-        elseif vertex == -1
-            colorStones=cat(colorStones,["rgba(0,0,0,1)"],dims=1)
-        elseif vertex == 1
-            colorStones=cat(colorStones,["rgba(255,255,255,1)"],dims=1)
-        else
-            continue
-        end
-    end
-    return colorStones
-end
-
-function odd_key_even_value(dictString;c=": ")
-    d=Dict{String,Any}()
-    k=""
-    j=1
-    if dictString[1]=='='
-        dictString=dictString[3:end]
-        c=[' ',':']
-    end
-    if dictString[1]=='R'
-        return Dict("Rules"=>odd_key_even_value(dictString[9:end-1];c=[':',',','"']))
-    end
-    for i in split(dictString,c;keepempty=false)
-        if j==1
-            k=i
-            j=0
-        else
-            if i in ["false","true"]
-                i=parse(Bool,i)
-            elseif tryparse(Int8,i) != nothing
-                i=tryparse(Int8,i)
-            elseif tryparse(Float64,i) != nothing
-                i=tryparse(Float64,i)
-            else
-            end
-            d[k]=i
-            j=1
-        end
-    end
-    return d
-end
-
-function agent_showboard()
+function showboard_magnet()
     query("showboard")
     paragraph=reply()
     paragraphVector=split(paragraph,"\n",keepempty=false)
@@ -269,9 +176,9 @@ function magnet_stones(color,magnetLines)
                 end
             end
         end
-        println(direct,' ',first,' ',i)
+        #println(direct,' ',first,' ',i)
     end
-    # print_matrix(magnetStones)
+    #print_matrix(magnetStones)
     return magnetStones
 end
 
@@ -297,7 +204,7 @@ function magnet_order(magnetStones)
         end
         newMagnetStones = cat(foreMagnetStones,backMagnetStones, dims=2)
     end
-     print_matrix(newMagnetStones)
+    #print_matrix(newMagnetStones)
     return newMagnetStones
 end
 
@@ -333,7 +240,7 @@ function magnet_act(position,vertex,magnetStones)
         end
     end
     positionString = positionString[2:end]
-    # println(positionString)
+    #println(positionString)
     if j != 1
         query("set_position $positionString") # auto clear_board before set_position
         reply()
@@ -363,19 +270,26 @@ function magnet_act(position,vertex,magnetStones)
             j = j+1
         end
     end
-    println("magnet_act done")
+    #println("magnet_act done")
 end
 
-function magnet_turn(color,vertex,position)
+function magnet_turn(color::Int64,vertex,position)
     magnetLines = magnet_lines(vertex,position)
     magnetStones = magnet_stones(color,magnetLines)
     newMagnetStones = magnet_order(magnetStones)
     magnet_act(position,vertex,newMagnetStones)
+    #print_matrix(newMagnetStones)
+    return newMagnetStones
 end
 
-function main()
+function magnet_turn(color::String,vertex,position)
+    color,vertex = abc_num(color,vertex,size(position)[2])
+    magnet_turn(color,vertex,position)
+end
+
+function main_magnet()
     while true
-        gameInfoAll = agent_showboard()
+        gameInfoAll = showboard_magnet()
         boardSize = gameInfoAll["BoardSize"]
         position = reshape(gameInfoAll["Board"],boardSize[1],:)'
         # position = rand([-1,0,1], (boardSize[1],boardSize[2]))
@@ -400,6 +314,6 @@ function main()
     end
 end
 
-engineProcess=run_engine()
+#engineProcess=run_engine()
 
-main()
+#main_magnet()

@@ -19,29 +19,32 @@ const SGF_X,SGF_Y,SGF_XY,GTP_X,GTP_Y,GTP_XY,UI_X,UI_Y,UI_XY=const_generate()
 
 function layout_board()
     Layout(
-    # boardSize are as big as setting
-    # aspectmode="manual",aspectratio=1,,
-    #aspectmode="data",
-    #width=930,height=836,
-    paper_bgcolor="rgb(0,255,127)",
-    plot_bgcolor="rgb(205,133,63)",
-    #plot_ratio=1,
-    #margin=attr(l=0,r=0,t=0,b=0),
-    xaxis_showgrid=false,
-    xaxis=attr(
-        # showline=true, mirror=true,linewidth=1,linecolor="black",
-        # zeroline=true,zerolinewidth=1,zerolinecolor="rgb(205,133,63)",
-        ticktext=UI_X,
-        tickvals=GTP_X
-        # if tickvals is a number array, row/col lines will become a line  
-        ),
-    yaxis_showgrid=false,
-    yaxis=attr(
-        # showline=true, mirror=true,linewidth=1,linecolor="black",
-        zeroline=false,
-        ticktext=UI_Y,
-        tickvals=GTP_Y
-        )
+        # boardSize are as big as setting
+        # aspectmode="manual",aspectratio=1,,
+        #aspectmode="data",
+        #aspectratio=attr(x=1,y=1),
+        width=930,
+        height=836,
+        paper_bgcolor="rgb(0,255,127)",
+        plot_bgcolor="rgb(205,133,63)",
+        #plot_ratio=1,
+        #margin=attr(l=0,r=0,t=0,b=0),
+        xaxis_showgrid=false,
+        xaxis=attr(
+            # showline=true, mirror=true,linewidth=1,linecolor="black",
+            # zeroline=true,zerolinewidth=1,zerolinecolor="rgb(205,133,63)",
+            ticktext=UI_X,
+            tickvals=GTP_X
+            # if tickvals is a number array, row/col lines will become a line  
+            ),
+        yaxis_showgrid=false,
+        yaxis=attr(
+            # showline=true, mirror=true,linewidth=1,linecolor="black",
+            zeroline=false,
+            ticktext=UI_Y,
+            tickvals=GTP_Y
+            ),
+        transition_duration = 500
     )
 end
 
@@ -76,6 +79,7 @@ function trace_line(boardSize)
         mode="lines",
         line_width=1,
         line_color="rgb(0,0,0)",
+        hoverinfo = "skip",
         name="row lines"
         )
     colLine=scatter(
@@ -89,6 +93,7 @@ function trace_line(boardSize)
         line_color="rgb(0,0,0)",
         #marker_size=1,
         #marker_color="rgb(0,0,0)",
+        hoverinfo = "skip",
         name="col lines"
         )
     return colLine,rowLine
@@ -118,9 +123,9 @@ function star_cross(axisSize,starNum,starMargin)
     starCross=[]
     if starNum != 0
         if starMargin==3
-        starCross=[4,axisSize-1]
+            starCross=[4,axisSize-1]
         else
-        starCross=[5,axisSize-2]
+            starCross=[5,axisSize-2]
         end
         if starNum==3
             starCross=cat(starCross,[div(axisSize+1,2)+1],dims=1)
@@ -150,6 +155,20 @@ function trace_star(boardSize)
         mode="markers",
         marker_color="rgb(0,0,0)",
         name="star points"
+        )
+end
+
+function plot_board(boardSize,stones)
+    Plot(
+        [
+        trace_line(boardSize)[1],
+        trace_line(boardSize)[2],
+        trace_star(boardSize),
+        trace_synchroboard(),
+        trace_resign(),
+        trace_stones(boardSize,stones)
+        ],
+        layout_board()
         )
 end
 
@@ -204,9 +223,9 @@ function plot_board(boardSize)
     )
 end
 
-function main()
+function main_board()
         boardSize="19 19"
         plot_board([parse(Int8,split(boardSize)[i]) for i in 1:2])
 end
 
-main()
+#main_board()
