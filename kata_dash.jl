@@ -746,4 +746,16 @@ callback!(
     return finalScore,dialogDisplay,info, plot_board(boardSize,colorVector)
 end
 
-run_server(app, "0.0.0.0", debug=true)
+#server = app.server # no server field?
+
+@async run_server(app, "0.0.0.0", 8050, debug=false)
+
+function kata_dash()
+    while true
+        if readline() == "exit"
+            break
+        end
+    end
+end
+
+kata_dash()
