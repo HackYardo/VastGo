@@ -1,5 +1,16 @@
 #katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
 #engineProcess=open(katagoCommand,"r+")
+function run_engine()
+    katagoCommand=`./katago gtp -config gtp_custom.cfg -model m6/model.txt.gz`
+    katagoProcess=open(katagoCommand,"r+")
+    return katagoProcess
+end
+
+function end_engine()
+    query("quit")
+    reply()
+    close(engineProcess)
+end
 #=
 function query()
     sentence=""
@@ -15,6 +26,11 @@ function query()
     return sentence::String
 end
 =#
+function query(sentence::String)
+    println(engineProcess,sentence)
+    println(sentence)
+end
+
 function reply()
     paragraph=""
     while true
@@ -74,6 +90,64 @@ function odd_key_even_value(dictString;c=": ")
         end
     end
     return d
+end
+#=
+function wait_showboard()
+    flag=true
+    paragraphVector=[]
+    while flag
+        query("showboard")
+        paragraph=reply()
+        #println(paragraph)
+        paragraphVector=split(paragraph,"\n",keepempty=false)
+        if length(paragraphVector)>2
+            flag=false
+        end
+        sleep(ℯ/π)
+    end
+    return paragraphVector
+end
+=#
+function agent_showboard()
+    query("showboard")
+    paragraph=reply()
+    paragraphVector=split(paragraph,"\n",keepempty=false)
+    boardInfo=Dict{String,Any}()
+    n=0
+    for c in paragraphVector[2]
+        if c in 'A':'T'
+            n=n+1
+        end
+    end
+    m=3
+    b=Vector{Int8}()
+    while paragraphVector[m][1] in "1 "
+        for c in paragraphVector[m]
+            if c=='X'
+                b=cat(b,[-1],dims=1)
+            elseif c=='O'
+                b=cat(b,[1],dims=1)
+            elseif c=='.'
+                b=cat(b,[0],dims=1)
+            else
+                continue
+            end
+        end
+        m=m+1
+    end
+    colorStones=color_stones(b)
+    boardInfo["Board"] = b
+    boardInfo["Position"] = reshape(b,n,:)'
+    boardInfo["BoardColor"]=colorStones
+    boardInfo["BoardSize"]=[n,m-3]
+    for line in cat([paragraphVector[1]],paragraphVector[m:end],dims=1)
+        boardInfo=merge(boardInfo,odd_key_even_value(line))
+    end
+    boardInfo["checkBoard"]=cat(paragraphVector[2:m-1],[json(boardInfo["Rules"],2)],dims=1)
+    query("printsgf")
+    sgfInfo=reply()[3:end]
+    boardInfo["sgf"]=sgfInfo
+    return boardInfo
 end
 
 function agent_showboard(paragraph)

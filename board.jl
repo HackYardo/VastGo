@@ -158,6 +158,51 @@ function trace_star(boardSize)
         )
 end
 
+function trace_stones(boardSize,colorVector)
+    xLine=GTP_X[2:boardSize[1]+1]
+    yLine=reverse(GTP_Y[2:boardSize[2]+1])
+    scatter(
+        x=repeat(xLine,boardSize[2]),
+        y=[yLine[i] for i in 1:boardSize[2] for j in 1:boardSize[1]],
+        mode="markers",
+        marker_color=colorVector,
+        marker_size=25,
+        name="stones"
+        )
+end
+
+function trace_synchroboard()
+    scatter(
+        x=['a','b'],
+        y=[0,0],
+        mode="markers+text",
+        marker=attr(
+            color="rgb(205,133,63)",
+            size=1
+            ),
+        text=["PA","SS"],
+        textposition="inside",
+        textfont=attr(color="rgb(255,255,255)",size=25),
+        name="buttons"
+        )
+end
+
+function trace_resign()
+    scatter(
+        x=['d'],
+        y=[0],
+        mode="markers+text",
+        marker=attr(
+            color="rgb(205,133,63)",
+            size=1
+            ),
+        text=["Resign"],
+        textposition="inside",
+        textfont=attr(color="rgb(0,0,0)",size=25),
+        name="resign"
+        )
+end
+
 function plot_board(boardSize,stones)
     Plot(
         [
