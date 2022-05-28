@@ -176,9 +176,9 @@ function magnet_stones(color,magnetLines)
                 end
             end
         end
-        #println(direct,' ',first,' ',i)
+        println(direct,' ',first,' ',i)
     end
-    #print_matrix(magnetStones)
+    print_matrix(magnetStones)
     return magnetStones
 end
 
@@ -204,7 +204,7 @@ function magnet_order(magnetStones)
         end
         newMagnetStones = cat(foreMagnetStones,backMagnetStones, dims=2)
     end
-    #print_matrix(newMagnetStones)
+    print_matrix(newMagnetStones)
     return newMagnetStones
 end
 
