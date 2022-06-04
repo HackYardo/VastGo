@@ -82,14 +82,13 @@ isfunnysummary = html_summary("Is it funny?")
 isfunnymarkdown = dcc_markdown() do
     "
     \n> **Yes**: 
-    \n>easy rules 
-    \n>complex tactics
-    \n>rare draws([~1‱](https://senseis.xmp.net/?NoResult))
+    \n>easy rules, complex tactics
+    \n>rare draws ([~1‱](https://senseis.xmp.net/?NoResult))
     \n>flexible 
     \n> **No**: 
     \n>silent
     \n>AI advantages
-    \n>elementary(no ∞∂∫∇, only +-*/)
+    \n>elementary (no ∞∂∫∇, only +-*/)
     "
 end
 isfunny = html_details([isfunnysummary,isfunnymarkdown])
@@ -114,7 +113,6 @@ whatguimarkdown = dcc_markdown(
 \n> [source code issues](https://github.com/HackYardo/VastGo/issues)
 \n> [contributors](https://github.com/HackYardo/VastGo/graphs/contributors)
 \n> [LICENSE](https://github.com/HackYardo/VastGo/blob/master/LICENSE.md)
-\n> *\"vast go\": many kinds of Go*
 "
 )
 whatgui = html_details([whatguisummary,whatguimarkdown])
