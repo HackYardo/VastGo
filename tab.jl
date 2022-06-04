@@ -4,7 +4,7 @@ topText="**Hi, welcome to VastGo!**
 bottomText=""
 
 bottomMarkdown=dcc_markdown(bottomText)
-
+#=
 someIssues="
 ### VastGo is on basic testing, there are some issues need to solve:
 - [x] KataGo starts up ***twice*?**(may need to add a `run KataGo` button in Dash APP or thread/coroutines or I/O redicect or import/using *.jl?)
@@ -34,37 +34,92 @@ someIssues="
   - [ ] `Dash.jl` sends two commands at once sometimes.
   - [x] The same two `clickData` does not run `callback!()` twice.
       - It's a Dash's feature and doesn't need to solve."
+=#
 #----------------------------------------
 # The up is tab1, the down is tab2
 #----------------------------------------
 
-whatGameLabel=html_summary("What's the game of Go/Baduk/Weiqi?")
-whatGameInfo=dcc_markdown() do
+whatgamesummary = html_summary("What's the game of Go/Baduk/Weiqi?")
+whatgamemarkdown = dcc_markdown() do
     "
-    \n>  A turn-based abstract strategy board game, in which the aim is to control more domains than the opponent.
-    \n>  It was invented in China more than **2,500 years** ago and is believed to be the oldest board game continuously played to the present day.¹⁻²
-    \n>***Turn-based***: players take turns to play
-    \n>***Abstract***: not rely on a theme or simulate the real world
-    \n>***Strategy***: players' choices determine the outcome
-    \n>***Board Game***: a tabletop game that involves counters or pieces moved or placed on a pre-marked surface or \"board\" 
-    \n>***Tabletop Game***: played on a table or other flat surface, such as board games, card games
+    \n>A turn-based abstract strategy board game, in which the aim is to 
+    control more domains than the opponent. It was invented in China more 
+    than **2,500 years** ago and is believed to be the oldest board game 
+    continuously played to the present day.¹⁻²
+    \n> **Turn-based**: players take turns to play
+    \n> **Abstract**: not rely on a theme or simulate the real world
+    \n> **Strategy**: players' choices determine the outcome
+    \n> **Board Game**: a tabletop game that involves counters or pieces 
+    moved or placed on a pre-marked surface or \"board\" 
+    \n> **Tabletop Game**: played on a table or other flat surface, such 
+    as board games, card games
     "
-    end
-whatGame=html_details() do
-    whatGameLabel,
-    whatGameInfo
-    end
+end
+whatgame = html_details([whatgamesummary,whatgamemarkdown])
 
-howPlayLabel=html_summary("How to play?")
-howPlayInfo=dcc_markdown() do #TODO
+howplaysummary = html_summary("How to play?")
+howplaymarkdown = dcc_markdown() do
     "
-    \n>Just try!
+    \n> [the easy way](https://www.usgo.org/learn-play) or 
+    [the hard way](https://lightvector.github.io/KataGo/rules.html)
+    \n> **With bots**:
+    \n ![s](assets/withbot.png)
+    \n> **Free and Open Source Software** (FOSS):
+    \n> **GUIs**: Sabaki, Lizzie, KaTrain, GoReviewPartner, LizGoban, q5Go, 
+    LizzieYzy, Ogatak, LeelaGUI, BadukAI, Drago, VastGo
+    \n> **GTP Engines**:  KataGo, Leela-Zero, SAI, MiniGo, ELF, PhoenixGo, 
+    Leela, Pachi, GNU Go, AQ, Ray
+    \n> **Models**: [KataGo's](https://katagotraining.org/), 
+    [Leela-Zero's](https://zero.sjeng.org/), 
+    [SAI's](http://sai.unich.it/)
+    \n> My favorites: Sabaki for editing, BadukAI for phones 
+    and VastGo otherwise.
     "
-    end
-howPlay=html_details() do
-    howPlayLabel,
-    howPlayInfo
-    end
+end
+howplay = html_details([howplaysummary,howplaymarkdown])
+
+isfunnysummary = html_summary("Is it funny?")
+isfunnymarkdown = dcc_markdown() do
+    "
+    \n> **Yes**: 
+    \n>easy rules 
+    \n>complex tactics
+    \n>rare draws([~1‱](https://senseis.xmp.net/?NoResult))
+    \n>flexible 
+    \n> **No**: 
+    \n>silent
+    \n>AI advantages
+    \n>elementary(no ∞∂∫∇, only +-*/)
+    "
+end
+isfunny = html_details([isfunnysummary,isfunnymarkdown])
+
+helpsummary = html_summary("?")
+helpmarkdown = dcc_markdown(
+    "
+    \n> **Don't know terms**?
+    \n> [Sensei's Library](https://senseis.xmp.net/) (SL)
+    \n> **Can't find FOSS**?
+    \n> SL, [Github](https://github.com), [Bing](https://www.bing.com)
+    "
+    )
+help = html_details([helpsummary,helpmarkdown])
+
+whatguisummary = html_summary("About")
+whatguimarkdown = dcc_markdown(
+"
+\n> version: 0.0.1 
+\n> [readme](https://github.com/HackYardo/VastGo)
+\n> [discuss without code](https://github.com/HackYardo/VastGo/discussions)
+\n> [source code issues](https://github.com/HackYardo/VastGo/issues)
+\n> [contributors](https://github.com/HackYardo/VastGo/graphs/contributors)
+\n> [LICENSE](https://github.com/HackYardo/VastGo/blob/master/LICENSE.md)
+\n> *\"vast go\": many kinds of Go*
+"
+)
+whatgui = html_details([whatguisummary,whatguimarkdown])
+
+guidediv = html_div([whatgame,isfunny,howplay,help,whatgui])
 
 rulesetReference=dcc_markdown() do
     "**Rule Sets**³:"
@@ -183,8 +238,7 @@ ruleCheck=html_div() do
 end
 
 startGame=html_div(style = Dict("columnCount" => 2)) do
-    whatGame,
-    howPlay,
+    guidediv,
     dcc_markdown(
         "
         \n### Start Now:
@@ -280,6 +334,5 @@ playGame=html_div() do
         style=(width="100%",display="inline-block",textAlign="right"#=,float="right"=#)
         ),
     dcc_textarea(id="Info",style=Dict("width"=>"900px","height"=>"300px",#="cols"=>2=#)),
-    dcc_confirmdialog(id="finalDialog",message="",displayed=false),
-    html_div(dcc_markdown(someIssues))
+    dcc_confirmdialog(id="finalDialog",message="",displayed=false)
 end
