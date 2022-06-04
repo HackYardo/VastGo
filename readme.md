@@ -32,10 +32,10 @@ Several ideas:
 
 Ideas | Details
 --- | ---
-funny | non-standard Go , *BEAT AI RIGHT NOW*
+funny | nonstandard Go, *BEAT AI RIGHT NOW*
 green | use playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
 simple | don't know Go, use GTP command `showboard`, *LESS CODE LESS GOTCHA*
-useful | rich and powerful plot: move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x)
+useful | *RICH and POWERFUL PLOT*: move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x)
 
 ## Why create this?
 Look at the table:
