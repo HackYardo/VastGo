@@ -93,8 +93,8 @@ isfunnymarkdown = dcc_markdown() do
 end
 isfunny = html_details([isfunnysummary,isfunnymarkdown])
 
-helpsummary = html_summary("?")
-helpmarkdown = dcc_markdown(
+gotchasummary = html_summary("Gotcha")
+gotchamarkdown = dcc_markdown(
     "
     \n> **Don't know terms**?
     \n> [Sensei's Library](https://senseis.xmp.net/) (SL)
@@ -102,7 +102,7 @@ helpmarkdown = dcc_markdown(
     \n> SL, [Github](https://github.com), [Bing](https://www.bing.com)
     "
     )
-help = html_details([helpsummary,helpmarkdown])
+gotcha = html_details([gotchasummary,gotchamarkdown])
 
 whatguisummary = html_summary("About")
 whatguimarkdown = dcc_markdown(
@@ -117,7 +117,7 @@ whatguimarkdown = dcc_markdown(
 )
 whatgui = html_details([whatguisummary,whatguimarkdown])
 
-guidediv = html_div([whatgame,isfunny,howplay,help,whatgui])
+guidediv = html_div([whatgame,isfunny,howplay,gotcha,whatgui])
 
 rulesetReference=dcc_markdown() do
     "**Rule Sets**³:"

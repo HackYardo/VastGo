@@ -1,7 +1,7 @@
 ![static](./board.svg)
-A static Go board ❄️
+a static Go board 
 ![dynamic](./dynamic.gif)
-A dynamic Go board 
+a dynamic Go board 
 
 ## About
 
@@ -28,14 +28,14 @@ Players <<<======>>> components
                         DATA
 ```
 
-Several funny, green, simple and useful ideas:
+Several ideas:
 
 Ideas | Details
 --- | ---
-funny | nonstandard Go , *BEAT AI RIGHT NOW*
-green | some Go GUIs play once and then review once, some review forever if no pause command, some save reviews but not load, *LESS EXCESSIVE COMPUTING LESS CO₂* 
+funny | non-standard Go , *BEAT AI RIGHT NOW*
+green | use playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
 simple | don't know Go, use GTP command `showboard`, *LESS CODE LESS GOTCHA*
-useful | rich and powerful plot
+useful | rich and powerful plot: move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x)
 
 ## Why create this?
 Look at the table:
