@@ -63,7 +63,7 @@ howplaymarkdown = dcc_markdown() do
     \n> [the easy way](https://www.usgo.org/learn-play) or 
     [the hard way](https://lightvector.github.io/KataGo/rules.html)
     \n> **With bots**:
-    \n ![s](assets/withbot.png)
+    \n ![withbot](assets/withbot.png)
     \n> **Free and Open Source Software** (FOSS):
     \n> **GUIs**: Sabaki, Lizzie, KaTrain, GoReviewPartner, LizGoban, q5Go, 
     LizzieYzy, Ogatak, LeelaGUI, BadukAI, Drago, VastGo
