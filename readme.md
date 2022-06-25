@@ -5,6 +5,8 @@ a dynamic Go board
 
 ## About
 
+**NOTE: This is a primitive draft only, welcome [contributions](#contribute) for modernizing!**
+
 > The repo is about the game of [Go/Baduk/Weiqi](https://www.usgo.org/learn-play), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
 
 VastGo is
@@ -55,7 +57,7 @@ Go GUI | Language
 ## What's new here?
 The [nonstandard Go](#nonstandard-go) and their free mixing.
 
-## What can the repo do today/tomorrow?
+## Features
 ### Standard Go
 - [ ] basic game features
   - [x] static Go board 19x19
@@ -186,14 +188,14 @@ GTP ready, beginning main protocol loop
 ```
 5. type following strings to play a Go game
 ```shell
-play B k10
-genmove W
-showboard
+1 play B k10
+2 genmove W
+3 showboard
 genmove B
 play W c3
 showboard
 ...
-final_score
+1 final_score
 quit
 ```
 </details>
@@ -213,16 +215,28 @@ cmd> julia kata_dash.jl
 </details>
 
 ## Q&A 
-- Why running board.jl takes so long? 
-  - Julia needs more time to first plot.
-  - You can use [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots) to accelerate.
+- Why so slow? 
+  - Julia's compiler sort of optimises code just barely ahead of run, and it takes time.
+  - Reuse the compiled work by [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots).
 - Why Julia?
   - [Evan Miller](https://www.evanmiller.org/why-im-betting-on-julia.html) 
 - Why Plotly(JS) Dash?
-  - More interactive features than the others. [Details](https://docs.juliaplots.org/latest/backends/)
+  - More interactive features than the others. [Details](https://docs.juliaplots.org/latest/backends/).
 
 ## LICENSE
 [LICENSE](./LICENSE.md) [THIRDPARTY](./THIRDPARTY.md)
+
+## Contribute
+```julia
+@label issues = https://github.com/HackYardo/VastGo/issues
+@label discussions = https://github.com/HackYardo/VastGo/discussions
+
+if sourceCode in contribution
+  @goto issues
+else
+  @goto discussions
+end
+```
 
 ## Doc
 - [my Markdown Cheat Sheet](./Markdown.md)
