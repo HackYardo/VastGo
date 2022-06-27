@@ -109,7 +109,7 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
   - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
   - [ ] square board response to windowSize
   - [ ] game tree
-  - [ ] games containe
+  - [ ] games contain
   - [ ] multiple boards preview
   - [ ] load/save analyzed svg
   - [ ] svg2sgf, sgf2svg [Ref1](https://github.com/julianandrews/sgf-render)
@@ -152,8 +152,13 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 ## Usage
 
 <details>
-	<summary>see the static 19x19 board——run board.jl</summary>
+	<summary>Hard/Software requirements</summary>
   
+**Hardware:**
+- harddiskspace >= 2GB
+- RAM >= 8GB
+
+**Julia, packages and this repo:**
 1. download, install and add [julia](https://julialang.org/) into path
 2. run julia in your cmd/shell/terminal and you will enter julia-REPL mode
 ```shell
@@ -163,39 +168,40 @@ cmd> julia
 ```julia
 julia> ]
 ```
-4. install [PlotlyJS.jl](https://github.com/JuliaPlots/PlotlyJS.jl)
+4. install packages
 ```julia
-(@v1.7) pkg> add PlotlyJS
+(@v1.7) pkg> add Dash PlotlyJS JSON LinearAlgebra
 ```
-5. download and run `board.jl`
-```julia
-julia> include("path/to/fileName.jl") 
-```  
+5. douwnload this repo
+
+**KataGo, Leela-Zero, GNU Go:**
+Download or Install, for example:
+- KataGo: download its [engine](https://github.com/lightvector/KataGo/releases/) and a [network](https://katagotraining.org/networks)
+- Linux(Debian/Ubuntu): `sudo apt full-upgrade -y`, `sudo apt install leela-zero gnugo`
 </details>
 
 <details>
   <summary>play with KataGo in CLI——run gtp.jl</summary>
 
-1. download a KataGo [release](https://github.com/lightvector/KataGo/releases/) and a [network](https://katagotraining.org/networks) and `gtp.jl`, then put them in one file fold
-2. edit the first line of `gtp.jl` to indicate the KataGo release, the network and the config(inside KataGo releases) 
-3. run `gtp.jl`
+1. edit the first line of `gtp.jl` to indicate the KataGo release, the network and the config(inside KataGo releases) 
+2. run `gtp.jl`
 ```shell
 cmd> julia gtp.jl 
 ```
-4. wait until
+3. wait until
 ```shell
 GTP ready, beginning main protocol loop
 ```
-5. type following strings to play a Go game
+4. type following strings to play a Go game
 ```shell
-1 play B k10
-2 genmove W
+1 play B k10    # (id) command arguments
+2 genmove W    # search GoTextProtocol for details
 3 showboard
 genmove B
-play W c3
-showboard
+5 play W c3
+10 showboard
 ...
-1 final_score
+3 final_score
 quit
 ```
 </details>
