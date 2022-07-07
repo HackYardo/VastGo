@@ -55,10 +55,9 @@ Go GUI | Language
 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 
 ## What's new here?
-The [nonstandard Go](#nonstandard-go) and their free mixing.
+The [nonstandard Go](./features.md#nonstandard-go) and their free mixing.
 
 ## Features
-
 [features](./features.md)
 [versions](./versions.md)
 ![features](assets/features.svg)
@@ -147,8 +146,10 @@ Because Android Phone is ARM and not x86-64, you need more steps:
 1. download and install [Termux](https://termux.com/)
 2. install [ubuntu in termux](https://github.com/MFDGaming/ubuntu-in-termux)
 3. download [julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **Note: instead of x86-64, use aarch**
+
 Now the same as on x86-64. **Note: KataGo for ARM is not open for the public**
 </details>
+
 ## Q&A 
 - Why so slow? 
   - Julia's compiler sort of optimises code, and it takes time.
