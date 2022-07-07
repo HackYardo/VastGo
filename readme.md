@@ -142,7 +142,7 @@ cmd> julia kata_dash.jl
 <details>
   <summary>on Android</summary>
 
-Because Android Phone is ARM and not x86-64, you need more steps:
+Because Android phones are arm and not x86-64, you need more steps:
 1. download and install [Termux](https://termux.com/)
 2. install [ubuntu in termux](https://github.com/MFDGaming/ubuntu-in-termux)
 3. download [julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **Note: instead of x86-64, use aarch**
