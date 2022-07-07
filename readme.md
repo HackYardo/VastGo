@@ -5,7 +5,7 @@ current
 
 ## About
 
-**!!!NOTE: Still in the very early [stage](#features), don't expect to be stable.**
+**Note: Still in the very early [stage](#features), don't expect to be stable.**
 
 > The repo is about the game of [Go/Baduk/Weiqi](https://www.usgo.org/learn-play), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
 
@@ -61,6 +61,8 @@ The [nonstandard Go](#nonstandard-go) and their free mixing.
 
 [features](./features.md)
 [versions](./versions.md)
+![features](assets/features.svg)
+![versions](assets/versions.svg)
 ***Be careful: avoid repetition to existing site/software, i.e. [boardspace](https://www.boardspace.net/english/index.shtml)/[kahv](https://go.kahv.io/)/[littlegolem](https://www.littlegolem.net/jsp/main/), and can be played/analyzed by corresponding bot/AI***
 
 ## Usage
@@ -138,6 +140,15 @@ cmd> julia kata_dash.jl
 3. open one(**only one**) browser and type `localhost:8050` in the address bar
 </details>
 
+<details>
+  <summary>on Android</summary>
+
+Because Android Phone is ARM and not x86-64, you need more steps:
+1. download and install [Termux](https://termux.com/)
+2. install [ubuntu in termux](https://github.com/MFDGaming/ubuntu-in-termux)
+3. download [julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **Note: instead of x86-64, use aarch**
+Now the same as on x86-64. **Note: KataGo for ARM is not open for the public**
+</details>
 ## Q&A 
 - Why so slow? 
   - Julia's compiler sort of optimises code, and it takes time.
