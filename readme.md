@@ -1,11 +1,11 @@
 ![static](./board.svg)
-a static Go board 
+future
 ![dynamic](./dynamic.gif)
-a dynamic Go board 
+current 
 
 ## About
 
-**NOTE: This is a primitive draft only, welcome [contributions](#contribute) for modernizing!**
+**!!!NOTE: Still in the very early [stage](#features), don't expect to be stable.**
 
 > The repo is about the game of [Go/Baduk/Weiqi](https://www.usgo.org/learn-play), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
 
@@ -14,7 +14,7 @@ VastGo is
 - Based on Dash.jl, PlotlyJS.jl, JSON.jl and modern or classic GTP engines.
 - Written in pure julia and under the MIT [license](#license).
 
-Top-level design:
+Design:
 ```
             DATA
 Players <<<======>>> components
@@ -30,9 +30,9 @@ Players <<<======>>> components
                         DATA
 ```
 
-Several ideas:
+Ideas:
 
-Ideas | Details
+Idea | Detail
 --- | ---
 funny | nonstandard Go, *BEAT AI RIGHT NOW*
 green | use playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
@@ -177,7 +177,10 @@ julia> ]
 **KataGo, Leela-Zero, GNU Go:**
 Download or Install, for example:
 - KataGo: download its [engine](https://github.com/lightvector/KataGo/releases/) and a [network](https://katagotraining.org/networks)
-- Linux(Debian/Ubuntu): `sudo apt full-upgrade -y`, `sudo apt install leela-zero gnugo`
+- Linux(Debian/Ubuntu): 
+ 1. `sudo apt full-upgrade -y`
+ 2. `sudo apt install leela-zero gnugo`
+ 3. download leelaz's [network]()
 </details>
 
 <details>
@@ -222,8 +225,8 @@ cmd> julia kata_dash.jl
 
 ## Q&A 
 - Why so slow? 
-  - Julia's compiler sort of optimises code just barely ahead of run, and it takes time.
-  - Reuse the compiled work by [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots).
+  - Julia's compiler sort of optimises code, and it takes time.
+  - Reuse the compiled work via [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots).
 - Why Julia?
   - [Evan Miller](https://www.evanmiller.org/why-im-betting-on-julia.html) 
 - Why Plotly(JS) Dash?
