@@ -166,6 +166,7 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 - delete KataGo's and Leela-Zero's networks
 
 </details>
+
 ## Q&A 
 - Why so slow? 
   - Julia's compiler sort of optimises code, and it takes time.
