@@ -158,6 +158,7 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 - Julia does not install anything outside the directory it was cloned into. Julia can be completely uninstalled by deleting this directory. 
 - Julia packages are installed in `~/.julia` by default, and can be uninstalled by deleting `~/.julia`.
 - This repo are the same.
+
 **uninstall KataGo, Leela-Zero, GNU Go:**
 (If you don't use them anymore...)
 - `sudo apt remove leela-zero gnugo`
