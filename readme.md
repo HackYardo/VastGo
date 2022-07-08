@@ -90,19 +90,19 @@ julia> ]
 5. download this repo
 
 **KataGo, Leela-Zero, GNU Go:**
-For example:
+(If you have no them yet...)
 - KataGo: download its [engine](https://github.com/lightvector/KataGo/releases/) and a [network](https://katagotraining.org/networks)
 - Linux(Debian/Ubuntu): 
- 1. `sudo apt update -y`
- 2. `sudo apt install leela-zero gnugo`
- 3. download a [network](https://zero.sjeng.org/) of Leela-Zero
+  1. `sudo apt update -y`
+  2. `sudo apt install leela-zero gnugo`
+  3. download a [network](https://zero.sjeng.org/) of Leela-Zero
 
 </details>
 
 <details>
   <summary>in terminal——run gtp.jl</summary>
 
-1. edit the first line of `gtp.jl` to indicate the KataGo release, the network and the config(inside KataGo releases) 
+1. edit the first line of `gtp.jl` to indicate the KataGo engine, the network and the config(inside KataGo releases) 
 2. run `gtp.jl`
 ```shell
 cmd> julia gtp.jl 
@@ -136,7 +136,8 @@ cmd> julia kata_dash.jl
 ```julia
 [ Info: Listening on: 0.0.0.0:8050
 ```
-3. open one(**only one**) browser and type `localhost:8050` in the address bar
+3. open one(**only one**) browser and type `localhost:8050` in the address bar to play
+4. type `exit` in terminal to exit the program
 </details>
 
 <details>
@@ -145,11 +146,26 @@ cmd> julia kata_dash.jl
 Because Android phones are arm and not x86-64, you need more steps:
 1. download and install [Termux](https://termux.com/)
 2. install [ubuntu in termux](https://github.com/MFDGaming/ubuntu-in-termux)
-3. download [julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **Note: instead of x86-64, use aarch**
+3. download [julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **Note: instead of x86-64, use aarch64 or armv7l**
 
-Now the same as on x86-64. **Note: KataGo for ARM is not open for the public**
+Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 </details>
 
+<details>
+  <summary>uninstall</summary>
+  
+**uninstall julia, packages and this repo:**
+- Julia does not install anything outside the directory it was cloned into. Julia can be completely uninstalled by deleting this directory. 
+- Julia packages are installed in `~/.julia` by default, and can be uninstalled by deleting `~/.julia`.
+- This repo are the same.
+**uninstall KataGo, Leela-Zero, GNU Go:**
+(If you don't use them anymore...)
+- `sudo apt remove leela-zero gnugo`
+- `sudo apt autoremove`
+- delete KataGo's engine
+- delete KataGo's and Leela-Zero's networks
+
+</details>
 ## Q&A 
 - Why so slow? 
   - Julia's compiler sort of optimises code, and it takes time.

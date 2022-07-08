@@ -5,7 +5,7 @@ include("board.jl")
 include("tab.jl")
 include("visibility.jl")
 include("magnet.jl")
-n=1
+
 function gtp_io(sentence)
     if sentence != "" && !("" in split(sentence," "))
         if sentence[end]=='.' && sentence[end-1] != ' '
@@ -316,8 +316,8 @@ end
 
 #server = app.server # no server field?
 
-#@async 
-    run_server(app, "0.0.0.0", 8050, debug=true)
+@async 
+    run_server(app, "0.0.0.0", 8050, debug=false)
 
 function kata_dash()
     while true
@@ -327,4 +327,4 @@ function kata_dash()
     end
 end
 
-#kata_dash()
+kata_dash()
