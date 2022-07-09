@@ -66,13 +66,30 @@ function trace_line(boardSize)
     rowX=line_fold(xLine,yLine)
     rowY=[yItem for yItem in yLine for j in 1:2]
     #colX=[xItem for xItem in xLine for i in 1:2]
-    colX=cat(['z'],[xLine[1]],[xItem for xItem in xLine for i in 1:2],[xLine[end]],[GTP_X[boardSize[1]+2]],dims=1)
-    #colYLine=cat(line_fold(yLine,xLine),[boardSize[1]%2==0 ? yLine[1] : yLine[end]],dims=1)
-    colYDotLine=cat([0],[nothing],line_fold(yLine,xLine),[nothing],[GTP_Y[boardSize[2]+2]],dims=1)
+    colX=cat(
+        ['z'],
+        [xLine[1]],
+        [xItem for xItem in xLine for i in 1:2],
+        [xLine[end]],
+        [GTP_X[boardSize[1]+2]],
+        dims=1
+        )
+    #=
+    colYLine=cat(
+        line_fold(yLine,xLine),
+        [boardSize[1]%2==0 ? yLine[1] : yLine[end]],
+        dims=1
+        )
+    =#
+    colYDotLine=cat(
+        [0],[nothing],line_fold(yLine,xLine),[nothing],
+        [GTP_Y[boardSize[2]+2]],
+        dims=1
+        )
     #println(colYDotLine)
     rowLine=scatter(
-        #x=['a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t'],
-        #y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19],
+        #x=['a','t','t','a','a','t','t','a','a','t','t','a',...,'a','t'],
+        #y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,...,19,19],
         # use fold lines to plot row/col lines
         x=rowX,
         y=rowY,
@@ -83,8 +100,8 @@ function trace_line(boardSize)
         name="row lines"
         )
     colLine=scatter(
-        #x=['z','a','a','b','b','c','c','d','d','e','e','f','f','g','g','h','h','i','i','j','j','k','k','m','m','n','n','o','o','p','p','q','q','r','r','s','s','t','t','u'],
-        #y=[1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19],
+        #x=['z','a','a','b','b','c','c',...,'t','u'],
+        #y=[1,1,19,19,1,1,19,19,1,1,19,19,1,1,...,19,19],
         # use (z,1) and (u,19) to widen col margin, if the board is 19x19
         x=colX,
         y=colYDotLine,
@@ -235,7 +252,9 @@ blackStone=scatter(
         color="rgb(0,0,0)",
         size=30
         ),
-    text=["1","361"],textposition="inside",textfont=attr(color="rgba(255,255,255,1)",size=[24,12]),
+    text=["1","361"],
+    textposition="inside",
+    textfont=attr(color="rgba(255,255,255,1)",size=[24,12]),
     name="Black stones"
     )
 
@@ -245,13 +264,37 @@ ownership=scatter(
     mode="markers",
     marker=attr(
         symbol="diamond",
-        color=["rgba(127,127,127,0.6)","rgba(0,0,0,0.6)","rgba(255,255,255,0.6)","rgba(0,0,0,0.6)"],
+        color=[
+            "rgba(127,127,127,0.6)","rgba(0,0,0,0.6)",
+            "rgba(255,255,255,0.6)","rgba(0,0,0,0.6)"
+            ],
         size=36,
         # opacity=0.6,
         line=attr(
             width=0)
         ),
     name="ownership"
+    )
+#= 
+Basic symbols in PlotlyJS:
+circle square diamond cross x 
+triangle pentagon hexagram star 
+hourglass bowtie asterisk hash y line
+=#
+markers = scatter(
+    x = [i for i in 1:10],
+    y = [j for j in 1:10],
+    mode = "markers",
+    marker = attr(
+        symbol = [
+            "hash","square","cross","triangle","pentagon",
+            "hexagram","star","hourglass","bowtie","asterisk"
+            ],
+        color = "rgba(0,0,0,1)",
+        size = 36,
+        line = attr(width = 0)
+        ),
+    name = "markers"
     )
 
 function plot_board(boardSize)
@@ -262,7 +305,8 @@ function plot_board(boardSize)
         trace_star(boardSize),
         whiteStone,
         blackStone,
-        ownership
+        ownership,
+        markers
         ],
         layout_board()
     )

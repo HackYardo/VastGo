@@ -1,4 +1,4 @@
-# 0.0.1 Just Work, Most Done
+# 0.0.1 Just Work
 
 - mouse click to place stones
 - auto take turns
@@ -12,7 +12,7 @@
     - move history
     - captures
 
-# 0.0.2 GTP, Doing
+# 0.0.2 GTP
 
 - multi-platform
 - multi-bot

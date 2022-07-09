@@ -316,8 +316,7 @@ end
 
 #server = app.server # no server field?
 
-@async 
-    run_server(app, "0.0.0.0", 8050, debug=false)
+@async run_server(app, "0.0.0.0", 8050, debug=false)
 
 function kata_dash()
     while true
