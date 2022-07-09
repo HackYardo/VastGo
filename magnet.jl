@@ -9,7 +9,7 @@ function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
         end
         vertex = string(GTP_X[vertex[2]+1],boardSizeY+1-vertex[1])
     else
-        if color in ['B','b']
+        if color in ['B','b',"B","b"]
             color = -1
         else
             color = 1
