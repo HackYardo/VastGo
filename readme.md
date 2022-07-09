@@ -90,7 +90,7 @@ julia> ]
 5. download this repo
 
 **KataGo, Leela-Zero, GNU Go:**
-(If you have no them yet...)
+(If you don't have them yet...)
 - KataGo: download its [engine](https://github.com/lightvector/KataGo/releases/) and a [network](https://katagotraining.org/networks)
 - Linux(Debian/Ubuntu): 
   1. `sudo apt update -y`
@@ -157,7 +157,7 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 **uninstall julia, packages and this repo:**
 - Julia does not install anything outside the directory it was cloned into. Julia can be completely uninstalled by deleting this directory. 
 - Julia packages are installed in `~/.julia` by default, and can be uninstalled by deleting `~/.julia`.
-- This repo are the same.
+- Delete this repo.
 
 **uninstall KataGo, Leela-Zero, GNU Go:**
 (If you don't use them anymore...)
@@ -183,13 +183,13 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 
 ## Contribute
 ```julia
-@label issues = https://github.com/HackYardo/VastGo/issues
-@label discussions = https://github.com/HackYardo/VastGo/discussions
+@label Issues = https://github.com/HackYardo/VastGo/issues
+@label Discussions = https://github.com/HackYardo/VastGo/discussions
 
 if sourceCode in contribution
-  @goto issues
+  @goto Issues
 else
-  @goto discussions
+  @goto Discussions
 end
 ```
 

@@ -190,9 +190,9 @@ function play()
     while true
         sentence=query()
         paragraph=reply()
-        if sentence=="quit"
+        if occursin("quit",sentence)
             break
-        elseif sentence=="showboard"
+        elseif occursin("showboard",sentence)
             boardInfo=agent_showboard(paragraph)
         else
             continue
