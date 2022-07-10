@@ -292,6 +292,26 @@ function trace_marker()
     return markers
 end
 
+function trace_chess()
+    R,N,B,Q,K,P = '♖','♘','♗','♕','♔','♙'
+    r,n,b,q,k,p = '♜','♞','♝','♛','♚','♟'
+    chessPieces = scatter(
+        x = [GTP_X[i] for m in 1:4 for i in 2:9],
+        y = [j for j in [14.8,13.8,8.8,7.8] for n in 1:8],
+        mode = "text",
+        text = [
+            r,n,b,q,k,b,n,r,p,p,p,p,p,p,p,p,
+            P,P,P,P,P,P,P,P,R,N,B,Q,K,B,N,R
+            ],
+        textposition = "bottom right",
+        textfont = attr(
+            size = 30, 
+            color = "rgba(0,0,0,1)"
+            ),
+        name = "chess pieces"
+        ) 
+end
+
 function plot_board(boardSize,stones)
     Plot(
         [
@@ -315,7 +335,8 @@ function plot_board(boardSize)
         whiteStone,
         blackStone,
         trace_marker(),
-        ownership
+        ownership,
+        trace_chess()
         ],
         layout_board()
     )
