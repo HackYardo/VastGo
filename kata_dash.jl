@@ -110,7 +110,7 @@ engineProcess=run_engine()
 
 app=dash()
 
-app.title = "VastGo | A funny,green,simple,useful tool for the game of Go/Baduk/Weiqi!"
+app.title = "VastGo"
 
 app.layout = html_div() do
     dcc_tabs(

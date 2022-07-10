@@ -220,22 +220,8 @@ function trace_resign()
         )
 end
 
-function plot_board(boardSize,stones)
-    Plot(
-        [
-        trace_line(boardSize)[1],
-        trace_line(boardSize)[2],
-        trace_star(boardSize),
-        trace_synchroboard(),
-        trace_resign(),
-        trace_stones(boardSize,stones)
-        ],
-        layout_board()
-        )
-end
-
 #boardStone=
-    # colors are as many as players: black,white,...
+    # colors are as many as players: black,white,blue,red...
 whiteStone=scatter(
     x=['k','d','r'],
     y=[10,16,3],
@@ -281,21 +267,44 @@ circle square diamond cross x
 triangle pentagon hexagram star 
 hourglass bowtie asterisk hash y line
 =#
-markers = scatter(
-    x = [i for i in 1:10],
-    y = [j for j in 1:10],
-    mode = "markers",
-    marker = attr(
-        symbol = [
-            "hash","square","cross","triangle","pentagon",
-            "hexagram","star","hourglass","bowtie","asterisk"
-            ],
-        color = "rgba(0,0,0,1)",
-        size = 36,
-        line = attr(width = 0)
-        ),
-    name = "markers"
-    )
+function trace_marker()
+    rgbaRange = [
+        "rgba($r,$g,$b,1)" 
+        for b in 0:85:255
+        for r in 0:85:255
+        for g in 0:85:255
+        #for a in 0.75:-0.01:0.25
+        ]
+    rgbaRange = reverse(rgbaRange)
+    markers = scatter(
+        x = [GTP_X[i] for p in 1:4 for i in 2:14 ],
+        y = [GTP_Y[j] for j in 17:20 for q in 1:13 ],
+        mode = "markers",
+        marker = attr(
+            symbol = ["$k" for k in 101:152],
+            color = rgbaRange,
+            #["rgba($r,$g,$b,1)" for r in ],
+            size = 25,
+            line = attr(width = 3, color = rgbaRange)
+            ),
+        name = "markers"
+        ) 
+    return markers
+end
+
+function plot_board(boardSize,stones)
+    Plot(
+        [
+        trace_line(boardSize)[1],
+        trace_line(boardSize)[2],
+        trace_star(boardSize),
+        trace_synchroboard(),
+        trace_resign(),
+        trace_stones(boardSize,stones)
+        ],
+        layout_board()
+        )
+end
 
 function plot_board(boardSize)
     plot(
@@ -305,8 +314,8 @@ function plot_board(boardSize)
         trace_star(boardSize),
         whiteStone,
         blackStone,
-        ownership,
-        markers
+        trace_marker(),
+        ownership
         ],
         layout_board()
     )
