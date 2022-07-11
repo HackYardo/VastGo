@@ -100,16 +100,16 @@ julia> ]
 </details>
 
 <details>
-  <summary>in terminal——run gtp.jl</summary>
+  <summary>in terminal——run terminal.jl</summary>
 
-1. edit the first line of `gtp.jl` to indicate the KataGo engine, the network and the config(inside KataGo releases) 
-2. run `gtp.jl`
+1. edit the first line of `terminal.jl` to indicate the command of running a bot
+2. run `terminal.jl`
 ```shell
-cmd> julia gtp.jl 
+cmd> julia terminal.jl 
 ```
 3. wait until
 ```shell
-GTP ready ...
+GTP ready 
 ```
 4. type following strings to play a Go game
 ```shell
