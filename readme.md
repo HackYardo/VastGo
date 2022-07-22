@@ -32,13 +32,11 @@ Players <<<======>>> components
 
 Ideas:
 
-Idea | Detail
---- | ---
-funny | nonstandard Go, *BEAT AI RIGHT NOW*
-green | use playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
-simple | don't know Go, use GTP command `showboard`, *LESS CODE LESS GOTCHA*
-useful | *RICH and POWERFUL PLOT*: move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x)
-compatible | SBKV for winrate and OGSC for score, *THE SAME SGF AS Sabaki AND Ogatak* 
+- **funny** | nonstandard Go, *BEAT AI RIGHT NOW*
+- **green** | use playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
+- **simple** | don't know Go, use GTP command `showboard`, *LESS CODE LESS GOTCHA*
+- **useful** | move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x), *RICH AND POWERFUL PLOT*
+- **compatible** | SBKV for winrate and OGSC for score, *THE SAME SGF AS Sabaki AND Ogatak* 
 
 ## Why create this?
 Look at the table:
