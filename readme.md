@@ -31,34 +31,16 @@ Players <<<======>>> components
 ```
 
 Ideas:
-
-- **funny** | nonstandard Go, *BEAT AI RIGHT NOW*
-- **green** | use playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
-- **simple** | don't know Go, use GTP command `showboard`, *LESS CODE LESS GOTCHA*
-- **useful** | move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x), *RICH AND POWERFUL PLOT*
-- **compatible** | SBKV for winrate and OGSC for score, *THE SAME SGF AS Sabaki AND Ogatak* 
-
-## Why create this?
-Look at the table:
-
-Go GUI | Language
---- | ---
-[Sabaki](https://sabaki.yichuanshen.de/) | JavaScript
-[q5Go](https://github.com/bernds/q5Go) | C++
-[Lizzie](https://github.com/featurecat/lizzie) | Java
-[KaTrain](https://github.com/sanderland/katrain) | Python
-[Lizgoban](https://github.com/kaorahi/lizgoban) | JavaScript
-[BadukAI](https://aki65.github.io/) | Python
-[Ogatak](https://github.com/rooklift/ogatak) | JavaScript
-
-🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
-
-## What's new here?
-The [nonstandard Go](./features.md#nonstandard-go) and their free mixing.
+- **funny**: nonstandard Go, *BEAT AI RIGHT NOW*
+- **green**: use playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
+- **simple**: don't know Go, use GTP command `showboard`, *LESS CODE LESS GOTCHA*
+- **useful**: move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x), *RICH AND POWERFUL PLOT*
+- **compatible**: SBKV for winrate and OGSC for score, *THE SAME SGF AS Sabaki AND Ogatak* 
 
 ## Features
-[features](./features.md)
-[versions](./versions.md)
+- Some [nonstandard Go modes](./features.md#nonstandard-go) and their free mixtures.
+- See [features.md](./features.md) for the wish list.
+- See [versions.md](./versions.md) for the road map.
 
 ***Be careful: avoid repetition to existing site/software, i.e. [boardspace](https://www.boardspace.net/english/index.shtml)/[kahv](https://go.kahv.io/)/[littlegolem](https://www.littlegolem.net/jsp/main/), and can be played/analyzed by corresponding bot/AI***
 
@@ -167,6 +149,12 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 </details>
 
 ## Q&A 
+- Why create this?
+  - JavaScript has [Sabaki](https://sabaki.yichuanshen.de/),  [Lizgoban](https://github.com/kaorahi/lizgoban),  [Ogatak](https://github.com/rooklift/ogatak).
+  - Python has [KaTrain](https://github.com/sanderland/katrain),  [BadukAI](https://aki65.github.io/).
+  - C++ has [q5Go](https://github.com/bernds/q5Go).
+  - Java has [Lizzie](https://github.com/featurecat/lizzie).
+  - 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 - Why so slow? 
   - Julia's compiler sort of optimises code, and it takes time.
   - Reuse the compiled work via [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots).
