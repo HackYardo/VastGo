@@ -3,6 +3,10 @@
     Just copy text from https://katagotraining.org/networks/ to a file,
     then run the code in terminal: 
         cmd> julia models.jl path/to/file
+    Some issues:
+        - plot without init callback
+        - line shapes, line dash
+        - range break
 =#
 
 using Dash, PlotlyBase
@@ -68,27 +72,50 @@ function plot(style)
     )
 end=#
 
-function trace(lstyle)
-    #println(typeof(lstyle),'\n',lstyle)
-    m = length(lstyle)
+function dropdown_multi(value)
+    str = ""
+    if typeof(value) <: Array
+        for v in value
+            str = str * "$v+"
+        end
+        str = str[1:end-1]
+    elseif value isa String
+        str = value
+    else
+        printstyled("Warning: "; color=:yellow)
+        println("Type may not support:")
+        println(typeof(value))
+        str = value
+    end
+    return str
+end
+
+function trace(l)
+    #lmode = dropdown_multi(l.mode)
+    #println(typeof(l.mode),'\n',l.mode)
+    #l = (mode=string(l.mode), shape=string(l.shape), dash=string(l.dash))
+    #=
+    m = length(l.mode)
     if m == 1
-        lstyle = lstyle[1]
+        l.mode = l.mode[1]
     elseif 2 <= m <= 3
         o = ""
-        for n in lstyle
+        for n in l.mode
             o = o * "$n+"
         end
-        lstyle = o[1:end-1]
+        l.mode = [o[1:end-1]]
     elseif m == 0 
-        lstyle = "markers"
+        l.mode = ["markers"]
     else
     end
-    println(typeof(lstyle),'\n',lstyle)
+    println(typeof(l.mode),'\n',l.mode)
+    =#
     traces = get_trace()
     trace = [ scatter(
         x = [1],
         y = [0],
-        mode = lstyle,
+        mode = l.mode,
+        line = attr(shape=l.shape,dash=l.dash),
         name = "random"
         )
     ]
@@ -97,7 +124,8 @@ function trace(lstyle)
             scatter(
                 x = traces[name].x,
                 y = traces[name].y,
-                mode = lstyle,
+                mode = l.mode,
+                line = attr(shape=l.shape,dash=l.dash),
                 name = name
             ), 
             dims = 1
@@ -112,7 +140,7 @@ end
 
 function plot(xstyle,ystyle,lstyle)
     Plot(
-        [trace(lstyle)[i] for i in 1:length(trace(lstyle))],
+        [trace for trace in trace(lstyle)],
         layout(xstyle,ystyle)
     )
 end
@@ -126,7 +154,6 @@ app.layout = html_div() do
             (label="log", value="log"),
             (label="linear", value="linear")
         ],
-        multi=false,
         value="log"  # default init option
     ),
     html_label("Yaxis:"),
@@ -135,17 +162,39 @@ app.layout = html_div() do
             (label="log", value="log"),
             (label="linear", value="linear")
         ],
-        multi=false,
         value="linear"  # default init option
     ),
     html_label("Line:"),
-    dcc_dropdown(id="lstyle",
+    dcc_dropdown(id="lmode",
         options=[
             (label="markers", value="markers"),
             (label="lines", value="lines")
         ],
         multi=true,
         value="markers"  # default init option
+    ),
+    dcc_dropdown(id="lshape",
+        options=[
+            (label="linear", value="linear"),
+            (label="hv", value="hv"),
+            (label="vh", value="vh"),
+            (label="hvh", value="hvh"),
+            (label="vhv", value="vhv"),
+            (label="spline", value="spline")
+        ],
+        value="spline"  # default init option
+    ),
+    dcc_dropdown(id="ldash",
+        options=[
+            (label="solid", value="solid"),
+            (label="5px,10px,2px,1px", value="5px,10px,2px,1px"),
+            (label="longdashdot", value="longdashdot"),
+            (label="longdash", value="longdash"),
+            (label="dashdot", value="dashdot"),
+            (label="dash", value="dash"),
+            (label="dot", value="dot")
+        ],
+        value="solid"  # default init option
     ),
     dcc_graph(id="curve") 
 end
@@ -154,11 +203,17 @@ callback!(app,
     Output("curve", "figure"),
     Input("xstyle", "value"),
     Input("ystyle", "value"),
-    Input("lstyle", "value"),
-    ) do x, y, l
+    Input("lmode", "value"),
+    Input("lshape", "value"),
+    Input("ldash", "value"),
+    ) do x, y, lms, ls, ld
+    lm = dropdown_multi(lms)
+    l = (mode=lm, shape=ls, dash=ld)
     plot(x, y, l)
 end
     
+run_server(app, "0.0.0.0", 8050, debug=true)
+#=
 @async run_server(app, "0.0.0.0", 8050, debug=false)
 
 function models()
@@ -169,4 +224,4 @@ function models()
     end
 end
 
-models()
+models()=#
