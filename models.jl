@@ -1,6 +1,6 @@
 #=
     This code is for realizing Regex in action.
-    Just copy text from https://katagotraining.org/ to a file,
+    Just copy text from https://katagotraining.org/networks/ to a file,
     then run the code in terminal: 
         cmd> julia models.jl path/to/file
 =#
