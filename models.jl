@@ -69,6 +69,21 @@ function plot(style)
 end=#
 
 function trace(lstyle)
+    #println(typeof(lstyle),'\n',lstyle)
+    m = length(lstyle)
+    if m == 1
+        lstyle = lstyle[1]
+    elseif 2 <= m <= 3
+        o = ""
+        for n in lstyle
+            o = o * "$n+"
+        end
+        lstyle = o[1:end-1]
+    elseif m == 0 
+        lstyle = "markers"
+    else
+    end
+    println(typeof(lstyle),'\n',lstyle)
     traces = get_trace()
     trace = [ scatter(
         x = [1],
