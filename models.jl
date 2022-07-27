@@ -7,8 +7,6 @@
 
 using Dash, PlotlyBase
 
-file = ARGS[1]
-
 function findindex(element, collection)
     m = 1 
     n = []
@@ -21,10 +19,10 @@ function findindex(element, collection)
     return n 
 end 
 
-function get_trace(file::String)
+function get_trace()
+    file = ARGS[1]
     lines = readlines(file)
     linesMatch = match.(r"^k.{2,}\d{3,}\.\d",lines)
-    linesWithoutNothing = []
     nameVector = []
     xVector = []
     yVector = []
@@ -53,61 +51,11 @@ function get_trace(file::String)
         end
         traces[name] = (x=m, y=n)
     end
-    
-    #println(length(linesWithoutNothing.x))
-    #println(linesWithoutNothing.y[end-2:end])
     #println(keys(traces))
     return traces
 end
 
-#get_trace(file)
-#=
-function get_number()
-    file = readlines("kata1curve.csv")[2:end-1]
-    newfile = [0,0.0]
-    for line in file
-        newline = split(line,",")
-        a = parse(Int64,newline[1])
-        b = parse(Float64,newline[2])
-        newfile = cat(newfile,[a,b],dims=2)
-    end
-    println(newfile)
-    return newfile
-end=#
-
-traces = get_trace(file)
-function trace()
-    trace = [ scatter(
-        x=[1],
-        y=[0],
-        mode="markers",
-        name="random"
-        )
-    ]
-    for name in keys(traces)
-    trace = cat(trace, scatter(
-        x = traces[name].x,
-        y = traces[name].y,
-        mode = "markers",
-        name = name
-    ), dims=1)
-    end 
-    return trace
-end
-
-function layout(style)
-    Layout(xaxis_type=style)
-end
-
-function plot(style)
-    Plot(
-        [trace()[i] for i in 1:length(trace())],
-        
-        layout(style)
-    )
-end
-
-#= example code
+#= example code from plotly.com
 function plot(style)
     x = range(1, stop=200, length=30)
     Plot(
@@ -120,25 +68,90 @@ function plot(style)
     )
 end=#
 
+function trace(lstyle)
+    traces = get_trace()
+    trace = [ scatter(
+        x = [1],
+        y = [0],
+        mode = lstyle,
+        name = "random"
+        )
+    ]
+    for name in keys(traces)
+        trace = cat(trace, 
+            scatter(
+                x = traces[name].x,
+                y = traces[name].y,
+                mode = lstyle,
+                name = name
+            ), 
+            dims = 1
+        )
+    end 
+    return trace
+end
+
+function layout(xstyle,ystyle)
+    Layout(xaxis_type=xstyle, yaxis_type=ystyle)
+end
+
+function plot(xstyle,ystyle,lstyle)
+    Plot(
+        [trace(lstyle)[i] for i in 1:length(trace(lstyle))],
+        layout(xstyle,ystyle)
+    )
+end
+
 app = dash()
 app.title = "KataGo models' plot"
 app.layout = html_div() do
-    dcc_dropdown(id="style",
+    html_label("Xaxis:"),
+    dcc_dropdown(id="xstyle",
         options=[
             (label="log", value="log"),
             (label="linear", value="linear")
         ],
         multi=false,
-        value="linear"  # default(init) option
+        value="log"  # default init option
+    ),
+    html_label("Yaxis:"),
+    dcc_dropdown(id="ystyle",
+        options=[
+            (label="log", value="log"),
+            (label="linear", value="linear")
+        ],
+        multi=false,
+        value="linear"  # default init option
+    ),
+    html_label("Line:"),
+    dcc_dropdown(id="lstyle",
+        options=[
+            (label="markers", value="markers"),
+            (label="lines", value="lines")
+        ],
+        multi=true,
+        value="markers"  # default init option
     ),
     dcc_graph(id="curve") 
 end
 
 callback!(app,
-    Output("curve","figure"),
-    Input("style","value"),
-    ) do val
-    plot(val)
+    Output("curve", "figure"),
+    Input("xstyle", "value"),
+    Input("ystyle", "value"),
+    Input("lstyle", "value"),
+    ) do x, y, l
+    plot(x, y, l)
 end
     
-run_server(app,"0.0.0.0",8050,debug=true)
+@async run_server(app, "0.0.0.0", 8050, debug=false)
+
+function models()
+    while true  
+        if readline() == "exit"
+            break
+        end
+    end
+end
+
+models()
