@@ -5,12 +5,12 @@
         cmd> julia models.jl path/to/file
     Some issues:
         - init plot without init callback
-        - line shape, line dash, and both relevant to line.mode
-        - range break, none, use 500k instead
+        - line.shape, line.dash, and both relevant to line.mode
         - spline order
-        - dash user define
+        - line.dash user define
         - text from Leela-Zero and SAI
         - auto scale square ratio layout
+        - auto copy text from KLS webpage
 =#
 
 using Dash, PlotlyBase
