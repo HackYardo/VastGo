@@ -6,7 +6,6 @@
     Some issues:
         - init plot without init callback
         - line.shape, line.dash, and both relevant to line.mode
-        - spline order
         - line.dash user define
         - text from Leela-Zero and SAI
         - auto scale square ratio layout
@@ -76,7 +75,7 @@ function plot(style)
     )
 end=#
 
-function dropdown_multi(value)
+function dropdown_multiTrue(value)
     str = ""
     t = typeof(value)
     if t <: AbstractArray || t <: AbstractVector
@@ -103,7 +102,7 @@ function dropdown_multi(value)
 end
 
 function trace(l)
-    #lmode = dropdown_multi(l.mode)
+    #lmode = dropdown_multiTrue(l.mode)
     #println(typeof(l.mode),'\n',l.mode)
     #l = (mode=string(l.mode), shape=string(l.shape), dash=string(l.dash))
     #=
@@ -127,7 +126,7 @@ function trace(l)
         x = [500000],
         y = [1],
         mode = l.mode,
-        line = attr(shape=l.shape,dash=l.dash),
+        line = attr(shape=l.shape, smoothing=l.smoothing, dash=l.dash),
         name = "random"
         )
     ]
@@ -137,7 +136,7 @@ function trace(l)
                 x = traces[name].x,
                 y = traces[name].y,
                 mode = l.mode,
-                line = attr(shape=l.shape,dash=l.dash),
+                line = attr(shape=l.shape, smoothing=l.smoothing, dash=l.dash),
                 name = name
             ), 
             dims = 1
@@ -196,6 +195,13 @@ app.layout = html_div() do
         ],
         value="spline"  # default init option
     ),
+    dcc_input(id="lsmoothing",
+        type="number",
+        min=0,
+        step=0.1,
+        max=1.3,
+        value=1.0  # default init value
+    ),
     dcc_dropdown(id="ldash",
         options=[
             (label="solid", value="solid"),
@@ -217,10 +223,11 @@ callback!(app,
     Input("ystyle", "value"),
     Input("lmode", "value"),
     Input("lshape", "value"),
+    Input("lsmoothing", "value"),
     Input("ldash", "value"),
-    ) do x, y, lms, ls, ld
-    lm = dropdown_multi(lms)
-    l = (mode=lm, shape=ls, dash=ld)
+    ) do x, y, lm, lsh, lsm, ld
+    lm = dropdown_multiTrue(lm)
+    l = (mode=lm, shape=lsh, smoothing=lsm, dash=ld)
     plot(x, y, l)
 end
     
