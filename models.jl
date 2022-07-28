@@ -6,7 +6,7 @@
     Some issues:
         - init plot without init callback
         - line shape, line dash, and both relevant to line.mode
-        - range break
+        - range break, none, use 500k instead
         - spline order
         - dash user define
         - text from Leela-Zero and SAI
@@ -91,7 +91,7 @@ function dropdown_multi(value)
     elseif value isa String
         str = "markers"
         #str = value
-        println("2")
+        #println("2")
     else
         printstyled("Warning: "; color=:yellow)
         println("Type may not support:")
@@ -124,8 +124,8 @@ function trace(l)
     =#
     traces = get_trace()
     trace = [ scatter(
-        x = [1],
-        y = [0],
+        x = [500000],
+        y = [1],
         mode = l.mode,
         line = attr(shape=l.shape,dash=l.dash),
         name = "random"
