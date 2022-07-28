@@ -4,9 +4,13 @@
     then run the code in terminal: 
         cmd> julia models.jl path/to/file
     Some issues:
-        - plot without init callback
-        - line shapes, line dash
+        - init plot without init callback
+        - line shape, line dash, and both relevant to line.mode
         - range break
+        - spline order
+        - dash user define
+        - text from Leela-Zero and SAI
+        - auto scale square ratio layout
 =#
 
 using Dash, PlotlyBase
@@ -74,19 +78,27 @@ end=#
 
 function dropdown_multi(value)
     str = ""
-    if typeof(value) <: Array
-        for v in value
-            str = str * "$v+"
+    t = typeof(value)
+    if t <: AbstractArray || t <: AbstractVector
+        if length(value) == 0 
+            str = "markers"
+        else 
+            for v in value
+                str = str * "$v+"
+            end
+            str = str[1:end-1]
         end
-        str = str[1:end-1]
     elseif value isa String
-        str = value
+        str = "markers"
+        #str = value
+        println("2")
     else
         printstyled("Warning: "; color=:yellow)
         println("Type may not support:")
-        println(typeof(value))
-        str = value
+        println(t)
     end
+    #println(typeof(value), '\n', value)
+    #println(typeof(str), '\n', str)
     return str
 end
 
@@ -212,8 +224,8 @@ callback!(app,
     plot(x, y, l)
 end
     
-run_server(app, "0.0.0.0", 8050, debug=true)
-#=
+#run_server(app, "0.0.0.0", 8050, debug=true)
+
 @async run_server(app, "0.0.0.0", 8050, debug=false)
 
 function models()
@@ -224,4 +236,4 @@ function models()
     end
 end
 
-models()=#
+models()
