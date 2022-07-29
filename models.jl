@@ -6,7 +6,6 @@
     Some issues:
         - init plot without init callback
         - line.shape, line.dash, and both relevant to line.mode
-        - line.dash user define
         - text from Leela-Zero and SAI
         - auto scale square ratio layout
         - auto copy text from KLS webpage
@@ -88,11 +87,15 @@ function linedash_lenghtlist(value)
 end 
 
 function linedash_choose(dashOption, lengthList)
-    if linedash_lenghtlist(dashvalue)
+    if linedash_lenghtlist(dashOption)
         return dashOption
     else 
         return lengthList
     end
+end
+
+function pattern_regex(r::Regex)
+    "$r"
 end
 
 function dropdown_multiTrue(value)
@@ -226,6 +229,7 @@ app.layout = html_div() do
         options=[
             (label="solid", value="solid"),
             (label="length list", value="length list"),
+            (label="5px,10px,15px", value="5px,10px,15px"),
             (label="longdashdot", value="longdashdot"),
             (label="longdash", value="longdash"),
             (label="dashdot", value="dashdot"),
@@ -235,9 +239,9 @@ app.layout = html_div() do
         value="solid"  # default init option
     ),
     dcc_input(id="ldashlength",
-        placeholder="e.g. 5px,10px,2px,1px",
+        placeholder="e.g. 5px,10px,15px",
         type="text",
-        pattern="/^(\d{1,}px)(,\d{1,}px){0,}(,\d{1,}px)$/",
+        pattern=pattern_regex(r"^(\d{1,}px)(,\d{1,}px){0,}(,\d{1,}px)$"),
         debounce=true,
         disabled=true
     ),
@@ -267,8 +271,8 @@ callback!(app,
     linedash_lenghtlist(val)
 end
 
-#run_server(app, "0.0.0.0", 8050, debug=true)
-
+run_server(app, "0.0.0.0", 8050, debug=true)
+#=
 @async run_server(app, "0.0.0.0", 8050, debug=false)
 
 function models()
@@ -279,4 +283,4 @@ function models()
     end
 end
 
-models()
+models()=#
