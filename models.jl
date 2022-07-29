@@ -14,6 +14,10 @@
 
 using Dash, PlotlyBase
 
+function check(r::Regex, s::AbstractString)
+    !(match(r,s) === nothing)
+end
+
 function findindex(element, collection)
     m = 1 
     n = []
@@ -74,6 +78,22 @@ function plot(style)
         )
     )
 end=#
+
+function linedash_lenghtlist(value)
+    if value == "length list"
+        return false 
+    else 
+        return true
+    end 
+end 
+
+function linedash_choose(dashOption, lengthList)
+    if linedash_lenghtlist(dashvalue)
+        return dashOption
+    else 
+        return lengthList
+    end
+end
 
 function dropdown_multiTrue(value)
     str = ""
@@ -157,7 +177,7 @@ function plot(xstyle,ystyle,lstyle)
 end
 
 app = dash()
-app.title = "KataGo models' plot"
+app.title = "Networks' Training-Rating Plot | of  KataGo, Leela-Zero and SAI"
 app.layout = html_div() do
     html_label("Xaxis:"),
     dcc_dropdown(id="xstyle",
@@ -205,7 +225,7 @@ app.layout = html_div() do
     dcc_dropdown(id="ldash",
         options=[
             (label="solid", value="solid"),
-            (label="5px,10px,2px,1px", value="5px,10px,2px,1px"),
+            (label="length list", value="length list"),
             (label="longdashdot", value="longdashdot"),
             (label="longdash", value="longdash"),
             (label="dashdot", value="dashdot"),
@@ -213,6 +233,13 @@ app.layout = html_div() do
             (label="dot", value="dot")
         ],
         value="solid"  # default init option
+    ),
+    dcc_input(id="ldashlength",
+        placeholder="e.g. 5px,10px,2px,1px",
+        type="text",
+        pattern="/^(\d{1,}px)(,\d{1,}px){0,}(,\d{1,}px)$/",
+        debounce=true,
+        disabled=true
     ),
     dcc_graph(id="curve") 
 end
@@ -225,12 +252,21 @@ callback!(app,
     Input("lshape", "value"),
     Input("lsmoothing", "value"),
     Input("ldash", "value"),
-    ) do x, y, lm, lsh, lsm, ld
+    Input("ldashlength", "value"),
+    ) do x, y, lm, lsh, lsm, ld, ldl
     lm = dropdown_multiTrue(lm)
+    ld = linedash_choose(ld, ldl)
     l = (mode=lm, shape=lsh, smoothing=lsm, dash=ld)
     plot(x, y, l)
 end
-    
+
+callback!(app,
+    Output("ldashlength", "disabled"),
+    Input("ldash", "value"),
+    ) do val 
+    linedash_lenghtlist(val)
+end
+
 #run_server(app, "0.0.0.0", 8050, debug=true)
 
 @async run_server(app, "0.0.0.0", 8050, debug=false)

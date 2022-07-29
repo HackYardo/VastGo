@@ -169,14 +169,16 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 
 ## Contribute
 ```julia
-@label Issues = https://github.com/HackYardo/VastGo/issues
-@label Discussions = https://github.com/HackYardo/VastGo/discussions
-
 if sourceCode in contribution
-  @goto Issues
+    @goto Issues
 else
-  @goto Discussions
+    @goto Discussions
 end
+
+@label Issues
+    browser("https://github.com/HackYardo/VastGo/issues")
+@label Discussions
+    browser("https://github.com/HackYardo/VastGo/discussions")
 ```
 
 ## Doc
