@@ -7,6 +7,7 @@
         - init plot without init callback
         - line.shape, line.dash, and both relevant to line.mode
         - text from Leela-Zero and SAI
+          - leelaz: r"^\d{1,3}.{1,}\d{4}-.{2,}\d$"
         - auto scale square ratio layout
         - auto copy text from KLS webpage
 =#
