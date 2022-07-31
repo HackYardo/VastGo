@@ -1,21 +1,35 @@
-#=
-    This code is for realizing Regex in action.
-    Just copy text from https://katagotraining.org/networks/ to a file,
-    then run the code in terminal: 
-        cmd> julia models.jl path/to/file
-    Some issues:
-        - init plot without init callback
-        - line.shape, line.dash, and both relevant to line.mode
-        - text from Leela-Zero and SAI
-          - leelaz: r"^\d{1,3}.{1,}\d{4}-.{2,}\d$"
-        - auto scale square ratio layout
-        - auto copy text from KLS webpage
-=#
-
 using Dash, PlotlyBase
+
+function regex2str(r::Regex)
+    "$r"
+end
 
 function check(r::Regex, s::AbstractString)
     !(match(r,s) === nothing)
+end
+
+function diy_match(r::Regex, file::String)
+    lines = readlines(file)
+    mlines = match.(r,lines)
+    v = []
+    for line in mlines
+        if isnothing(line)
+            continue
+        else 
+            v = cat(v, line, dims=1)
+        end
+    end
+    v 
+end
+
+function average(vector)
+    num = 0
+    sum = 0
+    for v in vector 
+        sum = sum + v
+        num = num + 1
+    end
+    sum/num  
 end
 
 function findindex(element, collection)
@@ -29,6 +43,61 @@ function findindex(element, collection)
     end 
     return n 
 end 
+
+function linedash_lenghtlist(value)
+    if value == "length list"
+        return false 
+    else 
+        return true
+    end 
+end 
+
+function linedash_choose(dashOption, lengthList)
+    if linedash_lenghtlist(dashOption)
+        return dashOption
+    else 
+        return lengthList
+    end
+end
+
+function dropdown_multiTrue(value)
+    str = ""
+    t = typeof(value)
+    if t <: AbstractArray || t <: AbstractVector
+        if length(value) == 0 
+            str = "markers"
+        else 
+            for v in value
+                str = str * "$v+"
+            end
+            str = str[1:end-1]
+        end
+    elseif value isa String
+        str = "markers"
+        #str = value
+        #println("2")
+    else
+        printstyled("Warning: "; color=:yellow)
+        println("Type may not support:")
+        println(t)
+    end
+    #println(typeof(value), '\n', value)
+    #println(typeof(str), '\n', str)
+    return str
+end
+
+#= example code from plotly.com
+function plot(style)
+    x = range(1, stop=200, length=30)
+    Plot(
+        scatter(x=x, y=x.^3, range_x=[0.8, 250], mode="markers"),
+        Layout(
+            yaxis_type="linear",
+            xaxis_type=style,
+            xaxis_range=[log10(0.8), log10(250)]
+        )
+    )
+end=#
 
 function get_trace()
     file = ARGS[1]
@@ -62,67 +131,10 @@ function get_trace()
         end
         traces[name] = (x=m, y=n)
     end
+    avg = average(traces["b6c96"].x)
+    println(avg)
     #println(keys(traces))
     return traces
-end
-
-#= example code from plotly.com
-function plot(style)
-    x = range(1, stop=200, length=30)
-    Plot(
-        scatter(x=x, y=x.^3, range_x=[0.8, 250], mode="markers"),
-        Layout(
-            yaxis_type="linear",
-            xaxis_type=style,
-            xaxis_range=[log10(0.8), log10(250)]
-        )
-    )
-end=#
-
-function linedash_lenghtlist(value)
-    if value == "length list"
-        return false 
-    else 
-        return true
-    end 
-end 
-
-function linedash_choose(dashOption, lengthList)
-    if linedash_lenghtlist(dashOption)
-        return dashOption
-    else 
-        return lengthList
-    end
-end
-
-function pattern_regex(r::Regex)
-    "$r"
-end
-
-function dropdown_multiTrue(value)
-    str = ""
-    t = typeof(value)
-    if t <: AbstractArray || t <: AbstractVector
-        if length(value) == 0 
-            str = "markers"
-        else 
-            for v in value
-                str = str * "$v+"
-            end
-            str = str[1:end-1]
-        end
-    elseif value isa String
-        str = "markers"
-        #str = value
-        #println("2")
-    else
-        printstyled("Warning: "; color=:yellow)
-        println("Type may not support:")
-        println(t)
-    end
-    #println(typeof(value), '\n', value)
-    #println(typeof(str), '\n', str)
-    return str
 end
 
 function trace(l)
@@ -180,9 +192,29 @@ function plot(xstyle,ystyle,lstyle)
     )
 end
 
-app = dash()
-app.title = "Networks' Training-Rating Plot | of  KataGo, Leela-Zero and SAI"
-app.layout = html_div() do
+about = dcc_markdown() do
+    """
+    This code is for **realizing Regex in action**.
+    Just copy text from https://katagotraining.org/networks/ to a file,
+    then run the code in terminal: `cmd> julia models.jl path/to/file` 
+    Or accelerate it via \
+[sysimage](https://julialang.github.io/\
+PackageCompiler.jl/dev/examples/plots.html):
+    ```shell
+    cmd> julia --sysimage path/to/accelerate.so models.jl path/to/file
+    ```
+    
+    Some issues:
+      - init plot without init callback
+      - line.shape, line.dash, and both relevant to line.mode
+      - text from Leela-Zero and SAI
+      - leelaz: r''^sd{1,3}.{1,}sd{4}-.{2,}sdS''
+      - auto scale square ratio layout
+      - auto copy text from KLS webpage
+    """
+end
+
+style = html_div() do 
     html_label("Xaxis:"),
     dcc_dropdown(id="xstyle",
         options=[
@@ -242,12 +274,17 @@ app.layout = html_div() do
     dcc_input(id="ldashlength",
         placeholder="e.g. 5px,10px,15px",
         type="text",
-        pattern=pattern_regex(r"^(\d{1,}px)(,\d{1,}px){0,}(,\d{1,}px)$"),
+        pattern=regex2str(r"^(\d{1,}px)(,\d{1,}px){0,}(,\d{1,}px)$"),
         debounce=true,
         disabled=true
-    ),
-    dcc_graph(id="curve") 
+    )
 end
+
+curve = html_div(dcc_graph(id="curve"))
+
+app = dash()
+app.title = "Networks' Training-Rating Plot | of KataGo, Leela-Zero and SAI"
+app.layout = html_div([about, style, curve])
 
 callback!(app,
     Output("curve", "figure"),

@@ -157,7 +157,7 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
   - 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 - Why so slow? 
   - Julia's compiler sort of optimises code, and it takes time.
-  - Reuse the compiled work via [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html#examples-plots).
+  - Reuse the compiled work via [sysimage](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html).
 - Why Julia?
   - [Evan Miller](https://www.evanmiller.org/why-im-betting-on-julia.html) 
 - Why Plotly(JS) Dash?
