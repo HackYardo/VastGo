@@ -1,4 +1,4 @@
-### Standard Go
+# Standard Go
 - [ ] basic game features
   - [x] static Go board 19x19
   - [x] mouse-click event to play stones
@@ -59,7 +59,7 @@
   - [ ] small to big KataGo models
   - [ ] rank, rating, ladder match 
   - [ ] opening book of modern Go community? *(exercise opening and dissecting sequences)*
-### Nonstandard Go
+# Nonstandard Go
 - [ ] Preset
   - [ ] [Random Start Go](https://senseis.xmp.net/?RandomStartGo), need a moveNumber *(exercise fighting or ending games)*
   - [ ] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz) *(exercise making/breaking eye shapes)* 
@@ -83,10 +83,10 @@
   - [ ] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
   - [ ] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
   - [ ] [Alice in Wonderland](https://www.britannica.com/topic/Alices-Adventures-in-Wonderland) mode(all rules random and need to guess)
-### Non Go
+# Non Go
 - [ ] not merely Go
   - [ ] Five In A Row
   - [ ] Checkers
   - [ ] Reversi
 - [ ] not merely Go board and stones
-  - [ ] Chess with Stockfish 
+  - [ ] Chess with [Stockfish](https://stockfishchess.org/) and [Leela Chess Zero (Lc0)](https://lczero.org/)
