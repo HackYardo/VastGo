@@ -1,6 +1,7 @@
 # 0.0.1 Just Work
 
-- mouse click to place stones
+- multi-platform
+- click to place stones
 - auto take turns
 - report final_score when game over
 - One Color Go
@@ -14,8 +15,7 @@
 
 # 0.0.2 GTP
 
-- multi-platform
-- multi-bot
+- multi-bot, ***Now Here***
 - complete modern universal GTP CLI (API)
 - bots' status table
 - CLI/WebApp double modes?
@@ -70,10 +70,10 @@
 
 # 0.0.6 Custom
 
+- i18n
 - CSS theme
 - stones' color
 - boardsize ratio px adjust
-- i18n
 
 # 0.0.7 Chess
 

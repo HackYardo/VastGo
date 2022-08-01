@@ -1,5 +1,8 @@
 using Dash, PlotlyBase
 
+const KATAGO = r"^k.{2,}\d{3,}\.\d"
+const LEELAZ = r"^\d{1,3}.{1,}\d{4}-.{2,}\d$"
+
 function regex2str(r::Regex)
     "$r"
 end
@@ -8,7 +11,7 @@ function check(r::Regex, s::AbstractString)
     !(match(r,s) === nothing)
 end
 
-function diy_match(r::Regex, file::String)
+function file_match(r::Regex, file::String)
     lines = readlines(file)
     mlines = match.(r,lines)
     v = []
@@ -16,10 +19,25 @@ function diy_match(r::Regex, file::String)
         if isnothing(line)
             continue
         else 
-            v = cat(v, line, dims=1)
+            v = cat(v, line.match, dims=1)
         end
     end
     v 
+end
+
+function vector2tuple(names, xVector, yVector)
+    names = unique(nameVector)
+    for name in names 
+        p = findindex(name, nameVector)
+        m = []
+        n = []
+        for q in p
+            m = cat(m, xVector[q], dims=1)
+            n = cat(n, yVector[q], dims=1)
+        end
+        traces[name] = (x=m, y=n)
+    end
+    traces
 end
 
 function average(vector)
@@ -98,7 +116,37 @@ function plot(style)
         )
     )
 end=#
+function data_match()
+    katago = file_match(KATAGO, ARGS[1])
+    leelaz = file_match(LEELAZ, ARGS[1])
+    kgNNStructVector = []; kgDataRowsVector = []; kgELOVector = [];
+    lzNNStructVector = []; lzGamesVector = []; lzELOVector = [];
 
+    for line in katago
+        lineSplit = split(line)
+        nnStruct = match(r"b.{3,5}\d",lineSplit[1]).match
+        dataRows = parse(Int64, match(r"d.{2,}",lineSplit[1]).match[2:end])
+        elo = parse(Float64, lineSplit[end])
+        kgNNStructVector = cat(kgNNStructVector, nnStruct, dims=1)
+        kgDataRowsVector = cat(kgDataRowsVector, dataRows, dims=1)
+        kgELOVector = cat(kgELOVector, elo, dims=1)
+    end 
+    kgTraces = vector2tuple(kgNNStructVector,kgDataRowsVector,kgELOVector)
+
+    for line in leelaz
+        lineSplit = split(line, '\t')
+        nnStruct = lineSplit[4]
+        games = parse(Int64, lineSplit[7])
+        elo = parse(Float64, lineSplit[6])
+        lzNNStructVector = cat(lzNNStructVector, nnStruct, dims=1)
+        lzGamesVector = cat(lzGamesVector, games, dims=1)
+        lzELOVector = cat(lzELOVector, elo, dims=1)
+    end
+    lzTraces = vector2tuple(lzNNStructVector,lzGamesVector,lzELOVector)
+
+    merge(kgTraces, lzTraces)
+end
+#=
 function get_trace()
     file = ARGS[1]
     lines = readlines(file)
@@ -136,7 +184,7 @@ function get_trace()
     #println(keys(traces))
     return traces
 end
-
+=#
 function trace(l)
     #lmode = dropdown_multiTrue(l.mode)
     #println(typeof(l.mode),'\n',l.mode)
@@ -157,9 +205,9 @@ function trace(l)
     end
     println(typeof(l.mode),'\n',l.mode)
     =#
-    traces = get_trace()
+    traces = data_match()
     trace = [ scatter(
-        x = [500000],
+        x = [1],
         y = [1],
         mode = l.mode,
         line = attr(shape=l.shape, smoothing=l.smoothing, dash=l.dash),
@@ -205,10 +253,10 @@ PackageCompiler.jl/dev/examples/plots.html):
     ```
     
     Some issues:
-      - init plot without init callback
+      - init plot without handy callback
+        - **there're no init callback for plot components**
       - line.shape, line.dash, and both relevant to line.mode
       - text from Leela-Zero and SAI
-      - leelaz: r''^sd{1,3}.{1,}sd{4}-.{2,}sdS''
       - auto scale square ratio layout
       - auto copy text from KLS webpage
     """
