@@ -1,5 +1,6 @@
 # Standard Go
-- [ ] basic game features
+
+- basic game features
   - [x] static Go board 19x19
   - [x] mouse-click event to play stones
   - [x] dynamic Go board
@@ -11,15 +12,15 @@
   - [ ] load/save sgf
   - [ ] time setting
   - [ ] handicap
-- [ ] features from [GNUGo](https://www.gnu.org/software/gnugo/gnugo_19.html#SEC200)    
+- features from [GNUGo](https://www.gnu.org/software/gnugo/gnugo_19.html#SEC200)  
   - [ ] eval_eye
   - [ ] owl_attack, owl_defend
   - [ ] initial_influence
-- [ ] features from modern Go-playing artificial intelligence engines
+- features from modern Go-playing artificial intelligence engines
   - [ ] winrate
   - [ ] order, principal variation 
   - [ ] visits
-- [ ] features from KataGo [1](https://github.com/lightvector/KataGo/tree/master/cpp/configs) [2](https://github.com/lightvector/KataGo/tree/master/docs)
+- features from KataGo [1](https://github.com/lightvector/KataGo/tree/master/cpp/configs) [2](https://github.com/lightvector/KataGo/tree/master/docs)
   - [x] ruleSet, komi (-150,150)
   - [ ] scoreLead, ownership, ownershipStdev *(exercise evaluating positions)*
   - [x] boardSize (2x2,19x19) 
@@ -30,14 +31,14 @@
   - [ ] kata-raw-nn SYMMETRY (0,7)+("all")
   - [ ] opening books on 7x7 board
   - [ ] evalsgf, runownershiptests, analysis 
-- [ ] features from KaTrain
+- features from KaTrain
   - [ ] weak bot
   - [ ] style bot 
-- [ ] features from [yishn](https://github.com/yishn)
+- features from [yishn](https://github.com/yishn)
   - [ ] KataJigo 
-- [ ] features from [waterfire](https://waterfire.us/joseki.htm)
+- features from [waterfire](https://waterfire.us/joseki.htm)
   - [ ] Kogo's Joseki Dictionary
-- [ ] advanced features 
+- advanced features 
   - [ ] CLI in web-app 
     - [x] add, behind the Go board
     - [ ] test all commands
@@ -59,34 +60,39 @@
   - [ ] small to big KataGo models
   - [ ] rank, rating, ladder match 
   - [ ] opening book of modern Go community? *(exercise opening and dissecting sequences)*
+  - [ ] i18n
+
 # Nonstandard Go
-- [ ] Preset
+
+- Preset
   - [ ] [Random Start Go](https://senseis.xmp.net/?RandomStartGo), need a moveNumber *(exercise fighting or ending games)*
   - [ ] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz) *(exercise making/breaking eye shapes)* 
   - [ ] [Dots Go](https://senseis.xmp.net/?DotsGo) *(exercise trading or ko fighting)*
-- [ ] Visibility
+- Visibility
   - [x] [One Color Go](https://senseis.xmp.net/?OneColourGo)
   - [x] [Phantom Go](https://senseis.xmp.net/?PhantomGo)
   - [x] [Blind Go](https://senseis.xmp.net/?BlindGo)
   - [ ] [Fog Of War Go](https://senseis.xmp.net/?FogOfWar)
-- [ ] Multiple Players
+- Multiple Players
   - [ ] [Multi-color Go](https://senseis.xmp.net/?MultiColorGo)
   - [ ] [Pair Go](https://senseis.xmp.net/?PairGo)
-- [ ] Moves && Positions
+- Moves && Positions
   - [ ] [Double Go](https://senseis.xmp.net/?DoubleGo)
   - [ ] Quantum Go [1](https://lifein19x19.com/viewtopic.php?f=9&t=18360) [2](https://senseis.xmp.net/?QuantumGo) [3](https://arxiv.org/abs/2007.12186)
   - [x] [Magnet Go](https://senseis.xmp.net/?ElectricGo)
-- [ ] Other
+- Other
   - [ ] reuse captures by each other, need to limit the number of stones, maybe 180 *(exercise counting liberties)*
   - [ ] [First Capture Go](https://senseis.xmp.net/?AtariGo) *(exercise capturing)*
   - [ ] [Topological Go](https://senseis.xmp.net/?TopologicalGo)?
   - [ ] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
   - [ ] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
   - [ ] [Alice in Wonderland](https://www.britannica.com/topic/Alices-Adventures-in-Wonderland) mode(all rules random and need to guess)
+
 # Non Go
-- [ ] not merely Go
+
+- not merely Go
   - [ ] Five In A Row
   - [ ] Checkers
   - [ ] Reversi
-- [ ] not merely Go board and stones
+- not merely Go board and stones
   - [ ] Chess with [Stockfish](https://stockfishchess.org/) and [Leela Chess Zero (Lc0)](https://lczero.org/)

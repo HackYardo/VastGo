@@ -72,4 +72,10 @@
 
 - CSS theme
 - stones' color
-- boardsize x,y adjust
+- boardsize ratio px adjust
+- i18n
+
+# 0.0.7 Chess
+
+- UCI
+- Stockfish, Lc0
