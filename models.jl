@@ -26,9 +26,10 @@ function file_match(r::Regex, file::String)
 end
 
 function vector2tuple(names, xVector, yVector)
-    names = unique(nameVector)
-    for name in names 
-        p = findindex(name, nameVector)
+    unames = unique(names)
+    traces = Dict()
+    for name in unames 
+        p = findindex(name, names)
         m = []
         n = []
         for q in p
@@ -137,7 +138,7 @@ function data_match()
         lineSplit = split(line, '\t')
         nnStruct = lineSplit[4]
         games = parse(Int64, lineSplit[7])
-        elo = parse(Float64, lineSplit[6])
+        elo = parse(Float64, lineSplit[5])
         lzNNStructVector = cat(lzNNStructVector, nnStruct, dims=1)
         lzGamesVector = cat(lzGamesVector, games, dims=1)
         lzELOVector = cat(lzELOVector, elo, dims=1)
@@ -207,7 +208,7 @@ function trace(l)
     =#
     traces = data_match()
     trace = [ scatter(
-        x = [1],
+        x = [9000],
         y = [1],
         mode = l.mode,
         line = attr(shape=l.shape, smoothing=l.smoothing, dash=l.dash),
@@ -243,7 +244,8 @@ end
 about = dcc_markdown() do
     """
     This code is for **realizing Regex in action**.
-    Just copy text from https://katagotraining.org/networks/ to a file,
+    Just copy text from https://katagotraining.org/networks/ and 
+    https://zero.sjeng.org/ to a file,
     then run the code in terminal: `cmd> julia models.jl path/to/file` 
     Or accelerate it via \
 [sysimage](https://julialang.github.io/\
