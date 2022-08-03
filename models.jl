@@ -3,6 +3,28 @@ using Dash, PlotlyBase
 const KATAGO = r"^k.{2,}\d{3,}\.\d"
 const LEELAZ = r"^\d{1,3}.{1,}\d{4}-.{2,}\d$"
 
+about = dcc_markdown() do
+    """
+    This code is for **realizing Regex in action**.
+    Just copy text from https://katagotraining.org/networks/ and 
+    https://zero.sjeng.org/ to a file,
+    then run the code in terminal: `cmd> julia models.jl path/to/file` 
+    Or accelerate it via \
+[sysimage](https://julialang.github.io/\
+PackageCompiler.jl/dev/examples/plots.html):
+    ```shell
+    cmd> julia --sysimage path/to/accelerate.so models.jl path/to/file
+    ```
+    
+    Some issues:
+      - init plot without handy callback
+        - **there're no auto init callback for plot components**
+      - line.shape, line.dash, both relevant to line.mode
+      - text from SAI
+      - auto scale square ratio layout
+    """
+end
+
 function regex2str(r::Regex)
     "$r"
 end
@@ -239,29 +261,6 @@ function plot(xstyle,ystyle,lstyle)
         [trace for trace in trace(lstyle)],
         layout(xstyle,ystyle)
     )
-end
-
-about = dcc_markdown() do
-    """
-    This code is for **realizing Regex in action**.
-    Just copy text from https://katagotraining.org/networks/ and 
-    https://zero.sjeng.org/ to a file,
-    then run the code in terminal: `cmd> julia models.jl path/to/file` 
-    Or accelerate it via \
-[sysimage](https://julialang.github.io/\
-PackageCompiler.jl/dev/examples/plots.html):
-    ```shell
-    cmd> julia --sysimage path/to/accelerate.so models.jl path/to/file
-    ```
-    
-    Some issues:
-      - init plot without handy callback
-        - **there're no init callback for plot components**
-      - line.shape, line.dash, and both relevant to line.mode
-      - text from Leela-Zero and SAI
-      - auto scale square ratio layout
-      - auto copy text from KLS webpage
-    """
 end
 
 style = html_div() do 
