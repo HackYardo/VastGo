@@ -1,5 +1,5 @@
 ![static](./board.png)
-future /\ , \/ current
+future /\ , \\/ current
 ![dynamic](./dynamic.gif)
 
 ## About
