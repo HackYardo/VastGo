@@ -17,11 +17,12 @@ PackageCompiler.jl/dev/examples/plots.html):
     ```
     
     Some issues:
-      - init plot without handy callback
-        - **there're no auto init callback for plot components**
-      - line.shape, line.dash, both relevant to line.mode
-      - text from SAI
-      - auto scale square ratio layout
+      - [x] init plot without handy callback
+        - there're **no auto init callback for plot components**
+      - [ ] line.shape, line.dash, both relevant to line.mode
+      - [ ] text from SAI
+        - differentiate from Leelaz
+      - [ ] auto scale square ratio layout
     """
 end
 
@@ -263,6 +264,21 @@ function plot(xstyle,ystyle,lstyle)
     )
 end
 
+function plot()
+    l = (mode="markers", shape="spline", smoothing=1.3, dash="solid")
+    x = "log"
+    y = "linear"
+    p = plot(x,y,l)
+    #print(json(p,2))
+    return p
+end
+
+function plot!(p,x,y,l)
+    #= example from PlotlyBase docstring
+    update!(p, Dict(:marker => Dict(:color => "red")), layout=Layout(title="this is a title"), marker_symbol="star")=#
+    update!(p, layout=layout(x, y), mode=l.mode, line=attr(shape=l.shape, smoothing=l.smoothing, dash=l.dash))
+end
+
 style = html_div() do 
     html_label("Xaxis:"),
     dcc_dropdown(id="xstyle",
@@ -328,8 +344,8 @@ style = html_div() do
         disabled=true
     )
 end
-
-curve = html_div(dcc_graph(id="curve"))
+p = plot()
+curve = html_div(dcc_graph(id="curve", figure=p))
 
 app = dash()
 app.title = "Networks' Training-Rating Plot | of KataGo, Leela-Zero and SAI"
@@ -337,6 +353,7 @@ app.layout = html_div([about, style, curve])
 
 callback!(app,
     Output("curve", "figure"),
+    #Input("curve", "figure"),
     Input("xstyle", "value"),
     Input("ystyle", "value"),
     Input("lmode", "value"),
@@ -348,7 +365,7 @@ callback!(app,
     lm = dropdown_multiTrue(lm)
     ld = linedash_choose(ld, ldl)
     l = (mode=lm, shape=lsh, smoothing=lsm, dash=ld)
-    plot(x, y, l)
+    plot!(p, x, y, l)
 end
 
 callback!(app,
@@ -358,8 +375,8 @@ callback!(app,
     linedash_lenghtlist(val)
 end
 
-run_server(app, "0.0.0.0", 8050, debug=true)
-#=
+#run_server(app, "0.0.0.0", 8050, debug=true)
+
 @async run_server(app, "0.0.0.0", 8050, debug=false)
 
 function models()
@@ -370,4 +387,4 @@ function models()
     end
 end
 
-models()=#
+models()
