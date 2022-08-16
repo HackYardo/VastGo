@@ -37,11 +37,11 @@ Ideas:
 - **compatible**: SBKV for winrate and OGSC for score, *THE SAME SGF AS Sabaki AND Ogatak* 
 
 ## Features
-- Some [nonstandard Go modes ](./features.md#nonstandard-go) and their free mixtures.
-- See [features.md ](./features.md) for the wish list.
-- See [versions.md ](./versions.md) for the road map.
+- [some nonstandard Go modes and their free mixtures](./features.md#nonstandard-go)
+- [the wish list](./features.md)
+- [the road map](./versions.md)
 
-***Be careful: avoid repetition to existing site/software, i.e. [boardspace](https://www.boardspace.net/english/index.shtml)/[kahv](https://go.kahv.io/)/[littlegolem](https://www.littlegolem.net/jsp/main/), and can be played/analyzed by corresponding bot/AI***
+*Be careful: avoid repetition to existing site/software, i.e. [boardspace](https://www.boardspace.net/english/index.shtml)/[kahv](https://go.kahv.io/)/[littlegolem](https://www.littlegolem.net/jsp/main/), and can be played/analyzed by corresponding bot/AI*
 
 ## Usage
 
