@@ -65,15 +65,9 @@ function vector2tuple(names, xVector, yVector)
 end
 
 function average(vector)
-    num = 0
-    sum = 0
-    for v in vector 
-        sum = sum + v
-        num = num + 1
-    end
-    sum/num  
+    sum(vector)/length(vector) 
 end
-
+#println(average([1,3,5]))
 function findindex(element, collection)
     m = 1 
     n = []
