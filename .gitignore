@@ -5,6 +5,8 @@
 # VastGo.gitignore
 
 */
+!src/
+!doc/
 
 # Plotly-Dash.gitignore
 
