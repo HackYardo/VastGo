@@ -46,6 +46,18 @@ Ideas:
 ## Usage
 
 <details>
+  <summary>Status</summary>
+
+Status | computer | phone
+--- | --- | ---
+julia | 1.8.0 | 1.6.7 or 1.7.2
+KataGo | **PASS** | *fail*
+Leela-Zero | *fail* | *fail*
+GNU Go | *fail* | *fail*
+
+</details>
+
+<details>
 	<summary>Hard/Software requirements</summary>
   
 **Hardware:**
