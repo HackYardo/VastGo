@@ -1,0 +1,98 @@
+# Standard Go
+
+- basic game features
+  - [x] static Go board 19x19
+  - [x] mouse-click event to play stones
+  - [x] dynamic Go board
+  - [ ] GTP to call Go engines and manage games
+  - [x] final_score *(exercise evaluating the ends)*
+  - [ ] final_status_list *(exercise evaluating groups of stones)* 
+  - [x] judge game-end, if `RE[` in sgf is not empty
+  - [X] completely play games
+  - [ ] load/save sgf
+  - [ ] time setting
+  - [ ] handicap
+- features from [GNUGo](https://www.gnu.org/software/gnugo/gnugo_19.html#SEC200)  
+  - [ ] eval_eye
+  - [ ] owl_attack, owl_defend
+  - [ ] initial_influence
+- features from modern Go-playing artificial intelligence engines
+  - [ ] winrate
+  - [ ] order, principal variation 
+  - [ ] visits
+- features from KataGo [1](https://github.com/lightvector/KataGo/tree/master/cpp/configs) [2](https://github.com/lightvector/KataGo/tree/master/docs)
+  - [x] ruleSet, komi (-150,150)
+  - [ ] scoreLead, ownership, ownershipStdev *(exercise evaluating positions)*
+  - [x] boardSize (2x2,19x19) 
+  - [ ] boardSize (2x2,29x29)?
+  - [ ] playoutDoublingAdvantage (-3,3), dynamic
+  - [ ] wideRootNoise (0,1)
+  - [ ] resignThreshold (-1,1), resignMinScoreDifference, resignConsecTurns
+  - [ ] kata-raw-nn SYMMETRY (0,7)+("all")
+  - [ ] opening books on 7x7 board
+  - [ ] evalsgf, runownershiptests, analysis 
+- features from KaTrain
+  - [ ] weak bot
+  - [ ] style bot 
+- features from [yishn](https://github.com/yishn)
+  - [ ] KataJigo 
+- features from [waterfire](https://waterfire.us/joseki.htm)
+  - [ ] Kogo's Joseki Dictionary
+- advanced features 
+  - [ ] CLI in web-app 
+    - [x] add, behind the Go board
+    - [ ] test all commands
+    - [ ] use extra file to store the history and show in TaxtArea
+    - [ ] `up/down` to find commands
+    - [ ] placehold commands and `tab` to complete commands
+  - [ ] navigate, move history, autoplay, guess mode, to implement **SGF** actually *(exercise memorizing games)* 
+  - [ ] exercise mode
+  - [ ] self-adaptive stoneSize(traceSize) when zoom in/out
+  - [ ] square board response to windowSize
+  - [ ] game tree
+  - [ ] games contain
+  - [ ] multiple boards preview
+  - [ ] load/save analyzed svg
+  - [ ] svg2sgf, sgf2svg [Ref1](https://github.com/julianandrews/sgf-render)
+  - [ ] Go games book, pdf
+  - [ ] fuzzy stone placement
+  - [ ] select data to analyze
+  - [ ] small to big KataGo models
+  - [ ] rank, rating, ladder match 
+  - [ ] opening book of modern Go community? *(exercise opening and dissecting sequences)*
+  - [ ] i18n
+
+# Nonstandard Go
+
+- Preset
+  - [ ] [Random Start Go](https://senseis.xmp.net/?RandomStartGo), need a moveNumber *(exercise fighting or ending games)*
+  - [ ] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz) *(exercise making/breaking eye shapes)* 
+  - [ ] [Dots Go](https://senseis.xmp.net/?DotsGo) *(exercise trading or ko fighting)*
+- Visibility
+  - [x] [One Color Go](https://senseis.xmp.net/?OneColourGo)
+  - [x] [Phantom Go](https://senseis.xmp.net/?PhantomGo)
+  - [x] [Blind Go](https://senseis.xmp.net/?BlindGo)
+  - [ ] [Fog Of War Go](https://senseis.xmp.net/?FogOfWar)
+- Multiple Players
+  - [ ] [Multi-color Go](https://senseis.xmp.net/?MultiColorGo)
+  - [ ] [Pair Go](https://senseis.xmp.net/?PairGo)
+- Moves && Positions
+  - [ ] [Double Go](https://senseis.xmp.net/?DoubleGo)
+  - [ ] Quantum Go [1](https://lifein19x19.com/viewtopic.php?f=9&t=18360) [2](https://senseis.xmp.net/?QuantumGo) [3](https://arxiv.org/abs/2007.12186)
+  - [x] [Magnet Go](https://senseis.xmp.net/?ElectricGo)
+- Other
+  - [ ] reuse captures by each other, need to limit the number of stones, maybe 180 *(exercise counting liberties)*
+  - [ ] [First Capture Go](https://senseis.xmp.net/?AtariGo) *(exercise capturing)*
+  - [ ] [Topological Go](https://senseis.xmp.net/?TopologicalGo)?
+  - [ ] [Toroidal Go](https://senseis.xmp.net/?ToroidalGo)
+  - [ ] [Neurotic Go](https://senseis.xmp.net/?NeuroticGo)
+  - [ ] [Alice in Wonderland](https://www.britannica.com/topic/Alices-Adventures-in-Wonderland) mode(all rules random and need to guess)
+
+# Non Go
+
+- not merely Go
+  - [ ] Five In A Row
+  - [ ] Checkers
+  - [ ] Reversi
+- not merely Go board and stones
+  - [ ] Chess with [Stockfish](https://stockfishchess.org/) and [Leela Chess Zero (Lc0)](https://lczero.org/)
