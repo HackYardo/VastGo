@@ -36,20 +36,6 @@ function check(r::Regex, s::AbstractString)
     !(match(r,s) === nothing)
 end
 
-function file_match(r::Regex, file::String)
-    lines = readlines(file)
-    mlines = match.(r,lines)
-    v = []
-    for line in mlines
-        if isnothing(line)
-            continue
-        else 
-            v = cat(v, line.match, dims=1)
-        end
-    end
-    v 
-end
-
 function vector2tuple(names, xVector, yVector)
     unames = unique(names)
     traces = Dict()

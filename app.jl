@@ -619,8 +619,8 @@ whatgame = html_details([whatgamesummary,whatgamemarkdown])
 howplaysummary = html_summary("How to play?")
 howplaymarkdown = dcc_markdown() do
     "
-    \n> [the easy way](https://www.usgo.org/learn-play) or 
-    [the hard way](https://lightvector.github.io/KataGo/rules.html)
+    \n> [THE EASY WAY](https://www.usgo.org/learn-play) or 
+    [THE HARD WAY](https://lightvector.github.io/KataGo/rules.html)
     \n> **With bots**:
     \n ![withbot](assets/withbot.png)
     \n> **Free and Open Source Software** (FOSS):

@@ -58,6 +58,39 @@ function findindex(element, collection)
 end 
 
 """
+`file_match(r::Regex, file::String)`
+
+Return a vector of the matched lines.
+
+# Examples
+
+```
+shell> cat f.txt
+000
+010
+210
+
+julia> r = r"^0.{2,}"; file_match(r,"f.txt")
+2-element Vector{Any}:
+ "000"
+ "010"
+```
+"""
+function file_match(r::Regex, file::String)
+    lines = readlines(file)
+    mlines = match.(r,lines)
+    v = []
+    for line in mlines
+        if isnothing(line)
+            continue
+        else 
+            v = cat(v, line.match, dims=1)
+        end
+    end
+    v 
+end
+
+"""
 `pkgNames_strFile(Pkg::Module)`
 
 Print `names`(Pkg) into a file.
@@ -100,5 +133,5 @@ utilityfunction2
 ```
 """
 function utility()
-    println("average\nfindindex\npkgNames_strFile")
+    println("average\nfindindex\nfile_match\npkgNames_strFile")
 end

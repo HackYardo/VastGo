@@ -79,7 +79,7 @@ julia> ]
 </details>
 
 <details>
-  <summary>in terminal——run terminal.jl</summary>
+  <summary>in terminal——run src/terminal.jl</summary>
 
 1. edit the first line of `terminal.jl` to indicate the command of running a bot
 2. run `terminal.jl`
@@ -105,11 +105,11 @@ quit
 </details>
 
 <details>
-  <summary>in browser——run kata_dash.jl</summary>
+  <summary>in browser——run app.jl</summary>
 
-1. run `kata_dash.jl`
+1. run `app.jl`
 ```shell
-cmd> julia kata_dash.jl
+cmd> julia app.jl
 ```
 2. wait until
 ```julia
