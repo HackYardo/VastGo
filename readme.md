@@ -1,10 +1,10 @@
-![static](./board.png)
+![static](assets/board.png)
 future /\ , \\/ current
-![dynamic](./dynamic.gif)
+![dynamic](assets/dynamic.gif)
 
 ## About
 
-**Note: Still in the very early [stage](./versions.md#001-just-work), don't expect to be stable.**
+**Note: Still in the very early [stage](doc/versions.md#001-just-work), don't expect to be stable.**
 
 > The repo is about the game of [Go/Baduk/Weiqi](https://www.usgo.org/learn-play), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
 
@@ -37,9 +37,9 @@ Ideas:
 - **compatible**: SBKV for winrate and OGSC for score, *THE SAME SGF AS Sabaki AND Ogatak* 
 
 ## Features
-- [some nonstandard Go modes and their free mixtures](./features.md#nonstandard-go)
-- [the wish list](./features.md)
-- [the road map](./versions.md)
+- [some nonstandard Go modes and their free mixtures](doc/features.md#nonstandard-go)
+- [the wish list](doc/features.md)
+- [the road map](doc/versions.md)
 
 *Be careful: avoid repetition to existing site/software, i.e. [boardspace](https://www.boardspace.net/english/index.shtml)/[kahv](https://go.kahv.io/)/[littlegolem](https://www.littlegolem.net/jsp/main/), and can be played/analyzed by corresponding bot/AI*
 
@@ -181,8 +181,8 @@ end
 ```
 
 ## Doc
-- [my Markdown Cheat Sheet](./Markdown.md)
-- [GTP Check list](./GTP-check-list.txt)
-- [Structures of Go, Go APP, VastGo](./structure.md)
+- [my Markdown Cheat Sheet](doc/Markdown.md)
+- [GTP Check list](doc/GTP-check-list.txt)
+- [Structures of Go, Go APP, VastGo](doc/structure.md)
 - static Go board state matrix
-- [Julia Style Cheat Sheet](./JuliaStyleCheatSheet.md)
+- [Julia Style Cheat Sheet](doc/JuliaStyleCheatSheet.md)

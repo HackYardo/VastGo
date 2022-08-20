@@ -1,5 +1,7 @@
 using Dash, PlotlyBase
 
+include("utility.jl")
+
 const KATAGO = r"^k.{2,}\d{3,}\.\d"
 const LEELAZ = r"^\d{1,3}.{1,}\d{4}-.{2,}\d$"
 
@@ -63,22 +65,6 @@ function vector2tuple(names, xVector, yVector)
     end
     traces
 end
-
-function average(vector)
-    sum(vector)/length(vector) 
-end
-#println(average([1,3,5]))
-function findindex(element, collection)
-    m = 1 
-    n = []
-    for el in collection
-        if el == element
-            n = cat(n, m, dims=1)
-        end 
-        m = m + 1
-    end 
-    return n 
-end 
 
 function linedash_lenghtlist(value)
     if value == "length list"
@@ -373,7 +359,7 @@ end
 
 @async run_server(app, "0.0.0.0", 8050, debug=false)
 
-function models()
+function model()
     while true  
         if readline() == "exit"
             break
@@ -381,4 +367,4 @@ function models()
     end
 end
 
-models()
+model()

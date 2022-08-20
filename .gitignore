@@ -11,6 +11,7 @@
 # Plotly-Dash.gitignore
 
 !assets/
+!data/
 
 # KataGo.gitignore
 
