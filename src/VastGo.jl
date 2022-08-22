@@ -1,0 +1,2 @@
+module VastGo
+end
