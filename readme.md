@@ -48,7 +48,7 @@ Ideas:
 <details>
   <summary>Status</summary>
 
-Status | computer | phone
+software | computer | phone
 --- | --- | ---
 julia | 1.8.0 | 1.6.7 or 1.7.2
 KataGo | **PASS** | *fail*
@@ -66,17 +66,17 @@ GNU Go | *fail* | *fail*
 
 **Julia, packages and this repo:**
 1. download and add [julia](https://julialang.org/) into path
-2. run julia in cmd/shell/terminal and you will enter julia-REPL mode
+2. run julia in cmd/shell/terminal and you will enter julia REPL-mode
 ```shell
 cmd> julia 
 ```  
-3. enter julia-pkg mode
+3. enter julia Pkg REPL-mode
 ```julia
 julia> ]
 ```
 4. install packages
 ```julia
-(@v1.8) pkg> add Dash PlotlyJS JSON LinearAlgebra PackageCompiler PlotlyBase
+(@v1.8) pkg> add Dash PlotlyJS JSON PackageCompiler LinearAlgebra PlotlyBase
 ```
 5. download this repo
 
