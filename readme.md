@@ -76,7 +76,7 @@ julia> ]
 ```
 4. install packages
 ```julia
-(@v1.7) pkg> add Dash PlotlyJS JSON LinearAlgebra
+(@v1.8) pkg> add Dash PlotlyJS JSON LinearAlgebra PackageCompiler PlotlyBase
 ```
 5. download this repo
 
@@ -161,10 +161,10 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 
 ## Q&A 
 - Why create this?
+  - C++ has [q5Go](https://github.com/bernds/q5Go).
+  - Java has [LizzieYzy](https://github.com/yzyray/lizzieyzy).
   - JavaScript has [Sabaki](https://sabaki.yichuanshen.de/),  [Lizgoban](https://github.com/kaorahi/lizgoban),  [Ogatak](https://github.com/rooklift/ogatak).
   - Python has [KaTrain](https://github.com/sanderland/katrain),  [BadukAI](https://aki65.github.io/).
-  - C++ has [q5Go](https://github.com/bernds/q5Go).
-  - Java has [Lizzie](https://github.com/featurecat/lizzie).
   - 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 - Why so slow? 
   - Julia's compiler sort of optimises code, and it takes time.
