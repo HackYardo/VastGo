@@ -8,6 +8,7 @@
 !src/
 !doc/
 !test/
+!deps/
 
 # Plotly-Dash.gitignore
 
