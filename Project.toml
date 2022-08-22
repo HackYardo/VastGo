@@ -1,3 +1,5 @@
+name = "VastGo"
+
 [deps]
 Dash = "1b08a953-4be3-4667-9a23-3db579824955"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
