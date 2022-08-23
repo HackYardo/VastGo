@@ -1,17 +1,17 @@
-![static](assets/board.png)
+![静态的](assets/board.png)
 未来 /\ , \\/ 当前
-![dynamic](assets/dynamic.gif)
+![动态的](assets/dynamic.gif)
 
 ## 关于
 
-**注意：仍处于上古[时期](doc/versions.md#001-just-work)，代码不稳定。**
+**注意：仍处于上古[时期](doc/versions.md#001-just-work)，代码很混沌。**
 
-> 本仓库与[围棋](https://www.usgo.org/learn-play)、[围棋文本协议(GTP)](http://www.lysator.liu.se/~gunnar/gtp/)、[智能游戏格式(.sgf)](https://www.red-bean.com/sgf/)、[卡塔围棋](https://katagotraining.org/)、[莉拉零](https://zero.sjeng.org/)、[牛羚围棋](https://www.gnu.org/software/gnugo/)、[Julia](https://julialang.org/)、[PlotlyJS.jl](https://plotly.com/julia/)、[Dash.jl](https://dash-julia.plotly.com/)、[Markdown](https://commonmark.org/)、[可放缩向量图(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG)、[正则表达式](https://ryanstutorials.net/linuxtutorial/grep.php)、等有关……
+> 本仓库与[围棋](https://www.usgo.org/learn-play)、[围棋文本协议(GTP)](http://www.lysator.liu.se/~gunnar/gtp/)、[智能游戏格式(.sgf)](https://www.red-bean.com/sgf/)、[卡塔围棋](https://katagotraining.org/)、[莉拉零](https://zero.sjeng.org/)、[牛羚围棋](https://www.gnu.org/software/gnugo/)、[Julia](https://julialang.org/)、[PlotlyJS.jl](https://plotly.com/julia/)、[Dash.jl](https://dash-julia.plotly.com/)、[Markdown](https://commonmark.org/)、[可放缩向量图(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG)、[正则表达式](https://ryanstutorials.net/linuxtutorial/grep.php)等有关……
 
 VastGo是
 - 一个多平台的围棋GUI，能运行于Windows、Linux、Android，或许FreeBSD、MacOS、IOS、HarmonyOS也行。 
 - 以Dash.jl、PlotlyJS.jl、JSON.jl和现代或古典的GTP引擎为基础。
-- 以100%的julia写就，采用MIT[协议](#license)。
+- 以100%的julia写就，采用MIT[许可](#许可)。
 
 设计：
 ```
@@ -102,7 +102,7 @@ cmd> julia terminal.jl
 ```shell
 GTP ready 
 ```
-4. 键入一下字符串，方可玩一局围棋
+4. 键入以下字符串，方可玩一局围棋
 ```shell
 1 play B k10    # (id) command arguments
 2 genmove W    # see GoTextProtocol for details
@@ -161,11 +161,11 @@ cmd> julia app.jl
 
 ## 问答
 - 缘何创建？
-  - C++有[q5Go](https://github.com/bernds/q5Go)。
-  - Java有[LizzieYzy](https://github.com/yzyray/lizzieyzy)。
-  - JavaScript有[Sabaki](https://sabaki.yichuanshen.de/)、[Lizgoban](https://github.com/kaorahi/lizgoban)、[Ogatak](https://github.com/rooklift/ogatak)。
-  - Python有[KaTrain](https://github.com/sanderland/katrain)、[BadukAI](https://aki65.github.io/)。
-  - 🚀🚀🚀 ***Julia也得有！*** 🚀🚀🚀
+  - C++有[q5Go](https://github.com/bernds/q5Go).
+  - Java有[LizzieYzy](https://github.com/yzyray/lizzieyzy).
+  - JavaScript有[Sabaki](https://sabaki.yichuanshen.de/)、[Lizgoban](https://github.com/kaorahi/lizgoban)、[Ogatak](https://github.com/rooklift/ogatak).
+  - Python有[KaTrain](https://github.com/sanderland/katrain)、[BadukAI](https://aki65.github.io/).
+  - 🚀🚀🚀 ***Julia也必须得有！*** 🚀🚀🚀
 - 为啥这么慢？
   - Julia的编译器会适度优化代码，这花些时间。
   - 通过[系统成像](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html)可以重用编译工作。
