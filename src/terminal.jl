@@ -3,6 +3,32 @@ botCommand = "gnugo --mode gtp"
 #botCommand = "leelaz --cpu-only -g -v 8 -w ../lzweights/weight.gz"
 
 #botProcess = open(`$botCommand`, "r+")
+function botget()
+    GNUGO = (dir="", cmd="gnugo --mode gtp")
+    LEELAZ = (dir="../Leela-Zero/", cmd="leelaz --cpu-only -g -v 8 -w lzweights/w5.gz")
+    KATAGO = (dir="./", cmd="./katago gtp -model kgmodels/m6.txt.gz")
+    botVector = [GNUGO, LEELAZ, KATAGO]
+    
+    @label Choose
+    println("Choose one or type a new one:")
+    println("1 $GNUGO.dir $GNUGO.cmd\n2 ../Leela-Zero/ leelaz --cpu-only -g -v 8 -w lzweights/w5.gz\n3 ./ ./katago gtp -model kgmodels/m6.txt.gz\nnew")
+    choose = readline()
+    bot = (dir="", cmd="")
+    if occursin(choose, "123")
+        bot = botVector[parse(Int, choose)]
+    elseif choose == "new"
+        println("Where is the GTP engine?")
+        dir = readline()
+        println("What's the command to run it?")
+        cmd = readline()
+        bot = (dir=dir, cmd=cmd)
+    else 
+        println("Please try again...")
+        @goto Choose 
+    end 
+    
+    return bot
+end 
 
 function botrun(;dir="",cmd="")
     inp = Base.PipeEndpoint()
@@ -25,10 +51,10 @@ function botrun(;dir="",cmd="")
     #println("$process")
     return process
 end
-botProcess = botrun(dir="", cmd=botCommand)
+#botProcess = botrun(dir="", cmd=botCommand)
+bot = botget()
+botProcess = botrun(dir=bot.dir, cmd=bot.cmd)
 function endbot()
-    query("quit")
-    reply()
     close(botProcess)
 end
 
