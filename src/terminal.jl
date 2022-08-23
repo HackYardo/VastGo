@@ -35,7 +35,7 @@ Why Base.PipeEndpoint() && run() or why not open()?
 Because stderr is hard to talk with, source:
 https://discourse.julialang.org/t/avoiding-readavailable-when-communicating-with-long-lived-external-program/61611/25
 =#
-function botrun(;dir="",cmd="")
+function botrun(; dir="", cmd="")
     inp = Base.PipeEndpoint()
     out = Base.PipeEndpoint()
     err = Base.PipeEndpoint()
@@ -57,20 +57,19 @@ function botrun(;dir="",cmd="")
     return process
 end
 #botProcess = botrun(dir="", cmd=botCommand)
-bot = botget()
-botProcess = botrun(dir=bot.dir, cmd=bot.cmd)
-function endbot()
-    close(botProcess)
+
+function endbot(p::Base.Process)
+    close(p)
 end
 
-function query(sentence::String)
-    println(botProcess,sentence)
+function query(proc, sentence::String)
+    println(proc, sentence)
 end
 
-function reply()
+function reply(proc)
     paragraph=""
     while true
-        sentence=readline(botProcess)
+        sentence=readline(proc)
         if sentence==""
             break
         else 
@@ -82,15 +81,17 @@ function reply()
 end
 
 function play()
-    if !occursin("katago",botCommand)
+    bot = botget()
+    botProcess = botrun(dir=bot.dir, cmd=bot.cmd)
+    if !occursin("katago", bot.cmd)
         println("GTP ready")
     end
     while true
         sentence = readline()
-        query(sentence)
-        reply()
-        if occursin("quit",sentence)
-            endbot()
+        query(botProcess, sentence)
+        reply(botProcess)
+        if occursin("quit", sentence)
+            endbot(botProcess)
             break
         else
             continue
