@@ -1,17 +1,17 @@
-#botCommand= "./katago gtp -model b6/model.txt.gz"
-botCommand = "gnugo --mode gtp"
-#botCommand = "leelaz --cpu-only -g -v 8 -w ../lzweights/weight.gz"
-
-#botProcess = open(`$botCommand`, "r+")
 function botget()
     GNUGO = (dir="", cmd="gnugo --mode gtp")
-    LEELAZ = (dir="../Leela-Zero/", cmd="leelaz --cpu-only -g -v 8 -w lzweights/w5.gz")
-    KATAGO = (dir="./", cmd="./katago gtp -model kgmodels/m6.txt.gz")
+    LEELAZ = (dir="", cmd="leelaz --cpu-only -g -v 8 -w lzweights/weight.gz")
+    KATAGO = (dir="../KataGo", cmd="katago gtp -model kgmodels/m6.txt.gz")
     botVector = [GNUGO, LEELAZ, KATAGO]
     
     @label Choose
     println("Choose one or type a new one:")
-    println("1 $GNUGO.dir $GNUGO.cmd\n2 ../Leela-Zero/ leelaz --cpu-only -g -v 8 -w lzweights/w5.gz\n3 ./ ./katago gtp -model kgmodels/m6.txt.gz\nnew")
+    j = 1
+    for i in botVector
+        println(j,' ',i.dir,' ',i.cmd)
+        j = j + 1 
+    end
+    println("new\n")
     choose = readline()
     bot = (dir="", cmd="")
     if occursin(choose, "123")
@@ -30,11 +30,16 @@ function botget()
     return bot
 end 
 
+#=
+Why Base.PipeEndpoint() && run() or why not open()?
+Because stderr is hard to talk with, source:
+https://discourse.julialang.org/t/avoiding-readavailable-when-communicating-with-long-lived-external-program/61611/25
+=#
 function botrun(;dir="",cmd="")
     inp = Base.PipeEndpoint()
     out = Base.PipeEndpoint()
     err = Base.PipeEndpoint()
-
+    
     cmdVector = split(cmd) # otherwise there will be ' in command
     exe = cmdVector[1]
     opt = cmdVector[2:end]
