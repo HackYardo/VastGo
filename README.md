@@ -1,5 +1,4 @@
-[Gitee](https://gitee.com/vastgo/VastGo) | [Github](https://github.com/HackYardo/VastGo)
-[简体中文](./README_CN.md) | [English](./README.md)
+[Github](https://github.com/HackYardo/VastGo) | [Gitee](https://gitee.com/vastgo/VastGo) | [English](./README.md) | [简体中文](./README_CN.md)
 
 ![static](assets/board.png)
 future /\ , \\/ current
