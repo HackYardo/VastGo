@@ -51,6 +51,13 @@ function botrun(; dir="", cmd="")
     return process
 end
 
+
+function name(proc)
+    query(proc, "name")
+    println("name")  # print to user
+    reply(proc)
+end
+
 function gtp_startup_info(proc, cmd)
     if occursin("leelaz", cmd)
         println(readuntil(proc.err, "B.", keep=true))
@@ -63,7 +70,7 @@ function gtp_ready(cmd)
     end
 end 
 
-function endbot(p::Base.Process)
+function botend(p::Base.Process)
     close(p)
 end
 
@@ -72,6 +79,7 @@ function query(proc, sentence::String)
 end
 
 function reply(proc)
+    #=
     paragraph=""
     while true
         sentence=readline(proc)
@@ -81,6 +89,8 @@ function reply(proc)
             paragraph="$paragraph$sentence\n"
         end
     end
+    =#
+    paragraph = readuntil(proc, r"^$", keep=true)
     println(paragraph)
     return paragraph::String
 end
@@ -95,7 +105,7 @@ function play()
         query(botProcess, sentence)
         reply(botProcess)
         if occursin("quit", sentence)
-            endbot(botProcess)
+            botend(botProcess)
             break
         else
             continue
