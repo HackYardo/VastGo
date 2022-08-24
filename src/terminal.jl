@@ -42,15 +42,26 @@ function botrun(; dir="", cmd="")
     
     cmdVector = split(cmd) # otherwise there will be ' in command
     command = Cmd(`$cmdVector`, dir=dir)
-    cmdString = "$command"[2:end-1]
-    println("The command:\n$cmdString")
+    cmdString = "$command"
+    println("The julia-style command:\n$cmdString")
     println("IF NO \"GTP ready\", TRY The command IN TERMINAL FIRST, \
-        THEN CHECK bot.csv")
+        THEN CHECK data/bot.csv\n")
     process = run(command,inp,out,err;wait=false)
     #println("$process")
     return process
 end
-#botProcess = botrun(dir="", cmd=botCommand)
+
+function gtp_startup_info(proc, cmd)
+    if occursin("leelaz", cmd)
+        println(readuntil(proc.err, "B.", keep=true))
+    end
+end 
+
+function gtp_ready(cmd)
+    if !occursin("katago", cmd)
+        println("GTP ready")
+    end
+end 
 
 function endbot(p::Base.Process)
     close(p)
@@ -77,9 +88,8 @@ end
 function play()
     bot = botget()
     botProcess = botrun(dir=bot.dir, cmd=bot.cmd)
-    if !occursin("katago", bot.cmd)
-        println("GTP ready")
-    end
+    gtp_startup_info(botProcess, bot.cmd)
+    gtp_ready(bot.cmd)
     while true
         sentence = readline()
         query(botProcess, sentence)
