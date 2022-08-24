@@ -1,11 +1,11 @@
 function botget()
     GNUGO = (dir="", cmd="gnugo --mode gtp")
-    LEELAZ = (dir="", cmd="leelaz --cpu-only -g -v 8 -w lzweights/weight.gz")
-    KATAGO = (dir="../KataGo", cmd="katago gtp -model kgmodels/m6.txt.gz")
+    LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
+    KATAGO = (dir="../KataGo/", cmd="./katago gtp -model kgmodels/m6.txt.gz")
     botVector = [GNUGO, LEELAZ, KATAGO]
     
     @label Choose
-    println("Choose one or type a new one:")
+    println("Choose one or type a new one:\nid dir cmd")
     j = 1
     for i in botVector
         println(j,' ',i.dir,' ',i.cmd)
@@ -41,13 +41,7 @@ function botrun(; dir="", cmd="")
     err = Base.PipeEndpoint()
     
     cmdVector = split(cmd) # otherwise there will be ' in command
-    exe = cmdVector[1]
-    opt = cmdVector[2:end]
-    if dir == ""
-        command = `$exe $opt`
-    else
-        command = Cmd(`./$exe $opt`,dir=dir)
-    end
+    command = Cmd(`$cmdVector`, dir=dir)
     cmdString = "$command"[2:end-1]
     println("The command:\n$cmdString")
     println("IF NO \"GTP ready\", TRY The command IN TERMINAL FIRST, \
