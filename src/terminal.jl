@@ -43,7 +43,7 @@ function botrun(; dir="", cmd="")
     cmdVector = split(cmd) # otherwise there will be ' in command
     command = Cmd(`$cmdVector`, dir=dir)
     cmdString = "$command"
-    println("The julia-style command:\n$cmdString")
+    println("Julia will run the command:\n$cmdString")
     println("IF NO \"GTP ready\", TRY The command IN TERMINAL FIRST, \
         THEN CHECK data/bot.csv\n")
     process = run(command,inp,out,err;wait=false)
@@ -51,23 +51,42 @@ function botrun(; dir="", cmd="")
     return process
 end
 
-
-function name(proc)
+function get_name(proc)
     query(proc, "name")
-    println("name")  # print to user
+    println("name")
     reply(proc)
 end
 
-function gtp_startup_info(proc, cmd)
-    if occursin("Leela Zero", name(proc))
-        println(readuntil(proc.err, "B.", keep=true))
-    end
+function get_version(proc)
+    query(proc, "version")
+    println("version")
+    reply(proc)
 end 
 
-function gtp_ready(cmd)
-    if !occursin("katago", cmd)
+function gtp_startup_info(proc)
+    name = get_name(proc)
+    version = get_version(proc)
+    info = ""
+    if occursin("Leela Zero", name)
+        info = readuntil(proc.err, "B.", keep=true)
+    elseif occursin("KataGo", name)
+        info = readuntil(proc.err, "GTP ready")
+    else
+    end
+    (info = info, name = name, version = version)
+end 
+
+function gtp_ready(proc)
+    startup = gtp_startup_info(proc)
+    println(startup.info)
+    println(startup.name)
+    println(startup.version)
+    #=
+    if !occursin("KataGo", startup.name)
         println("GTP ready")
     end
+    =#
+    println("GTP ready")
 end 
 
 function botend(p::Base.Process)
@@ -91,19 +110,19 @@ function reply(proc)
     end
     =#
     paragraph = readuntil(proc, "\n\n")
-    println(paragraph, '\n')
-    return paragraph::String
+    #println(paragraph, '\n')
+    return "$paragraph\n"
 end
 
 function play()
     bot = botget()
     botProcess = botrun(dir=bot.dir, cmd=bot.cmd)
-    gtp_startup_info(botProcess, bot.cmd)
-    gtp_ready(bot.cmd)
+    gtp_ready(botProcess)
     while true
         sentence = readline()
         query(botProcess, sentence)
-        reply(botProcess)
+        paragraph = reply(botProcess)
+        println(paragraph)
         if occursin("quit", sentence)
             botend(botProcess)
             break
