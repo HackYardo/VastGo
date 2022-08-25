@@ -64,6 +64,14 @@ function showboard_format(p::Base.Process)
     println(reply(p))
 end 
 
+function isvalid(sentence::String)
+    if sentence == "" || "" in split(sentence, keepempty=true)
+        return false
+    else 
+        return true
+    end 
+end 
+
 function query(proc, sentence::String)
     println(proc, sentence)
 end
@@ -79,7 +87,12 @@ function terminal()
     gtp_ready(botProcess)
     while true
         sentence = readline()
-        query(botProcess, sentence)
+        if isvalid(sentence)
+            query(botProcess, sentence)
+        else 
+            println("? invalid command\n")
+            continue
+        end 
         
         if occursin("quit", sentence)
             botend(botProcess)
