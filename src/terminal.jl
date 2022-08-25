@@ -59,7 +59,7 @@ function name(proc)
 end
 
 function gtp_startup_info(proc, cmd)
-    if occursin("leelaz", cmd)
+    if occursin("Leela Zero", name(proc))
         println(readuntil(proc.err, "B.", keep=true))
     end
 end 
@@ -90,8 +90,8 @@ function reply(proc)
         end
     end
     =#
-    paragraph = readuntil(proc, r"^$", keep=true)
-    println(paragraph)
+    paragraph = readuntil(proc, "\n\n")
+    println(paragraph, '\n')
     return paragraph::String
 end
 
