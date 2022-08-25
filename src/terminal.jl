@@ -1,7 +1,8 @@
 function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp")
     LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
-    KATAGO = (dir="../katago1.11avx2/", cmd="./katago gtp -model models/m6.txt.gz")
+    KATAGO = (dir="../katago1.11avx2/", cmd="./katago gtp -model \
+        models/m6.txt.gz")
     botDict = Dict("gnugo"=>GNUGO, "leelazero"=>LEELAZ, "katago"=>KATAGO)
     
     botDict[ARGS[1]]
@@ -10,7 +11,8 @@ end
 #=
 Why Base.PipeEndpoint() && run() or why not open()?
 Because stderr is hard to talk with, source:
-https://discourse.julialang.org/t/avoiding-readavailable-when-communicating-with-long-lived-external-program/61611/25
+https://discourse.julialang.org/t/avoiding-readavailable-when-communicating-
+with-long-lived-external-program/61611/25
 =#
 function bot_run(; dir="", cmd="")
     inp = Base.PipeEndpoint()
@@ -21,9 +23,19 @@ function bot_run(; dir="", cmd="")
     command = Cmd(`$cmdVector`, dir=dir)
     cmdString = "$command"
     println("Julia will run the command:\n$cmdString")
-    println("IF NO \"GTP ready\", PLEASE TRY The command IN Cmd/Shell/Terminal, \
-        OR CHECK data/bot.csv")
+    
     process = run(command,inp,out,err;wait=false)
+    
+    query(process, "name")
+    name = reply(process)
+    if name[1] != '='
+        errInfo = readchomp(process.err)
+        @info "stdout:\n$name"
+        @info "stderr:\n$errInfo"
+        @error "Please look at the above ↑↑↑"
+        exit()
+    end
+    
     #println("$process")
     return process
 end
@@ -74,7 +86,7 @@ end
 
 function gtp_ready(proc)
     gtp_startup_info(proc)
-    println("GTP ready, beginning main protocol loop")
+    println("GTP ready")
 end 
 
 function leelaz_showboard(proc)
