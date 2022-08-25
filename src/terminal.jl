@@ -1,7 +1,7 @@
-function botget()
+function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp")
     LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
-    KATAGO = (dir="../KataGo/", cmd="./katago gtp -model kgmodels/m6.txt.gz")
+    KATAGO = (dir="../katago1.11avx2/", cmd="./katago gtp -model models/m6.txt.gz")
     botDict = Dict("gnugo"=>GNUGO, "leelazero"=>LEELAZ, "katago"=>KATAGO)
     
     botDict[ARGS[1]]
@@ -12,7 +12,7 @@ Why Base.PipeEndpoint() && run() or why not open()?
 Because stderr is hard to talk with, source:
 https://discourse.julialang.org/t/avoiding-readavailable-when-communicating-with-long-lived-external-program/61611/25
 =#
-function botrun(; dir="", cmd="")
+function bot_run(; dir="", cmd="")
     inp = Base.PipeEndpoint()
     out = Base.PipeEndpoint()
     err = Base.PipeEndpoint()
@@ -28,41 +28,10 @@ function botrun(; dir="", cmd="")
     return process
 end
 
-function botend(p::Base.Process)
-    println(reply(p))
-    close(p)
+function bot_end(proc::Base.Process)
+    println(reply(proc))
+    close(proc)
 end
-
-function name_get(proc)
-    query(proc, "name")
-    reply(proc)
-end
-
-function version_get(proc)
-    query(proc, "version")
-    reply(proc)
-end 
-
-function gtp_startup_info(proc)
-    name = name_get(proc)
-    if occursin("Leela Zero", name)
-        info = readuntil(proc.err, "B.", keep=true)
-    elseif occursin("KataGo", name)
-        info = readuntil(proc.err, "GTP ready")
-    else
-        info = name[3:end-1]
-    end
-    println(info)
-end 
-
-function gtp_ready(proc)
-    gtp_startup_info(proc)
-    println("GTP ready")
-end 
-
-function showboard_format(p::Base.Process)
-    println(reply(p))
-end 
 
 function isvalid(sentence::String)
     if "" in split(sentence, keepempty=true)
@@ -81,9 +50,61 @@ function reply(proc)
     return "$paragraph\n"
 end
 
+function name_get(proc)
+    query(proc, "name")
+    reply(proc)[3:end-1]
+end
+
+function version_get(proc)
+    query(proc, "version")
+    reply(proc)[3:end-1]
+end 
+
+function gtp_startup_info(proc)
+    name = name_get(proc)
+    if name == "Leela Zero"
+        info = readuntil(proc.err, "MiB.", keep=true)
+    elseif name == "KataGo"
+        info = readuntil(proc.err, "GTP ready")[1:end-1]
+    else
+        info = name
+    end
+    println(info)
+end 
+
+function gtp_ready(proc)
+    gtp_startup_info(proc)
+    println("GTP ready, beginning main protocol loop")
+end 
+
+function leelaz_showboard(proc)
+    readuntil(proc.err, "Passes:")
+    paragraphErr = "Passes:" * readuntil(proc.err, "\n") * "\n"
+    while true
+        line = readline(proc.err)
+        if line == ""
+            continue
+        end
+        paragraphErr = paragraphErr * line * "\n"
+        if occursin("White time:", line)
+            break
+        end
+    end
+    paragraphErr
+end
+
+function showboard_format(proc::Base.Process)
+    paragraph = reply(proc)
+    name = name_get(proc)
+    if name == "Leela Zero"
+        paragraph = paragraph * leelaz_showboard(proc)
+    end
+    println(paragraph)
+end 
+
 function terminal()
-    bot = botget()
-    botProcess = botrun(dir=bot.dir, cmd=bot.cmd)
+    bot = bot_get()
+    botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
     gtp_ready(botProcess)
     while true
         sentence = readline()
@@ -95,7 +116,7 @@ function terminal()
         end 
         
         if occursin("quit", sentence)
-            botend(botProcess)
+            bot_end(botProcess)
             break
         elseif occursin("showboard", sentence)
             showboard_format(botProcess)
