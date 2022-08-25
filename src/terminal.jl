@@ -65,7 +65,7 @@ function showboard_format(p::Base.Process)
 end 
 
 function isvalid(sentence::String)
-    if sentence == "" || "" in split(sentence, keepempty=true)
+    if "" in split(sentence, keepempty=true)
         return false
     else 
         return true
