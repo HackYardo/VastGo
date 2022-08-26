@@ -86,7 +86,7 @@ end
 
 function gtp_ready(proc)
     gtp_startup_info(proc)
-    println("GTP ready")
+    @info "GTP ready"
 end 
 
 function leelaz_showboard(proc)
@@ -105,14 +105,19 @@ function leelaz_showboard(proc)
     paragraphErr
 end
 
-function showboard_format(proc::Base.Process)
+function showboard_get(proc::Base.Process)
     paragraph = reply(proc)
     name = name_get(proc)
     if name == "Leela Zero"
         paragraph = paragraph * leelaz_showboard(proc)
     end
     println(paragraph)
+    paragraph, name
 end 
+
+function showboard_format(proc)
+    paragraph, name = showboard_get(proc)
+end
 
 function terminal()
     bot = bot_get()
