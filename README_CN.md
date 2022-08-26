@@ -101,6 +101,7 @@ KATAGOOPENCL = (dir="../KataGo1.11OpenCL/", cmd="./katago gtp -config gtp_v256_t
 botDict = Dict(..., "kgo"=>KATAGOOPENCL)
 ```
 **注意：不要在莉拉零的命令中用-q，因为`showboard`会消失**
+
 2. 在VastGo/里，带上bot的id来运行`terminal.jl`，例如
 ```shell
 cmd> julia src/terminal.jl kgo

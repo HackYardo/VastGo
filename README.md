@@ -101,6 +101,7 @@ KATAGOOPENCL = (dir="../KataGo1.11OpenCL/", cmd="./katago gtp -config gtp_v256_t
 botDict = Dict(..., "kgo"=>KATAGOOPENCL)
 ```
 **Note: DO NOT use -q in Leela-Zero's command, since `showboard` will GONE.**
+
 2. in VastGo/, run `terminal.jl` with a bot's id, e.g.
 ```shell
 cmd> julia src/terminal.jl kgo
