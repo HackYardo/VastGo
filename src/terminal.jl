@@ -84,7 +84,7 @@ function gtp_startup_info(proc::Base.Process)
     if name == "Leela Zero"
         info = readuntil(proc.err, "MiB.", keep=true)
     elseif name == "KataGo"
-        info = readuntil(proc.err, "GTP ready")[1:end-1]
+        info = readuntil(proc.err, "loop", keep=true)
     else
         info = name
     end
@@ -126,32 +126,32 @@ function showboard_format(proc::Base.Process)
     paragraph, name = showboard_get(proc)
 end
 
-function gaming()
-    
-end
-
-function terminal()
-    bot = bot_get()
-    botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
-    gtp_ready(botProcess)
+function gtp_loop(proc::Base.Process)
     while true
         sentence = readline()
         if isvalid(sentence)
-            query(botProcess, sentence)
+            query(proc, sentence)
         else 
             println("? invalid command\n")
             continue
         end 
         
         if occursin("quit", sentence)
-            bot_end(botProcess)
+            bot_end(proc)
             break
         elseif occursin("showboard", sentence)
-            showboard_format(botProcess)
+            showboard_format(proc)
         else
-            println(reply(botProcess))
+            println(reply(proc))
         end
     end
+end
+
+function terminal()
+    bot = bot_get()
+    botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
+    gtp_ready(botProcess)
+    gtp_loop(botProcess)
 end
 
 terminal()
