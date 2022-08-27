@@ -20,7 +20,7 @@ function bot_ready(proc::Base.Process)
         exit()
     end
 
-    println("$proc")
+    #println("$proc")
 end
 
 #=
@@ -36,12 +36,10 @@ function bot_run(; dir="", cmd="")::Base.Process
     
     cmdVector = split(cmd) # otherwise there will be ' in command
     command = Cmd(`$cmdVector`, dir=dir)
-    println("VastGo will run the command \n\t$cmd\nin the direetory\n\t$dir")
+    println("VastGo will run the command: $cmd\nin the direetory: $dir")
     #println(command)
-    println("Please waiting...")
 
     process = run(command,inp,out,err;wait=false)
-    
     bot_ready(process)
     
     return process
@@ -112,7 +110,7 @@ function leelaz_showboard(proc::Base.Process)::String
     paragraphErr
 end
 
-function showboard_get(proc::Base.Process)::Tuple
+function showboard_get(proc::Base.Process)::Tuple{SubString, String}
     paragraph = reply(proc)
     name = name_get(proc)
     if name == "Leela Zero"
@@ -122,8 +120,17 @@ function showboard_get(proc::Base.Process)::Tuple
     paragraph, name
 end 
 
+function gnugo_showboardf(paragraph::SubString)
+    lines = split(paragraph, "\n")
+    n = length(lines[3])
+    
+end
+
 function showboard_format(proc::Base.Process)
     paragraph, name = showboard_get(proc)
+    if name == "GNU Go"
+        gnugo_showboardf(paragraph)
+    end
 end
 
 function gtp_loop(proc::Base.Process)
