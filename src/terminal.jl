@@ -124,7 +124,7 @@ function showboard_get(proc::Base.Process)
     paragraph, name
 end 
 
-function gnugo_showboardf(paragraph)
+function gnugo_showboardf(paragraph)  # f: _format
     r = r"captured \d{1,}"
     lines = split(paragraph, '\n')
     

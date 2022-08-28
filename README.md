@@ -52,7 +52,7 @@ Ideas:
 
 software | computer | phone
 --- | --- | ---
-julia | 1.8.0 | 1.6.7 or 1.7.2
+julia | >= 1.6.7 | 1.6.7 - 1.7.2
 KataGo | **PASS** | *fail*
 Leela-Zero | *fail* | *fail*
 GNU Go | *fail* | *fail*
