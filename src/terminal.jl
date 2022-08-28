@@ -133,22 +133,22 @@ function gnugo_showboardf(paragraph)
 
     m = length(lines) - 4
     n = length(split(lines[2]))
-    board = zeros(Int8, m, n)
+    position = zeros(m, n)
     i = m
     j = 1
-    linesBoard = lines[3:2+m]
-    for line in linesBoard
+    linesPosition = lines[3:2+m]
+    for line in linesPosition
         if length(line) > l + 20
             v = cat(v, match_diy([r, r"\d{1,}"], [line]), dims=1)
         end
         for char in line
             if char == 'O'
-                board[i,j] = 1
+                position[i,j] = 1
                 j = j + 1
             elseif char == 'X'
-                board[i,j] = -1
+                position[i,j] = -1
                 j = j + 1
-            elseif char == '.'
+            elseif char in ".+"
                 j = j + 1
             elseif j == n 
                 break
@@ -159,22 +159,28 @@ function gnugo_showboardf(paragraph)
         j = 1
         i = i - 1
     end 
-    #println(board)
+    position = collectrows(position)
+    println(position)
     #println(v)
-    showboardJSON = JSON3.write(
-        (board = board, blackCaptured = v[1], whiteCaptured=v[2])
+    
+    boardJSON = JSON3.write(
+        (position = position, blackCaptured = v[1], whiteCaptured=v[2])
         )
-    showboard = (dict = JSON3.read(showboardJSON, Dict), 
-        namedtuple = JSON3.read(showboardJSON, NamedTuple)
+    board = (namedtuple = JSON3.read(boardJSON, NamedTuple), 
+        dict = JSON3.read(boardJSON, Dict), 
+        json = boardJSON
         )
-    #println(showboard)
-    return showboard 
+    println(board.namedtuple)
+    println(board.dict)
+    println(board.json)
+    JSON3.pretty(board.json)
+    return board 
 end
-
+collectrows(x::AbstractMatrix) = collect.(eachrow(x))
 function showboard_format(proc::Base.Process)
     paragraph, name = showboard_get(proc)
     if name == "GNU Go"
-        gnugo_showboardf(paragraph)
+        #gnugo_showboardf(paragraph)
     elseif name == "Leela Zero"
     elseif name == "KataGo"
     end
