@@ -12,7 +12,7 @@
 
 VastGo是
 - 一个多平台的围棋GUI，能运行于Windows、Linux、Android，或许FreeBSD、MacOS、IOS、HarmonyOS也行。 
-- 以Dash.jl、PlotlyJS.jl、JSON.jl和现代或古典的GTP引擎为基础。
+- 以Dash.jl、PlotlyJS.jl、JSON3.jl和现代或古典的GTP引擎为基础。
 - 以100%的julia写就，采用MIT[许可](#许可)。
 
 设计：
@@ -78,7 +78,7 @@ julia> ]
 ```
 4. 安装包
 ```julia
-(@v1.8) pkg> add Dash PlotlyJS JSON PackageCompiler LinearAlgebra PlotlyBase
+(@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra PlotlyBase
 ```
 5. 下载本仓库
 
@@ -97,14 +97,14 @@ julia> ]
 
 1. 编辑`terminal.jl`的第一个函数，指示运行bot的**命令**、运行命令的**文件夹**，以及Dict()里的**id=>bot**，例如
 ```julia
-KATAGOOPENCL = (dir="../KataGo1.11OpenCL/", cmd="./katago gtp -config gtp_v256_t5.cfg -model ../KataGoModels/model_elo12500.bin.gz")
-botDict = Dict(..., "kgo"=>KATAGOOPENCL)
+KATAGOOPENCL = (dir="../KataGo1.11OpenCL/", cmd="./katago gtp -config gtp_v256_t5.cfg -model model_elo12500.bin.gz")
+botDict = Dict(..., "ko"=>KATAGOOPENCL)
 ```
 **注意：不要在莉拉零的命令中用-q，因为`showboard`会消失**
 
 2. 在VastGo/里，带上bot的id来运行`terminal.jl`，例如
 ```shell
-cmd> julia src/terminal.jl kgo
+cmd> julia src/terminal.jl ko
 ```
 3. 等到
 ```shell
@@ -168,13 +168,13 @@ cmd> julia app.jl
 </details>
 
 ## 问答
-- 缘何创建？
+- 为什么创建？
   - C++有[q5Go](https://github.com/bernds/q5Go).
   - Java有[LizzieYzy](https://github.com/yzyray/lizzieyzy).
   - JavaScript有[Sabaki](https://sabaki.yichuanshen.de/)、[Lizgoban](https://github.com/kaorahi/lizgoban)、[Ogatak](https://github.com/rooklift/ogatak).
   - Python有[KaTrain](https://github.com/sanderland/katrain)、[BadukAI](https://aki65.github.io/).
   - 🚀🚀🚀 ***Julia也必须得有！*** 🚀🚀🚀
-- 为啥这么慢？
+- 为什么这么慢？
   - Julia的编译器会适度优化代码，这花些时间。
   - 通过[系统成像](https://julialang.github.io/PackageCompiler.jl/dev/examples/plots.html)可以重用编译工作。
 - 为什么选择Julia语言？

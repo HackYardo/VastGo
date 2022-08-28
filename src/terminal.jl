@@ -1,3 +1,7 @@
+import JSON3
+
+include("utility.jl")
+
 function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp")
     LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
@@ -50,7 +54,7 @@ function bot_end(proc::Base.Process)
     close(proc)
 end
 
-function isvalid(sentence::String)::Bool
+function gtp_valid(sentence::String)::Bool
     if "" in split(sentence, keepempty=true)
         return false
     else 
@@ -62,17 +66,17 @@ function query(proc::Base.Process, sentence::String)
     println(proc, sentence)
 end
 
-function reply(proc::Union{Base.Process, Base.PipeEndpoint})::String
+function reply(proc::Union{Base.Process, Base.PipeEndpoint})
     paragraph = readuntil(proc, "\n\n")
     return "$paragraph\n"
 end
 
-function name_get(proc::Base.Process)::SubString
+function name_get(proc::Base.Process)
     query(proc, "name")
     reply(proc)[3:end-1]
 end
 
-function version_get(proc::Base.Process)::SubString
+function version_get(proc::Base.Process)
     query(proc, "version")
     reply(proc)[3:end-1]
 end 
@@ -94,7 +98,7 @@ function gtp_ready(proc::Base.Process)
     @info "GTP ready"
 end 
 
-function leelaz_showboard(proc::Base.Process)::String
+function leelaz_showboard(proc::Base.Process)
     readuntil(proc.err, "Passes:")
     paragraphErr = "Passes:" * readuntil(proc.err, "\n") * "\n"
     while true
@@ -110,7 +114,7 @@ function leelaz_showboard(proc::Base.Process)::String
     paragraphErr
 end
 
-function showboard_get(proc::Base.Process)::Tuple{SubString, String}
+function showboard_get(proc::Base.Process)
     paragraph = reply(proc)
     name = name_get(proc)
     if name == "Leela Zero"
@@ -120,23 +124,66 @@ function showboard_get(proc::Base.Process)::Tuple{SubString, String}
     paragraph, name
 end 
 
-function gnugo_showboardf(paragraph::SubString)
-    lines = split(paragraph, "\n")
-    n = length(lines[3])
+function gnugo_showboardf(paragraph)
+    r = r"captured \d{1,}"
+    lines = split(paragraph, '\n')
     
+    l = length(lines[2]) + 2
+    v = Vector{String}()
+
+    m = length(lines) - 4
+    n = length(split(lines[2]))
+    board = zeros(Int8, m, n)
+    i = m
+    j = 1
+    linesBoard = lines[3:2+m]
+    for line in linesBoard
+        if length(line) > l + 20
+            v = cat(v, match_diy([r, r"\d{1,}"], [line]), dims=1)
+        end
+        for char in line
+            if char == 'O'
+                board[i,j] = 1
+                j = j + 1
+            elseif char == 'X'
+                board[i,j] = -1
+                j = j + 1
+            elseif char == '.'
+                j = j + 1
+            elseif j == n 
+                break
+            else
+                continue
+            end
+        end
+        j = 1
+        i = i - 1
+    end 
+    #println(board)
+    #println(v)
+    showboardJSON = JSON3.write(
+        (board = board, blackCaptured = v[1], whiteCaptured=v[2])
+        )
+    showboard = (dict = JSON3.read(showboardJSON, Dict), 
+        namedtuple = JSON3.read(showboardJSON, NamedTuple)
+        )
+    #println(showboard)
+    return showboard 
 end
 
 function showboard_format(proc::Base.Process)
     paragraph, name = showboard_get(proc)
     if name == "GNU Go"
         gnugo_showboardf(paragraph)
+    elseif name == "Leela Zero"
+    elseif name == "KataGo"
     end
 end
 
 function gtp_loop(proc::Base.Process)
     while true
         sentence = readline()
-        if isvalid(sentence)
+        if gtp_valid(sentence)
             query(proc, sentence)
         else 
             println("? invalid command\n")

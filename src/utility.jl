@@ -17,6 +17,8 @@ utilityfunction2
 """
 =#
 
+
+
 """
 `average(v::Vector)`
 
@@ -39,28 +41,28 @@ end
 # Examples
 
 ```
-julia> c = ["a",1,"1","o",0,"a"]; findindex("a",c)
-2-element Vector{Any}:
- 1
+julia> c = ["a",1,"1","o",0,'a']; findindex('a', c)
+1-element Vector{Int64}:
  6
 ```
 """
 function findindex(element, collection)
     m = 1 
-    n = []
+    n = Vector{Int64}()
     for el in collection
         if el == element
             n = cat(n, m, dims=1)
         end 
         m = m + 1
     end 
-    return n 
+    n 
 end 
 
 """
-`file_match(r::Regex, file::String)`
+`match_diy(r::Regex, lines::Vector)`
+`match_diy(r::Vector{Regex}, lines::Vector)`
 
-Return a vector of the matched lines.
+Return a vector of the matched strings.
 
 # Examples
 
@@ -70,22 +72,32 @@ shell> cat f.txt
 010
 210
 
-julia> r = r"^0.{2,}"; file_match(r,"f.txt")
-2-element Vector{Any}:
+julia> r = r"^0.{1,}"; match_diy(r, readlines("f.txt"))
+2-element Vector{AbstractString}:
  "000"
  "010"
+
+julia> r = [r, r"^2.{1,}"]; match_diy(r, readlines("f.txt"))
+String[]
 ```
 """
-function file_match(r::Regex, file::String)
-    lines = readlines(file)
-    mlines = match.(r,lines)
-    v = []
+function match_diy(r::Regex, lines::Vector)
+    mlines = match.(r, lines)
+    v = Vector{String}()
     for line in mlines
         if isnothing(line)
             continue
         else 
             v = cat(v, line.match, dims=1)
         end
+    end
+    v 
+end
+function match_diy(r::Vector{Regex}, lines::Vector)
+    v = Vector{String}()
+    for i in r
+        v = match_diy(i, lines)
+        lines = v 
     end
     v 
 end

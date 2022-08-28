@@ -12,7 +12,7 @@ future /\ , \\/ current
 
 VastGo is
 - A multi-platform Go GUI that can run on Windows, Linux, Android and perhaps FreeBSD, MacOS, IOS, HarmonyOS. 
-- Based on Dash.jl, PlotlyJS.jl, JSON.jl and modern or classic GTP engines.
+- Based on Dash.jl, PlotlyJS.jl, JSON3.jl and modern or classic GTP engines.
 - Written in pure julia and under the MIT [license](#license).
 
 Design:
@@ -78,7 +78,7 @@ julia> ]
 ```
 4. install packages
 ```julia
-(@v1.8) pkg> add Dash PlotlyJS JSON PackageCompiler LinearAlgebra PlotlyBase
+(@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra PlotlyBase
 ```
 5. download this repo
 
@@ -97,14 +97,14 @@ julia> ]
 
 1. edit the first function of `terminal.jl` to indicate **the command** of running a bot, **the directory** where to run the command and the **id=>bot** in Dict(), e.g.
 ```julia
-KATAGOOPENCL = (dir="../KataGo1.11OpenCL/", cmd="./katago gtp -config gtp_v256_t5.cfg -model ../KataGoModels/model_elo12500.bin.gz")
-botDict = Dict(..., "kgo"=>KATAGOOPENCL)
+KATAGOOPENCL = (dir="../KataGo1.11OpenCL/", cmd="./katago gtp -config gtp_v256_t5.cfg -model model_elo12500.bin.gz")
+botDict = Dict(..., "ko"=>KATAGOOPENCL)
 ```
 **Note: DO NOT use -q in Leela-Zero's command, since `showboard` will GONE.**
 
 2. in VastGo/, run `terminal.jl` with a bot's id, e.g.
 ```shell
-cmd> julia src/terminal.jl kgo
+cmd> julia src/terminal.jl ko
 ```
 3. wait until
 ```julia
