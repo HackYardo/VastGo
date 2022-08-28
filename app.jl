@@ -1,10 +1,11 @@
-using Dash, JSON, PlotlyJS
+using Dash, JSON3, PlotlyJS
 
 #include("gtp.jl")
 #katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
 #engineProcess=open(katagoCommand,"r+")
 function run_engine()
-    katagoCommand=`./katago gtp -config gtp_custom.cfg -model m6/model.txt.gz`
+    katagoCommand = Cmd(`./katago gtp -config custom_gtp.cfg -model \
+        models/m6.txt.gz`, dir="../katago1.11avx2/")
     katagoProcess=open(katagoCommand,"r+")
     return katagoProcess
 end
@@ -146,7 +147,7 @@ function agent_showboard()
     for line in cat([paragraphVector[1]],paragraphVector[m:end],dims=1)
         boardInfo=merge(boardInfo,odd_key_even_value(line))
     end
-    boardInfo["checkBoard"]=cat(paragraphVector[2:m-1],[json(boardInfo["Rules"],2)],dims=1)
+    boardInfo["checkBoard"]=cat(paragraphVector[2:m-1],[JSON3.write(boardInfo["Rules"])],dims=1)
     query("printsgf")
     sgfInfo=reply()[3:end]
     boardInfo["sgf"]=sgfInfo
@@ -924,7 +925,7 @@ function mode_color(colorVector,colorPlayer,modeColor)
 end
 #include("visibility.jl")
 
-#using JSON
+#using JSON3
 
 function abc_num(color,vertex,boardSizeY) # move_syntax_converter: gtp & num
     if color in [-1,1]
@@ -1015,7 +1016,7 @@ function showboard_magnet()
     for line in cat([paragraphVector[1]],paragraphVector[m:end],dims=1)
         boardInfo=merge(boardInfo,odd_key_even_value(line))
     end
-    boardInfo["checkBoard"]=cat(paragraphVector[2:m-1],[json(boardInfo["Rules"],2)],dims=1)
+    boardInfo["checkBoard"]=cat(paragraphVector[2:m-1],[JSON3.write(boardInfo["Rules"])],dims=1)
     query("printsgf")
     sgfInfo=reply()[3:end]
     boardInfo["sgf"]=sgfInfo
@@ -1483,8 +1484,8 @@ callback!(
     end
 
     if sth != nothing
-        sthJSON=JSON.json(sth)
-        sthParse=JSON.parse(sthJSON)
+        sthJSON=JSON3.write(sth)
+        sthParse=JSON3.read(sthJSON, Dict)
         vector=sthParse["points"][1]
         xPlayer=vector["x"]
         yPlayer=vector["y"]
@@ -1545,17 +1546,19 @@ callback!(
         colorVector=mode_color(colorVector,colorPlayer,modeColor)
     end
 
-    gameInfo=json(gameInfo,2)
+    gameInfo=JSON3.write(gameInfo)
 
     sgfInfo=gameInfoAll["sgf"]
 
-    info=" GameInfo:\n$gameInfo SGF:\n$sgfInfo\n ClickInfo:\n$clickData"
+    info="  GameInfo:\n$gameInfo\n\n  SGF:\n$sgfInfo\n  ClickInfo:\n$clickData"
 
     return finalScore,dialogDisplay,info, plot_board(boardSize,colorVector)
 end
 
 #server = app.server # no server field?
 
+#run_server(app, "0.0.0.0", 8050, debug=true)
+#
 @async run_server(app, "0.0.0.0", 8050, debug=false)
 
 function kata_dash()
@@ -1566,4 +1569,4 @@ function kata_dash()
     end
 end
 
-kata_dash()
+kata_dash()  #
