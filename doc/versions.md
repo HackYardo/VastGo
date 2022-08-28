@@ -74,8 +74,18 @@
 - CSS theme
 - stones' color
 - boardsize ratio px adjust
+- data filtering
+- A/B testing
+- choose data to add/delete plots
 
-# 0.0.7 Chess
+# 0.0.7 Speed
+
+- Matrix Row to Col
+- startup faster even with with sysimage
+  - in terminal
+  - in browser
+
+# 0.0.8 Chess
 
 - UCI
 - Stockfish, Lc0
