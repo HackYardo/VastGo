@@ -77,7 +77,7 @@ shell> julia
 julia> ]
 ```
 4. 安装包
-```shell
+```julia
 (@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra PlotlyBase
 ```
 5. 下载本仓库
@@ -100,14 +100,14 @@ julia> ]
 KATAGOOPENCL = (dir="../KataGoOpenCL/", cmd="./katago gtp -model elo9000.txt.gz")
 botDict = Dict(..., "ko"=>KATAGOOPENCL)
 ```
-**注意：不要在莉拉零的命令中用-q，因为`showboard`会消失**
+**注意：不要在莉拉零的命令中用`-q`，因为`showboard`会消失**
 
 2. 在VastGo/里，带上bot的id来运行`terminal.jl`，例如
 ```shell
 shell> julia src/terminal.jl ko
 ```
 3. 等到
-```shell
+```julia
 [ Info: GTP ready 
 ```
 4. 键入以下字符串，方可玩一局围棋
@@ -132,7 +132,7 @@ quit
 shell> julia app.jl
 ```
 2. 等到
-```shell
+```julia
 [ Info: Listening on: 0.0.0.0:8050
 ```
 3. 打开一个(**仅一个**) 浏览器，在地址栏中键入`localhost:8050`后就可以玩了
@@ -160,10 +160,10 @@ shell> julia app.jl
 
 **卸载卡塔围棋、莉拉零、牛羚围棋：**
 （如果你的设备不需要了……）
-- `sudo apt remove leela-zero gnugo`
-- `sudo apt autoremove`
-- 删除卡塔围棋的引擎
-- 删除卡塔围棋和莉拉零的网络
+  1. `sudo apt remove leela-zero gnugo`
+  2. `sudo apt autoremove`
+  3. 删除卡塔围棋的引擎
+  4. 删除卡塔围棋和莉拉零的网络
 
 </details>
 

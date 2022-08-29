@@ -77,7 +77,7 @@ shell> julia
 julia> ]
 ```
 4. install packages
-```shell
+```julia
 (@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra PlotlyBase
 ```
 5. download this repo
@@ -100,14 +100,14 @@ julia> ]
 KATAGOOPENCL = (dir="../KataGoOpenCL/", cmd="./katago gtp -model elo9000.txt.gz")
 botDict = Dict(..., "ko"=>KATAGOOPENCL)
 ```
-**Note: DO NOT use -q in Leela-Zero's command, since `showboard` will GONE.**
+**Note: DO NOT use `-q` in Leela-Zero's command, since `showboard` will GONE.**
 
 2. in VastGo/, run `terminal.jl` with a bot's id, e.g.
 ```shell
 shell> julia src/terminal.jl ko
 ```
 3. wait until
-```shell
+```julia
 [ Info: GTP ready 
 ```
 4. type following strings to play a Go game
@@ -132,7 +132,7 @@ quit
 shell> julia app.jl
 ```
 2. wait until
-```shell
+```julia
 [ Info: Listening on: 0.0.0.0:8050
 ```
 3. open one(**only one**) browser and type `localhost:8050` in the address bar to play
@@ -160,10 +160,10 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 
 **uninstall KataGo, Leela-Zero, GNU Go:**
 (If you don't use them anymore...)
-- `sudo apt remove leela-zero gnugo`
-- `sudo apt autoremove`
-- delete KataGo's engine
-- delete KataGo's and Leela-Zero's networks
+  1. `sudo apt remove leela-zero gnugo`
+  2. `sudo apt autoremove`
+  3. delete KataGo's engine
+  4. delete KataGo's and Leela-Zero's networks
 
 </details>
 

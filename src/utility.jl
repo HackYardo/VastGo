@@ -138,6 +138,19 @@ collectrows(A::AbstractMatrix) = collect.(eachrow(A))
 #collectcol(A::AbstractMatrix) = collect.(eachcol(A'))'
 
 """
+`split_undo(v::Vector{SubString{String}})::String`
+
+Undo `split`(str, "\n").
+"""
+function split_undo(v::Vector{SubString{String}})::String
+    s = ""
+    for el in v 
+        s = s * el * "\n" 
+    end 
+    s
+end
+
+"""
 `utility()`
 
 Some utilities.
@@ -151,10 +164,12 @@ utilityfunction2
 ```
 """
 function utility()
-    println("""
+    print("""
         average
         findindex
         match_diy
         pkgNames_strFile
-        collectrows""")
+        collectrows
+        split_undo
+        """)
 end

@@ -1,5 +1,5 @@
 #import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
-include("utility.jl")  # match_diy()
+include("utility.jl")  # match_diy(), split_undo()
 
 function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp --boardsize 3")
@@ -113,15 +113,36 @@ function leelaz_showboard(proc::Base.Process)
     paragraphErr
 end
 
-function showboard_get(proc::Base.Process)
-    paragraph = reply(proc)
-    name = name_get(proc)
-    if name == "Leela Zero"
-        paragraph = paragraph * leelaz_showboard(proc)
+function leelaz_showboardf(paragraph)  # f: _format
+    lines = split(paragraph, "\n")
+    
+    infoUp = lines[2:3]
+    infoDown = lines[25:27]
+    infoAll = cat(infoUp, infoDown, dims=1)
+    info = split_undo(infoAll)
+
+    m = n = 19
+    linesPosition = lines[5:23]
+    c = Vector{String}()
+    for line in linesPosition
+        line = split(line, [' ', ')', '('])
+        for char in line
+            if char == "O"
+                push!(c, "rgba(255,255,255,1)")
+            elseif char == "X"
+                push!(c, "rgba(0,0,0,1)")
+            elseif char in [".", "+"]
+                push!(c, "rgba(0,0,0,0)")
+            else 
+                continue
+            end
+        end
     end
-    println(paragraph)
-    paragraph, name
-end 
+    x = repeat([p for p in 1:n], m)
+    y = [p for p in m:-1:1 for q in 1:n]
+
+    (x = x, y = y, c = c, i = info)
+end
 
 function gnugo_showboardf(paragraph)  # f: _format
     r = r"captured \d{1,}"
@@ -175,17 +196,30 @@ function gnugo_showboardf(paragraph)  # f: _format
 
     info = """
     B stones captured: $blackCaptured
-    W stones captured: $whiteCaptured"""
+    W stones captured: $whiteCaptured
+    """
 
     (x = x, y = y, c = c, i = info)
 end
 
+function showboard_get(proc::Base.Process)
+    paragraph = reply(proc)
+    name = name_get(proc)
+    if name == "Leela Zero"
+        paragraph = paragraph * leelaz_showboard(proc)
+    end
+    println(paragraph)
+    paragraph, name
+end 
+
 function showboard_format(proc::Base.Process)
     paragraph, name = showboard_get(proc)
     if name == "GNU Go"
-        board = gnugo_showboardf(paragraph)
-        #println(dump(board))
+        boardG = gnugo_showboardf(paragraph)
+        #println(dump(boardG))
     elseif name == "Leela Zero"
+        boardL = leelaz_showboardf(paragraph)
+        #println(dump(boardL))
     elseif name == "KataGo"
     end
 end
@@ -200,10 +234,10 @@ function gtp_loop(proc::Base.Process)
             continue
         end 
         
-        if occursin("quit", sentence)
+        if "quit" in split(sentence)
             bot_end(proc)
             break
-        elseif occursin("showboard", sentence)
+        elseif "showboard" in split(sentence)
             showboard_format(proc)
         else
             println(reply(proc))
