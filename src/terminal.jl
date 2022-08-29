@@ -202,6 +202,39 @@ function gnugo_showboardf(paragraph)  # f: _format
     (x = x, y = y, c = c, i = info)
 end
 
+function katago_showboardf(paragraph)
+    lines = split(paragraph, "\n")
+
+    infoUp = lines[1][3:end]
+
+    n = length(split(lines[2]))
+    m = 3
+    c = Vector{String}()
+    while lines[m][1] in "1 "
+        for char in split(lines[m][4:end], [' ', '1', '2', '3'])
+            if char == "O"
+                push!(c, "rgba(255,255,255,1)")
+            elseif char == "X"
+                push!(c, "rgba(0,0,0,1)")
+            elseif char == "."
+                push!(c, "rgba(0,0,0,0)")
+            else 
+                continue
+            end
+        end
+        m=m+1
+    end
+    m = m - 3
+    x = repeat([p for p in 1:n], m)
+    y = [p for p in m:-1:1 for q in 1:n]
+
+    infoDown = lines[m+3:m+6]
+    infoAll = cat(infoUp, infoDown, dims=1)
+    info = split_undo(infoAll)
+
+    (x = x, y = y, c = c, i = info)
+end
+
 function showboard_get(proc::Base.Process)
     paragraph = reply(proc)
     name = name_get(proc)
@@ -212,15 +245,17 @@ function showboard_get(proc::Base.Process)
     paragraph, name
 end 
 
-function showboard_format(proc::Base.Process)
-    paragraph, name = showboard_get(proc)
+function showboard_format(paragraph, name)
     if name == "GNU Go"
         boardG = gnugo_showboardf(paragraph)
-        #println(dump(boardG))
+        println(dump(boardG))
     elseif name == "Leela Zero"
         boardL = leelaz_showboardf(paragraph)
-        #println(dump(boardL))
+        println(dump(boardL))
     elseif name == "KataGo"
+        boardK = katago_showboardf(paragraph)
+        println(dump(boardK))
+    else
     end
 end
 
@@ -238,7 +273,8 @@ function gtp_loop(proc::Base.Process)
             bot_end(proc)
             break
         elseif "showboard" in split(sentence)
-            showboard_format(proc)
+            paragraph, name = showboard_get(proc)
+            #showboard_format(paragraph, name)
         else
             println(reply(proc))
         end
