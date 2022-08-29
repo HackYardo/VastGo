@@ -1,6 +1,5 @@
-import JSON3
-
-include("utility.jl")
+import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
+include("utility.jl")  # match_diy()
 
 function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp")
@@ -40,7 +39,7 @@ function bot_run(; dir="", cmd="")::Base.Process
     
     cmdVector = split(cmd) # otherwise there will be ' in command
     command = Cmd(`$cmdVector`, dir=dir)
-    println("VastGo will run the command: $cmd\nin the direetory: $dir")
+    println("VastGo will run the command: $cmd\nin the directory: $dir")
     #println(command)
 
     process = run(command,inp,out,err;wait=false)

@@ -143,5 +143,5 @@ utilityfunction2
 ```
 """
 function utility()
-    println("average\nfindindex\nfile_match\npkgNames_strFile")
+    println("average\nfindindex\nmatch_diy\npkgNames_strFile")
 end

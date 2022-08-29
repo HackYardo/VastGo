@@ -1,6 +1,6 @@
-using Dash, PlotlyBase
-
-include("utility.jl")
+using Dash
+using PlotlyBase  # scatter(), Layout(), Plot(), undate!()
+include("utility.jl")  # average(), findindex(), match_diy()
 
 const KATAGO = r"^k.{2,}\d{3,}\.\d"
 const LEELAZ = r"^\d{1,3}.{1,}\d{4}-.{2,}\d$"
@@ -85,9 +85,12 @@ function dropdown_multiTrue(value)
         #str = value
         #println("2")
     else
+        #=
         printstyled("Warning: "; color=:yellow)
         println("Type may not support:")
         println(t)
+        =#
+        @warn "Type may not support: $t"
     end
     #println(typeof(value), '\n', value)
     #println(typeof(str), '\n', str)
@@ -107,8 +110,8 @@ function plot(style)
     )
 end=#
 function data_match()
-    katago = file_match(KATAGO, ARGS[1])
-    leelaz = file_match(LEELAZ, ARGS[1])
+    katago = match_diy(KATAGO, ARGS[1])
+    leelaz = match_diy(LEELAZ, ARGS[1])
     kgNNStructVector = []; kgDataRowsVector = []; kgELOVector = [];
     lzNNStructVector = []; lzGamesVector = []; lzELOVector = [];
 
@@ -241,8 +244,10 @@ end
 
 function plot!(p,x,y,l)
     #= example from PlotlyBase docstring
-    update!(p, Dict(:marker => Dict(:color => "red")), layout=Layout(title="this is a title"), marker_symbol="star")=#
-    update!(p, layout=layout(x, y), mode=l.mode, line=attr(shape=l.shape, smoothing=l.smoothing, dash=l.dash))
+    update!(p, Dict(:marker => Dict(:color => "red")), 
+    layout=Layout(title="this is a title"), marker_symbol="star")=#
+    update!(p, layout=layout(x, y), mode=l.mode, line=attr(
+        shape=l.shape, smoothing=l.smoothing, dash=l.dash))
 end
 
 style = html_div() do 
