@@ -6,7 +6,7 @@ function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp")
     LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
     KATAGO = (dir="../katago1.11avx2/", cmd="./katago gtp -config \
-        custom_gtp.cfg-model models/m6.txt.gz")
+        custom_gtp.cfg -model models/m6.txt.gz")
     botDict = Dict("g"=>GNUGO, "l"=>LEELAZ, "k"=>KATAGO)
     
     botDict[ARGS[1]]
@@ -160,12 +160,13 @@ function gnugo_showboardf(paragraph)  # f: _format
         j = 1
         i = i - 1
     end 
-    position = collectcol(position)
-    println(position)
+    positionForJSON = collectcol(position)
+    #=
+    println(positionForJSON)
     #println(v)
     
     boardJSON = JSON3.write(
-        (position = position, blackCaptured = v[1], whiteCaptured=v[2])
+        (position = positionForJSON, blackCaptured = v[1], whiteCaptured=v[2])
         )
     board = (namedtuple = JSON3.read(boardJSON, NamedTuple), 
         dict = JSON3.read(boardJSON, Dict), 
@@ -178,6 +179,8 @@ function gnugo_showboardf(paragraph)  # f: _format
     #buff = IOBuffer()
     #redirect_stdout(JSON3.pretty(board.json), buff)
     #println(buff)
+    =#
+    
     return board 
 end
 collectrows(x::AbstractMatrix) = collect.(eachrow(x))
