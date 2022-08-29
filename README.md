@@ -70,14 +70,14 @@ GNU Go | *fail* | *fail*
 1. download and add [julia](https://julialang.org/) into path
 2. run julia in cmd/shell/terminal and you will enter julia REPL-mode
 ```shell
-cmd> julia 
+shell> julia 
 ```  
 3. enter julia Pkg REPL-mode
-```julia
+```shell
 julia> ]
 ```
 4. install packages
-```julia
+```shell
 (@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra PlotlyBase
 ```
 5. download this repo
@@ -104,10 +104,10 @@ botDict = Dict(..., "ko"=>KATAGOOPENCL)
 
 2. in VastGo/, run `terminal.jl` with a bot's id, e.g.
 ```shell
-cmd> julia src/terminal.jl ko
+shell> julia src/terminal.jl ko
 ```
 3. wait until
-```julia
+```shell
 [ Info: GTP ready 
 ```
 4. type following strings to play a Go game
@@ -129,10 +129,10 @@ quit
 
 1. run `app.jl`
 ```shell
-cmd> julia app.jl
+shell> julia app.jl
 ```
 2. wait until
-```julia
+```shell
 [ Info: Listening on: 0.0.0.0:8050
 ```
 3. open one(**only one**) browser and type `localhost:8050` in the address bar to play
@@ -187,7 +187,7 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 [THIRDPARTY](./THIRDPARTY.md)
 
 ## Contribute
-```julia
+```shell
 if sourceCode in contribution
     @goto Issues
 else

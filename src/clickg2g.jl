@@ -1,9 +1,10 @@
 using JSON
-using PlotlyJS
+using PlotlyJS, PlotlyBase
 using Dash
 
-const SGF_X=['a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t']
-const SGF_Y=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+#const SGF_X=['a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t']
+const SGF_X = [i for i in 0:20]
+const SGF_Y = SGF_X
 const SGF_XY=[(i,j) for i in SGF_X for j in SGF_Y]
 
 boardLayout=Layout(
@@ -17,21 +18,25 @@ boardLayout=Layout(
 	xaxis=attr(
 		# showline=true, mirror=true,linewidth=1,linecolor="black",
 		# zeroline=true,zerolinewidth=1,zerolinecolor="rgb(205,133,63)",
-		ticktext=['Z','A','B','C','D','E','F','G','H','J','K','L','M','N','O','P','Q','R','S','T','U'],
-		tickvals=['z','a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u'] 
+		zeroline = false,
+		ticktext=cat(['Z'], 
+			[c for c in 'A':'H'], [c for c in 'J':'U'], dims=1),
+		tickvals = SGF_X 
 		# if tickvals is a number array, row/col lines will become a line  
 		),
 	yaxis_showgrid=false,
 	yaxis=attr(
 		# showline=true, mirror=true,linewidth=1,linecolor="black",
 		zeroline=false,
-		ticktext=['0','1','2','3','4','5','6','7','8','9',"10","11","12","13","14","15","16","17","18","19","20"],
-		tickvals=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+		ticktext=["$i" for i in 0:20],
+		tickvals = SGF_Y
 		)
 	)
 rowLine=scatter(
-	x=['a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t'],
-	y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19],
+	#x=['a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t'],
+	#y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19],
+	x = repeat([1, 19, nothing], 19),
+	y = [i for i in 1:19 for j in 1:3],
 	# use fold lines to plot row/col lines
 	mode="lines",
 	line_width=1,
@@ -40,8 +45,10 @@ rowLine=scatter(
 	name="row lines"
 	)
 colLine=scatter(
-	x=['z','a','a','b','b','c','c','d','d','e','e','f','f','g','g','h','h','i','i','j','j','k','k','m','m','n','n','o','o','p','p','q','q','r','r','s','s','t','t','u'],
-	y=[1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19],
+	#x=['z','a','a','b','b','c','c','d','d','e','e','f','f','g','g','h','h','i','i','j','j','k','k','m','m','n','n','o','o','p','p','q','q','r','r','s','s','t','t','u'],
+	#y=[1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19],
+	x = [c for c in 1:19 for j in 1:3],
+	y = repeat([1, 19, nothing], 19),
 	# use (z,1) and (u,19) to widen col margin
 	mode="lines",
 	line_width=1,
@@ -50,18 +57,18 @@ colLine=scatter(
 	name="col lines"
 	)
 starPoint=scatter(
-	x=['d','j','q','d','j','q','d','j','q'],
-	y=[4,4,4,10,10,10,16,16,16],
+	x = repeat([4, 10, 16], 3),
+	y = [i for i in [4, 10, 16] for j in 1:3],
 	mode="markers",
 	marker_color="rgb(0,0,0)",
 	name="star points"
 	)
 vertex=scatter(
-	x=[SGF_XY[i][1] for i in range(1,length=19^2)],
-	y=[SGF_XY[j][2] for j in range(1,stop=361)],
+	x = [i for i in 1:19 for j in 1:19],
+	y = repeat([i for i in 1:19], 19),
 	mode="markers",
-	marker_size=1,
-	marker_color="rgba(205,133,63,0)",
+	marker_size = 36,
+	marker_color="rgba(0,0,0,0.618)",
 	name="vertex"
 	)
 ownership=scatter(
@@ -77,6 +84,21 @@ ownership=scatter(
 		),
 	name="ownership"
 	)
+tryVectorVector = scatter(
+	y = [1, 1, 1, 2, 2, 2, 3, 3, 3],
+	x = [1, 2, 3, 1, 2, 3, 1, 2, 3],
+	mode = "markers",
+	marker = attr(
+		symbol = "circle",
+		color = [
+		"rgba(24,64,125,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 
+		"rgba(0,0,0,0)", "rgba(0,0,0,1)", "rgba(0,0,0,0)", 
+		"rgba(0,0,0,0)", "rgba(255,255,255,1)", "rgba(0,0,0,0)"
+		],
+		size = 50
+	),
+	name = "tryVectorVector"
+)
 
 topText="
 ### Hello, welcome to VastGoMaterial!
@@ -129,6 +151,7 @@ app.layout=html_div() do
 		),
 	dcc_graph(id="board2"),
 	html_div(id="seeDebugData"),
+	dcc_graph(figure = Plot(tryVectorVector)),
 	html_div(
 		bottomDiv, 
 		style=(width="49%",display="inline-block",float="right")

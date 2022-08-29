@@ -110,8 +110,8 @@ function plot(style)
     )
 end=#
 function data_match()
-    katago = match_diy(KATAGO, ARGS[1])
-    leelaz = match_diy(LEELAZ, ARGS[1])
+    katago = match_diy(KATAGO, readlines(ARGS[1]))
+    leelaz = match_diy(LEELAZ, readlines(ARGS[1]))
     kgNNStructVector = []; kgDataRowsVector = []; kgELOVector = [];
     lzNNStructVector = []; lzGamesVector = []; lzELOVector = [];
 

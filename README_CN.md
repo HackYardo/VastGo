@@ -70,14 +70,14 @@ GNU Go | *fail* | *fail*
 1. 下载[julia](https://julialang.org/)并添加到路径
 2. 在终端cmd/shell/terminal里运行julia，即进入julia REPL模式
 ```shell
-cmd> julia 
+shell> julia 
 ```  
 3. 进入julia Pkg REPL模式
-```julia
+```shell
 julia> ]
 ```
 4. 安装包
-```julia
+```shell
 (@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra PlotlyBase
 ```
 5. 下载本仓库
@@ -104,7 +104,7 @@ botDict = Dict(..., "ko"=>KATAGOOPENCL)
 
 2. 在VastGo/里，带上bot的id来运行`terminal.jl`，例如
 ```shell
-cmd> julia src/terminal.jl ko
+shell> julia src/terminal.jl ko
 ```
 3. 等到
 ```shell
@@ -129,10 +129,10 @@ quit
 
 1. 运行`app.jl`
 ```shell
-cmd> julia app.jl
+shell> julia app.jl
 ```
 2. 等到
-```julia
+```shell
 [ Info: Listening on: 0.0.0.0:8050
 ```
 3. 打开一个(**仅一个**) 浏览器，在地址栏中键入`localhost:8050`后就可以玩了

@@ -132,13 +132,13 @@ function gnugo_showboardf(paragraph)  # f: _format
 
     m = length(lines) - 4
     n = length(split(lines[2]))
-    position = zeros(Integer, m, n)
+    position = zeros(Int64, m, n)
     i = m
     j = 1
     linesPosition = lines[3:2+m]
     traceMatrix = (
-        x = Matrix{Integer}(undef, m, n), 
-        y = Matrix{Integer}(undef, m, n), 
+        x = Matrix{Int64}(undef, m, n), 
+        y = Matrix{Int64}(undef, m, n), 
         c = Matrix{String}(undef, m, n)
         )
     for line in linesPosition
@@ -170,10 +170,10 @@ function gnugo_showboardf(paragraph)  # f: _format
         i = i - 1
     end 
     println(position)
-    println(traceMatrix.x)
-    println(traceMatrix.y)
-    println(traceMatrix.c)
-    positionForJSON = collectcol(position)
+    println(collectrows(traceMatrix.x))
+    println(collectrows(traceMatrix.y))
+    println(collectrows(traceMatrix.c))
+    #positionForJSON = collectcol(position)
     #=
     println(positionForJSON)
     #println(v)
@@ -201,7 +201,7 @@ collectcol(A::AbstractMatrix) = collect.(eachcol(A'))'
 function showboard_format(proc::Base.Process)
     paragraph, name = showboard_get(proc)
     if name == "GNU Go"
-        #gnugo_showboardf(paragraph)
+        gnugo_showboardf(paragraph)
     elseif name == "Leela Zero"
     elseif name == "KataGo"
     end
