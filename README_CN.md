@@ -97,7 +97,7 @@ julia> ]
 
 1. 编辑`terminal.jl`的第一个函数，指示运行bot的**命令**、运行命令的**文件夹**，以及Dict()里的**id=>bot**，例如
 ```julia
-KATAGOOPENCL = (dir="../KataGoOpenCL/", cmd="./katago gtp -model elo9000.bin.gz")
+KATAGOOPENCL = (dir="../KataGoOpenCL/", cmd="./katago gtp -model elo9000.txt.gz")
 botDict = Dict(..., "ko"=>KATAGOOPENCL)
 ```
 **注意：不要在莉拉零的命令中用-q，因为`showboard`会消失**

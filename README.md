@@ -97,7 +97,7 @@ julia> ]
 
 1. edit the first function of `terminal.jl` to indicate **the command** of running a bot, **the directory** where to run the command and the **id=>bot** in Dict(), e.g.
 ```julia
-KATAGOOPENCL = (dir="../KataGoOpenCL/", cmd="./katago gtp -model elo9000.bin.gz")
+KATAGOOPENCL = (dir="../KataGoOpenCL/", cmd="./katago gtp -model elo9000.txt.gz")
 botDict = Dict(..., "ko"=>KATAGOOPENCL)
 ```
 **Note: DO NOT use -q in Leela-Zero's command, since `showboard` will GONE.**
