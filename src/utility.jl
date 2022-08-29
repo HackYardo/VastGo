@@ -31,9 +31,7 @@ julia> v = [1,3,5]; average(v)
 3.0
 ```
 """
-function average(vector)
-    sum(vector)/length(vector) 
-end
+average(vector) = sum(vector)/length(vector) 
 
 """
 `findindex(element, collection)`

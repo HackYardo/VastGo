@@ -133,7 +133,7 @@ function gnugo_showboardf(paragraph)  # f: _format
 
     m = length(lines) - 4
     n = length(split(lines[2]))
-    position = zeros(m, n)
+    position = zeros(Integer, m, n)
     i = m
     j = 1
     linesPosition = lines[3:2+m]
@@ -141,14 +141,15 @@ function gnugo_showboardf(paragraph)  # f: _format
         if length(line) > l + 20
             v = cat(v, match_diy([r, r"\d{1,}"], [line]), dims=1)
         end
+        line = split(line)[2:n+1]
         for char in line
-            if char == 'O'
+            if char == "O"
                 position[i,j] = 1
                 j = j + 1
-            elseif char == 'X'
+            elseif char == "X"
                 position[i,j] = -1
                 j = j + 1
-            elseif char in ".+"
+            elseif char in [".", "+"]
                 j = j + 1
             elseif j == n 
                 break
@@ -159,7 +160,7 @@ function gnugo_showboardf(paragraph)  # f: _format
         j = 1
         i = i - 1
     end 
-    position = collectrows(position)
+    position = collectcol(position)
     println(position)
     #println(v)
     
@@ -174,9 +175,13 @@ function gnugo_showboardf(paragraph)  # f: _format
     println(board.dict)
     println(board.json)
     JSON3.pretty(board.json)
+    #buff = IOBuffer()
+    #redirect_stdout(JSON3.pretty(board.json), buff)
+    #println(buff)
     return board 
 end
 collectrows(x::AbstractMatrix) = collect.(eachrow(x))
+collectcol(A::AbstractMatrix) = collect.(eachcol(A'))'
 function showboard_format(proc::Base.Process)
     paragraph, name = showboard_get(proc)
     if name == "GNU Go"
