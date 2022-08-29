@@ -65,8 +65,8 @@ starPoint=scatter(
 	name="star points"
 	)
 vertex=scatter(
-	x = [i for i in 1:19 for j in 1:19],
-	y = repeat([i for i in 1:19], 19),
+	x = repeat([i for i in 1:19], 19),
+	y = [i for i in 19:-1:1 for j in 1:19],
 	mode="markers",
 	marker_size = 36,
 	marker_color="rgba(0,0,0,0)",
@@ -85,9 +85,9 @@ ownership=scatter(
 		),
 	name="ownership"
 	)
-tryVectorVector = scatter(
-	y = [1, 1, 1, 2, 2, 2, 3, 3, 3],
+longVector = scatter(
 	x = [1, 2, 3, 1, 2, 3, 1, 2, 3],
+	y = [3, 3, 3, 2, 2, 2, 1, 1, 1],
 	mode = "markers",
 	marker = attr(
 		symbol = "circle",
@@ -98,7 +98,7 @@ tryVectorVector = scatter(
 		],
 		size = 50
 	),
-	name = "tryVectorVector"
+	name = "longVector"
 )
 
 topText="
@@ -153,7 +153,7 @@ app.layout=html_div() do
 		),
 	dcc_graph(id="board2"),
 	html_div(id="seeDebugData"),
-	dcc_graph(figure = Plot(tryVectorVector)),
+	dcc_graph(figure = Plot(longVector)),
 	html_div(
 		bottomDiv, 
 		style=(width="49%",display="inline-block",float="right")
