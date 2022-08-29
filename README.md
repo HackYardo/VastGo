@@ -33,8 +33,8 @@ Players <<<======>>> components
 
 Ideas:
 - **funny**: nonstandard Go, *BEAT AI RIGHT NOW*
-- **green**: use playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
-- **simple**: don't know Go, use GTP command `showboard`, *LESS CODE LESS GOTCHA*
+- **green**: uses playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
+- **simple**: doesn't know Go, uses GTP command `showboard`, *LESS CODE LESS GOTCHA*
 - **useful**: move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x), *RICH AND POWERFUL PLOT*
 - **compatible**: SBKV for winrate and OGSC for score, *THE SAME SGF AS Sabaki AND Ogatak* 
 
@@ -97,7 +97,7 @@ julia> ]
 
 1. edit the first function of `terminal.jl` to indicate **the command** of running a bot, **the directory** where to run the command and the **id=>bot** in Dict(), e.g.
 ```julia
-KATAGOOPENCL = (dir="../KataGo1.11OpenCL/", cmd="./katago gtp -config gtp_v256_t5.cfg -model model_elo12500.bin.gz")
+KATAGOOPENCL = (dir="../KataGoOpenCL/", cmd="./katago gtp -model elo9000.bin.gz")
 botDict = Dict(..., "ko"=>KATAGOOPENCL)
 ```
 **Note: DO NOT use -q in Leela-Zero's command, since `showboard` will GONE.**
