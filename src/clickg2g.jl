@@ -2,11 +2,6 @@ using JSON
 using PlotlyJS, PlotlyBase
 using Dash
 
-#const SGF_X=['a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t']
-const SGF_X = [i for i in 0:20]
-const SGF_Y = SGF_X
-const SGF_XY=[(i,j) for i in SGF_X for j in SGF_Y]
-
 boardLayout=Layout(
 	# boardSize are as big as setting
 	# aspectmode="manual",aspectratio=1,
@@ -21,7 +16,7 @@ boardLayout=Layout(
 		zeroline = false,
 		ticktext=cat(['Z'], 
 			[c for c in 'A':'H'], [c for c in 'J':'U'], dims=1),
-		tickvals = SGF_X 
+		tickvals = [i for i in 0:20]
 		# if tickvals is a number array, row/col lines will become a line  
 		),
 	yaxis_showgrid=false,
@@ -29,7 +24,7 @@ boardLayout=Layout(
 		# showline=true, mirror=true,linewidth=1,linecolor="black",
 		zeroline=false,
 		ticktext=["$i" for i in 0:20],
-		tickvals = SGF_Y
+		tickvals = [i for i in 0:20]
 		)
 	)
 rowLine=scatter(
@@ -37,7 +32,6 @@ rowLine=scatter(
 	#y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19],
 	x = repeat([1, 19, nothing], 19),
 	y = [i for i in 1:19 for j in 1:3],
-	# use fold lines to plot row/col lines
 	mode="lines",
 	line_width=1,
 	line_color="rgb(0,0,0)",
@@ -49,12 +43,19 @@ colLine=scatter(
 	#y=[1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19],
 	x = [c for c in 1:19 for j in 1:3],
 	y = repeat([1, 19, nothing], 19),
-	# use (z,1) and (u,19) to widen col margin
 	mode="lines",
 	line_width=1,
 	line_color="rgb(0,0,0)",
 	hoverinfo="skip",
 	name="col lines"
+	)
+anchorPoint = scatter(
+	# use (z,1) and (u,19) to widen col margin
+	x = [0, 20],
+	y = [0, 20],
+	mode = "markers",
+	marker_color = "rgba(0,0,0,0)",
+	name = "anchors"
 	)
 starPoint=scatter(
 	x = repeat([4, 10, 16], 3),
@@ -68,7 +69,7 @@ vertex=scatter(
 	y = repeat([i for i in 1:19], 19),
 	mode="markers",
 	marker_size = 36,
-	marker_color="rgba(0,0,0,0.618)",
+	marker_color="rgba(0,0,0,0)",
 	name="vertex"
 	)
 ownership=scatter(
@@ -114,7 +115,8 @@ bottomDiv=dcc_markdown(bottomText)
 
 function plot_board(colLine,rowLine,starPoint,vertex,stone,boardLayout)
 	plot(
-		[colLine,
+		[anchorPoint,
+		colLine,
 		rowLine,
 		starPoint,
 		vertex,
