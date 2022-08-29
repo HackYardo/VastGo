@@ -130,6 +130,14 @@ function pkgNames_strFile(pkg)
 end
 
 """
+`collectrows(A::AbstractMatrix)`
+
+`collect`.(`eachrow`(A))
+"""
+collectrows(A::AbstractMatrix) = collect.(eachrow(A))
+#collectcol(A::AbstractMatrix) = collect.(eachcol(A'))'
+
+"""
 `utility()`
 
 Some utilities.
@@ -143,5 +151,10 @@ utilityfunction2
 ```
 """
 function utility()
-    println("average\nfindindex\nmatch_diy\npkgNames_strFile")
+    println("""
+        average
+        findindex
+        match_diy
+        pkgNames_strFile
+        collectrows""")
 end

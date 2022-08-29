@@ -1,4 +1,4 @@
-import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
+#import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
 include("utility.jl")  # match_diy()
 
 function bot_get()
@@ -128,37 +128,33 @@ function gnugo_showboardf(paragraph)  # f: _format
     lines = split(paragraph, '\n')
     
     l = length(lines[2]) + 2
-    v = Vector{String}()
+    captured = Vector{String}()
 
     m = length(lines) - 4
     n = length(split(lines[2]))
-    position = zeros(Int64, m, n)
+    #position = zeros(Int64, m, n)
     i = m
     j = 1
     linesPosition = lines[3:2+m]
-    traceMatrix = (
-        x = Matrix{Int64}(undef, m, n), 
-        y = Matrix{Int64}(undef, m, n), 
-        c = Matrix{String}(undef, m, n)
-        )
+
+    c = Vector{String}()
+
     for line in linesPosition
         if length(line) > l + 20
-            v = cat(v, match_diy([r, r"\d{1,}"], [line]), dims=1)
+            captured = cat(captured, match_diy([r, r"\d{1,}"], [line]), dims=1)
         end
         line = split(line)[2:n+1]
         for char in line
-            traceMatrix.x[i,j] = i 
-            traceMatrix.y[i,j] = j
             if char == "O"
-                position[i,j] = 1
-                traceMatrix.c[i,j] = "rgba(255,255,255,1)"
+                #position[i,j] = 1
+                push!(c, "rgba(255,255,255,1)")
                 j = j + 1
             elseif char == "X"
-                position[i,j] = -1
-                traceMatrix.c[i,j] = "rgba(0,0,0,1)"
+                #position[i,j] = -1
+                push!(c, "rgba(0,0,0,1)")
                 j = j + 1
             elseif char in [".", "+"]
-                traceMatrix.c[i,j] = "rgba(0,0,0,0)"
+                push!(c, "rgba(0,0,0,0)")
                 j = j + 1
             elseif j == n
                 break
@@ -169,39 +165,26 @@ function gnugo_showboardf(paragraph)  # f: _format
         j = 1
         i = i - 1
     end 
-    println(position)
-    println(collectrows(traceMatrix.x))
-    println(collectrows(traceMatrix.y))
-    println(collectrows(traceMatrix.c))
-    #positionForJSON = collectcol(position)
-    #=
-    println(positionForJSON)
-    #println(v)
+    #println(position)
+
+    x = repeat([p for p in 1:n], m)
+    y = [p for p in m:-1:1 for q in 1:n]
     
-    boardJSON = JSON3.write(
-        (position = positionForJSON, blackCaptured = v[1], whiteCaptured=v[2])
-        )
-    board = (namedtuple = JSON3.read(boardJSON, NamedTuple), 
-        dict = JSON3.read(boardJSON, Dict), 
-        json = boardJSON
-        )
-    println(board.namedtuple)
-    println(board.dict)
-    println(board.json)
-    JSON3.pretty(board.json)
-    #buff = IOBuffer()
-    #redirect_stdout(JSON3.pretty(board.json), buff)
-    #println(buff)
-    =#
-    
-    #return board
+    blackCaptured = captured[1]
+    whiteCaptured = captured[2]
+
+    info = """
+    B stones captured: $blackCaptured
+    W stones captured: $whiteCaptured"""
+
+    (x = x, y = y, c = c, i = info)
 end
-collectrows(x::AbstractMatrix) = collect.(eachrow(x))
-collectcol(A::AbstractMatrix) = collect.(eachcol(A'))'
+
 function showboard_format(proc::Base.Process)
     paragraph, name = showboard_get(proc)
     if name == "GNU Go"
-        gnugo_showboardf(paragraph)
+        board = gnugo_showboardf(paragraph)
+        #println(dump(board))
     elseif name == "Leela Zero"
     elseif name == "KataGo"
     end
