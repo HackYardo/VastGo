@@ -2,7 +2,7 @@ import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
 include("utility.jl")  # match_diy()
 
 function bot_get()
-    GNUGO = (dir="", cmd="gnugo --mode gtp")
+    GNUGO = (dir="", cmd="gnugo --mode gtp --boardsize 3")
     LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
     KATAGO = (dir="../katago1.11avx2/", cmd="./katago gtp -config \
         custom_gtp.cfg -model models/m6.txt.gz")
@@ -136,29 +136,43 @@ function gnugo_showboardf(paragraph)  # f: _format
     i = m
     j = 1
     linesPosition = lines[3:2+m]
+    traceMatrix = (
+        x = Matrix{Integer}(undef, m, n), 
+        y = Matrix{Integer}(undef, m, n), 
+        c = Matrix{String}(undef, m, n)
+        )
     for line in linesPosition
         if length(line) > l + 20
             v = cat(v, match_diy([r, r"\d{1,}"], [line]), dims=1)
         end
         line = split(line)[2:n+1]
         for char in line
+            traceMatrix.x[i,j] = i 
+            traceMatrix.y[i,j] = j
             if char == "O"
                 position[i,j] = 1
+                traceMatrix.c[i,j] = "rgba(255,255,255,1)"
                 j = j + 1
             elseif char == "X"
                 position[i,j] = -1
+                traceMatrix.c[i,j] = "rgba(0,0,0,1)"
                 j = j + 1
             elseif char in [".", "+"]
+                traceMatrix.c[i,j] = "rgba(0,0,0,0)"
                 j = j + 1
-            elseif j == n 
+            elseif j == n
                 break
-            else
+            else 
                 continue
             end
         end
         j = 1
         i = i - 1
     end 
+    println(position)
+    println(traceMatrix.x)
+    println(traceMatrix.y)
+    println(traceMatrix.c)
     positionForJSON = collectcol(position)
     #=
     println(positionForJSON)
@@ -180,7 +194,7 @@ function gnugo_showboardf(paragraph)  # f: _format
     #println(buff)
     =#
     
-    return board 
+    #return board
 end
 collectrows(x::AbstractMatrix) = collect.(eachrow(x))
 collectcol(A::AbstractMatrix) = collect.(eachcol(A'))'
