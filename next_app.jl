@@ -448,7 +448,8 @@ app.layout=html_div() do
 			)
 		),
 	dcc_graph(id="board2", figure=board),
-	dcc_textarea(id = "info"),
+	dcc_textarea(id = "info", 
+	style = Dict("height" => 256, "width" => 800)),
 	html_div(id="seeDebugData"),
 	dcc_graph(figure = Plot(longVector)),
 	html_div(
@@ -457,8 +458,8 @@ app.layout=html_div() do
 		)
 end
 
-callback!(
-	app,
+callback!(app,
+    Output("info", "value"),
 	Output("board2","figure"),
 	Input("board2","clickData"),
 	) do sth
@@ -483,7 +484,7 @@ callback!(
 	paragraph, name = showboard_get(botProcess)
 	board = showboard_format((paragraph, name))
 	
-	return plot_board!(
+	return board.i, plot_board!(
 		trace_stones(board.x, board.y, board.c)
 		)
 end
