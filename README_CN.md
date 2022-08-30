@@ -188,16 +188,16 @@ shell> julia app.jl
 
 ## 贡献
 ```julia
-if sourceCode in contribution
+if 源码 in 贡献
     @goto Issues
 else
-    @goto Discussions
+    @goto 评论
 end
 
 @label Issues
-    browser("https://github.com/HackYardo/VastGo/issues")
-@label Discussions
-    browser("https://github.com/HackYardo/VastGo/discussions")
+    browser("https://gitee.com/vastgo/VastGo/issues")
+@label 评论
+    browser("https://gitee.com/vastgo/VastGo")
 ```
 
 ## 文档
