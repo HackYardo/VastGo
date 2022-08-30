@@ -273,7 +273,7 @@ function gtp_loop(proc::Base.Process)
             bot_end(proc)
             break
         elseif "showboard" in split(sentence)
-            proc |> showboard_get |> showboard_format
+            proc |> showboard_get #|> showboard_format
         else
             println(reply(proc))
         end

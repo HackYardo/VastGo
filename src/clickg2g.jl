@@ -124,7 +124,12 @@ end
 board = plot_board()
 function plot_board!(stone,boardLayout)
 	Plot(
-		stone,
+		[anchorPoint,
+		colLine,
+		rowLine,
+		starPoint,
+		vertex,
+		stone],
 		boardLayout
 		)
 end
