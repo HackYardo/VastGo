@@ -245,19 +245,17 @@ function showboard_get(proc::Base.Process)
     paragraph, name
 end 
 
-function showboard_format(paragraph, name)
+function showboard_format((paragraph, name))
     board = NamedTuple()
     if name == "GNU Go"
         board = gnugo_showboardf(paragraph)
-        println(dump(board))
     elseif name == "Leela Zero"
         board = leelaz_showboardf(paragraph)
-        println(dump(board))
     elseif name == "KataGo"
         board = katago_showboardf(paragraph)
-        println(dump(board))
     else
     end
+    println(dump(board))
     board 
 end
 
@@ -275,8 +273,7 @@ function gtp_loop(proc::Base.Process)
             bot_end(proc)
             break
         elseif "showboard" in split(sentence)
-            paragraph, name = showboard_get(proc)
-            #showboard_format(paragraph, name)
+            proc |> showboard_get |> showboard_format
         else
             println(reply(proc))
         end
