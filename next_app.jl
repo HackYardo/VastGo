@@ -3,6 +3,8 @@ using PlotlyBase
 import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
 include("src/utility.jl")  # match_diy(), split_undo()
 
+const VERTEX = cat([c for c in 'A':'H'], [c for c in 'J':'T'], dims=1)
+
 function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp --boardsize 3")
     LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
@@ -257,7 +259,8 @@ function showboard_format((paragraph, name))
         board = katago_showboardf(paragraph)
     else
     end
-    println(dump(board) * "\n")
+    println(dump(board))
+    println()
     board 
 end
 
@@ -296,8 +299,7 @@ boardLayout=Layout(
 		# showline=true, mirror=true,linewidth=1,linecolor="black",
 		# zeroline=true,zerolinewidth=1,zerolinecolor="rgb(205,133,63)",
 		zeroline = false,
-		ticktext=cat(['Z'], 
-			[c for c in 'A':'H'], [c for c in 'J':'U'], dims=1),
+		ticktext = cat(['Z'], VERTEX, ['U'], dims=1),
 		tickvals = [i for i in 0:20] 
 		),
 	yaxis_showgrid=false,
@@ -404,14 +406,13 @@ function plot_board()
 		)
 end
 board = plot_board()
-function plot_board!(stone,boardLayout)
+function plot_board!(vertex)
 	Plot(
 		[anchorPoint,
 		colLine,
 		rowLine,
 		starPoint,
-		vertex,
-		stone],
+		vertex],
 		boardLayout
 		)
 end
@@ -419,16 +420,20 @@ function color_turn(playerNumber=2,boardSize=19*19,
 	chooseColor=["rgb(255,255,255)","rgb(0,0,0)"])
 
 end
-function trace_stones(xArray=[],yArray=[])
+function trace_stones(vx=[],vy=[],vc=[])
 	scatter(
-		x=xArray,
-		y=yArray,
+		x=vx,
+		y=vy,
 		mode="markers",
-		marker_color= "rgba(255,255,255,1)",
+		marker_color= vc,
 		marker_size=25,
-		name="W stones"
+		name="stones"
 		)
 end
+
+bot = bot_get()
+botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
+gtp_ready(botProcess)
 
 app=dash()
 app.title = "VastGo"
@@ -462,24 +467,30 @@ callback!(
 		sthJSON = JSON3.write(sth)
 		sthParse = JSON3.read(sthJSON, Dict)
 		vector=sthParse["points"][1]
-		xArray=[vector["x"]]
-		yArray=[vector["y"]]
+		
+		#xPlayerIndex = parse(Int, vector["x"])
+		xPlayer = VERTEX[vector["x"]]
+		yPlayer = vector["y"]
 	else
-		xArray=[]
-		yArray=[]
+		xPlayer = ""
+		yPlayer = ""
 	end
+	query(botProcess, "play B $xPlayer$yPlayer")
+	reply(botProcess)
+	query(botProcess, "genmove W")
+	reply(botProcess)
+    query(botProcess, "showboard")
+	paragraph, name = showboard_get(botProcess)
+	board = showboard_format((paragraph, name))
+	
 	return plot_board!(
-		trace_stones(xArray,yArray),
-		boardLayout
+		trace_stones(board.x, board.y, board.c)
 		)
 end
 
-@asunc run_server(app, "0.0.0.0", debug=false)
+@async run_server(app, "0.0.0.0", debug=false)
 
 function next_app()
-    bot = bot_get()
-    botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
-    gtp_ready(botProcess)
     gtp_loop(botProcess)
 end
 
