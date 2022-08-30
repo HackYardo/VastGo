@@ -1,12 +1,12 @@
 using JSON
-using PlotlyJS, PlotlyBase
+using PlotlyBase
 using Dash
 
 boardLayout=Layout(
 	# boardSize are as big as setting
 	# aspectmode="manual",aspectratio=1,
-	width=930,
-	height=820,
+	width=800*1.08,
+	height=800,
 	paper_bgcolor="rgb(0,255,127)",
 	plot_bgcolor="rgb(205,133,63)",
 	xaxis_showgrid=false,
@@ -16,8 +16,7 @@ boardLayout=Layout(
 		zeroline = false,
 		ticktext=cat(['Z'], 
 			[c for c in 'A':'H'], [c for c in 'J':'U'], dims=1),
-		tickvals = [i for i in 0:20]
-		# if tickvals is a number array, row/col lines will become a line  
+		tickvals = [i for i in 0:20] 
 		),
 	yaxis_showgrid=false,
 	yaxis=attr(
@@ -28,8 +27,6 @@ boardLayout=Layout(
 		)
 	)
 rowLine=scatter(
-	#x=['a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t','t','a','a','t'],
-	#y=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19],
 	x = repeat([1, 19, nothing], 19),
 	y = [i for i in 1:19 for j in 1:3],
 	mode="lines",
@@ -39,8 +36,6 @@ rowLine=scatter(
 	name="row lines"
 	)
 colLine=scatter(
-	#x=['z','a','a','b','b','c','c','d','d','e','e','f','f','g','g','h','h','i','i','j','j','k','k','m','m','n','n','o','o','p','p','q','q','r','r','s','s','t','t','u'],
-	#y=[1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19,1,1,19,19],
 	x = [c for c in 1:19 for j in 1:3],
 	y = repeat([1, 19, nothing], 19),
 	mode="lines",
@@ -78,7 +73,8 @@ ownership=scatter(
 	mode="markers",
 	marker=attr(
 		symbol="diamond",
-		color=["rgba(127,127,127,0.6)","rgba(255,255,255,0.6)","rgba(0,0,0,0.6)"],
+		color=["rgba(127,127,127,0.6)",
+		"rgba(255,255,255,0.6)","rgba(0,0,0,0.6)"],
 		size=50,
 		# opacity=0.6,
 		line=attr(width=0)
@@ -101,31 +97,39 @@ longVector = scatter(
 	name = "longVector"
 )
 
-topText="
-### Hello, welcome to VastGoMaterial!
+topText="""
+### Hello, welcome to VastGo!
 
-> A funny, green, simple, useful tool for the game of Go/Baduk/Weiqi
-"
+> Have a nice day!
+"""
 
 bottomText="
-*powered by [Plotly Dash](https://dash-julia.plotly.com/), driven by [KataGo](https://katagotraining.org/), written in [Julia](https://julialang.org/)*
+*based on [Plotly Dash](https://dash-julia.plotly.com/), \
+written in [Julia](https://julialang.org/)*
 "
 
 bottomDiv=dcc_markdown(bottomText)
 
-function plot_board(colLine,rowLine,starPoint,vertex,stone,boardLayout)
-	plot(
+function plot_board()
+	Plot(
 		[anchorPoint,
 		colLine,
 		rowLine,
 		starPoint,
-		vertex,
-		stone
+		vertex
 		],
 		boardLayout
 		)
 end
-function color_turn(playerNumber=2,boardSize=19*19,chooseColor=["rgb(255,255,255)","rgb(0,0,0)"])
+board = plot_board()
+function plot_board!(stone,boardLayout)
+	Plot(
+		stone,
+		boardLayout
+		)
+end
+function color_turn(playerNumber=2,boardSize=19*19,
+	chooseColor=["rgb(255,255,255)","rgb(0,0,0)"])
 
 end
 function trace_stones(xArray=[],yArray=[])
@@ -151,7 +155,7 @@ app.layout=html_div() do
 			"color"=>"rgba(0,255,0,1)"
 			)
 		),
-	dcc_graph(id="board2"),
+	dcc_graph(id="board2", figure=board),
 	html_div(id="seeDebugData"),
 	dcc_graph(figure = Plot(longVector)),
 	html_div(
@@ -175,11 +179,7 @@ callback!(
 			xArray=[]
 			yArray=[]
 		end
-		return plot_board(
-			colLine,
-			rowLine,
-			starPoint,
-			vertex,
+		return plot_board!(
 			trace_stones(xArray,yArray),
 			boardLayout
 			)
