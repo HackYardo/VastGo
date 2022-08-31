@@ -246,7 +246,7 @@ function showboard_get(proc::Base.Process; ifprint = true)
     paragraph, name
 end 
 
-function showboard_format(proc::Base.Process)
+function showboard_format(proc::Base.Process; ifprint=true)
     board = NamedTuple()
     paragraph, name = showboard_get(proc; ifprint = false)
     if name == "GNU Go"
@@ -257,8 +257,10 @@ function showboard_format(proc::Base.Process)
         board = katago_showboardf(paragraph)
     else
     end
-    println(dump(board))
-    println()
+    if ifprint
+        println(dump(board))
+        println()
+    end 
     board 
 end
 

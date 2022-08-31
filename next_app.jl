@@ -7,34 +7,46 @@ include("src/board.jl")
 include("src/gotextprotocol.jl")  
     # bot_get(), bot_run(), query(), reply()
     # gtp_ready(), gtp_loop(), showboard_get(), showboard_format()
+    # include("utility.jl")  # findindex()
 
+function color_rgba(color)
+    colorDict = Dict(
+        "" => "rgba(0,0,0,0)",
+        "W" => "rgba(255,255,255,1)",
+        "B" => "rgba(0,0,0,1)",
+        "A" => "rgba(255,0,0,1)",
+        "C" => "rgba(0,255,0,1)",
+        "D" => "rgba(0,0,255,1)",
+        "S" => "rgba(255,255,0,1)",
+        "G" => "rgba(255,0,255,1)",
+        "R" => "rgba(0,255,255,1)"
+        )
+    colorDict[color]
+end
+
+function color_turn(color)
+    colorVector = ["B", "W"]
+    idx = findindex(color, colorVector)[1]
+    if idx == length(colorVector)
+        idx = 0 
+    end
+    colorVector[idx + 1]
+end 
+
+function gtp_turn(proc::Base.Process, color, vertex)
+    query(proc, "play $color $vertex")
+    reply(proc)
+    
+    color = color_turn(color)
+    query(proc, "genmove $color")
+    reply(proc)[3:end]
+end
 
 topText="""
-### Hello, welcome to VastGo!
+### Hello, welcome to VastGo!"""
 
-`Have a nice day!`"""
-
-bottomText="""
-***based on [Plotly Dash](https://dash-julia.plotly.com/), 
-written in [Julia](https://julialang.org/)***"""
-
-bottomDiv=dcc_markdown(bottomText)
-
-
-function color_turn(playerNumber=2,boardSize=19*19,
-    chooseColor=["rgb(255,255,255)","rgb(0,0,0)"])
-
-end
-
-function gtp_turn(proc::Base.Process, x, y)
-    query(proc, "play B $x$y")
-    reply(proc)
-    query(proc, "genmove W")
-    reply(proc)
-    query(proc, "showboard")
-    board = showboard_format(proc)
-    return board
-end
+bottomText = dcc_markdown("""
+***`Have a nice day!`***""")
 
 board = plot_board()
 
@@ -61,7 +73,7 @@ app.layout=html_div() do
     html_div(id="seeDebugData"),
     dcc_graph(figure = Plot(longVector)),
     html_div(
-        bottomDiv, 
+        bottomText, 
         style=(width="49%",display="inline-block",float="right")
         )
 end
@@ -71,23 +83,24 @@ callback!(app,
     Output("board2","figure"),
     Input("board2","clickData"),
     ) do sth
-    io = IOBuffer()
+    #io = IOBuffer()
+    botVertex = "none\n"
     if sth != nothing
         sthJSON = JSON3.write(sth)
-        sthParse = JSON3.read(sthJSON, Dict)
-        vector=sthParse["points"][1]
-        
-        #xPlayerIndex = parse(Int, vector["x"])
-        xPlayer = VERTEX[vector["x"]]
-        yPlayer = vector["y"]
-    else
-        xPlayer = ""
-        yPlayer = ""
+        sthDict = JSON3.read(sthJSON, Dict)
+        point=sthDict["points"][1]
+        x = VERTEX[point["x"]]
+        y = point["y"]
+        vertex = "$x$y"
+        botVertex = gtp_turn(botProcess, "B", vertex)
     end
     
-    board = gtp_turn(botProcess, xPlayer, yPlayer)
+    query(botProcess, "showboard")
+    board = showboard_format(botProcess, ifprint=false)
     
-    return board.i, plot_board!(trace_stones(board.x, board.y, board.c))
+    info = board.i * "bot vertex: $botVertex\n"
+    
+    return info, plot_board!(trace_stones(board.x, board.y, board.c))
 end
 
 @async run_server(app, "0.0.0.0", debug=false)
