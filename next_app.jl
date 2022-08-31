@@ -33,6 +33,10 @@ function color_turn(color)
     end
     colorVector[idx + 1]
 end 
+function move_replenish(proc, color)
+    query(proc, "genmove $color")
+    reply(proc)[3:end-1]
+end
 
 function gtp_turn(proc::Base.Process, color, vertex)
     query(proc, "play $color $vertex")
@@ -40,7 +44,26 @@ function gtp_turn(proc::Base.Process, color, vertex)
     
     color = color_turn(color)
     query(proc, "genmove $color")
-    reply(proc)[3:end]
+    reply(proc)[3:end-1]
+end
+
+function boardinfo!(proc, button_id, color, vertex)
+    botVertex = move_replenish(botProcess, color)
+    query(botProcess, "showboard")
+    board = showboard_format(botProcess, ifprint=false)
+    info = board.i * "last move at: $botVertex\n"
+    
+    botVertex = "none\n"
+    vertex = "none"
+    
+    botVertex = gtp_turn(botProcess, "B", vertex)
+    
+    query(proc, "showboard")
+    board = showboard_format(proc, ifprint=false)
+    
+    info = board.i * "last move at: $botVertex\n"
+    
+    return info, plot_board!(trace_stones(board.x,board.y,board.c))
 end
 
 board = plot_board()
@@ -61,7 +84,8 @@ app.layout=html_div() do
             "color"=>"rgba(0,255,0,1)"
             )
         ),
-    dcc_graph(id="board2", figure=board),
+    chooseColor,
+    dcc_graph(id = "board", figure=board),
     dcc_textarea(id = "info", 
         style = Dict("height" => 256, "width" => 800)
         ),
@@ -74,29 +98,22 @@ app.layout=html_div() do
 end
 
 callback!(app,
-    Output("board2","figure"),
-    Input("ChooseColor","value"),
-    ) do color 
-    
-end
-
-callback!(app,
     Output("info", "value"),
-    Output("board2","figure"),
-    Input("board2","clickData"),
-    ) do sth
+    Output("board", "figure"),
+    Input("board", "clickData"),
+    Input("ChooseColor", "value"),
+    ) do sth, color
 
     ctx = callback_context()
-
     if length(ctx.triggered) == 0
-        button_id = "No clicks yet"
+        button_id = "none"
     else
         button_id = split(ctx.triggered[1].prop_id, ".")[1]
     end
 
     #io = IOBuffer()  # for JSON3.pretty()
-
-    botVertex = "none\n"
+    
+    vertex = "none"
     if sth != nothing
         sthJSON = JSON3.write(sth)
         sthDict = JSON3.read(sthJSON, Dict)
@@ -104,15 +121,9 @@ callback!(app,
         x = VERTEX[point["x"]]
         y = point["y"]
         vertex = "$x$y"
-        botVertex = gtp_turn(botProcess, "B", vertex)
     end
     
-    query(botProcess, "showboard")
-    board = showboard_format(botProcess, ifprint=false)
-    
-    info = board.i * "bot vertex: $botVertex\n"
-    
-    return info, plot_board!(trace_stones(board.x, board.y, board.c))
+    boardinfo!(botProcess, button_id, color, vertex)
 end
 
 @async run_server(app, "0.0.0.0", debug=false)
