@@ -5,9 +5,10 @@ include("src/board.jl")
     # VERTEX
     # trace_stone(), plot_board(), plot_board!()
 include("src/gotextprotocol.jl")  
+    # include("utility.jl")  # findindex()
     # bot_get(), bot_run(), query(), reply()
     # gtp_ready(), gtp_loop(), showboard_get(), showboard_format()
-    # include("utility.jl")  # findindex()
+include("src/menu.jl")  # topText, bottomText, 
 
 function color_rgba(color)
     colorDict = Dict(
@@ -42,12 +43,6 @@ function gtp_turn(proc::Base.Process, color, vertex)
     reply(proc)[3:end]
 end
 
-topText="""
-### Hello, welcome to VastGo!"""
-
-bottomText = dcc_markdown("""
-***`Have a nice day!`***""")
-
 board = plot_board()
 
 bot = bot_get()
@@ -79,11 +74,28 @@ app.layout=html_div() do
 end
 
 callback!(app,
+    Output("board2","figure"),
+    Input("ChooseColor","value"),
+    ) do color 
+    
+end
+
+callback!(app,
     Output("info", "value"),
     Output("board2","figure"),
     Input("board2","clickData"),
     ) do sth
-    #io = IOBuffer()
+
+    ctx = callback_context()
+
+    if length(ctx.triggered) == 0
+        button_id = "No clicks yet"
+    else
+        button_id = split(ctx.triggered[1].prop_id, ".")[1]
+    end
+
+    #io = IOBuffer()  # for JSON3.pretty()
+
     botVertex = "none\n"
     if sth != nothing
         sthJSON = JSON3.write(sth)
