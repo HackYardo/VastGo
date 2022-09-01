@@ -37,22 +37,37 @@ end
 
 function boardinfo(proc, button_id, color, vertex)
     botColor = color_turn(color)
-    botVertex = "none"
-    
+    botVertex = "= none\n"
+    finalScore = "= W+7.0\n"
+
     if button_id == "colorRadioitems"
         query(proc, "genmove $botColor")
-        botVertex = reply(proc)[3:end-1]
+        botVertex = reply(proc)
     elseif button_id == "boardGraph"
-        query(proc, "play $color $vertex")
-        reply(proc)
-        query(proc, "genmove $botColor")
-        botVertex = reply(proc)[3:end-1]
+        if vertex == "A0"
+            query(proc, "play $color pass")
+            reply(proc)
+            query(proc, "genmove $botColor")
+            botVertex = reply(proc)
+        elseif !(vertex in ["C0", "E0"])
+            query(proc, "play $color $vertex")
+            reply(proc)
+            query(proc, "genmove $botColor")
+            botVertex = reply(proc)
+        else
+        end
     else
     end
-    
+
     query(proc, "showboard")
     board = showboard_format(proc, ifprint=false)
-    info = board.i * "Bot moves at: $botVertex\n"
+    info = board.i * "Bot move $botVertex"
     
-    return info, plot_board(trace_stones(board.x,board.y,board.c))
+    if vertex == "C0"
+        query(proc, "final_score")
+        finalScore = reply(proc)
+        info = info * "Final Score $finalScore"
+    end
+    
+    return info, plot_board(trace_stone(board.x,board.y,board.c))
 end

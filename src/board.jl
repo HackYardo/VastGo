@@ -13,7 +13,8 @@ boardLayout=Layout(
         # zeroline=true,zerolinewidth=1,zerolinecolor="rgb(205,133,63)",
         zeroline = false,
         ticktext = cat(['Z'], VERTEX, ['U'], dims=1),
-        tickvals = [i for i in 0:20] 
+        tickvals = [i for i in 0:20]
+        #tickfont = attr(size = 25) 
         ),
     yaxis_showgrid=false,
     yaxis=attr(
@@ -47,9 +48,9 @@ anchorPoint = scatter(
     y = [20, 0],
     mode = "text",
     textposition = "inside",
-    text = ["+"],
-    textfont = attr(size = 10, color = [
-        "rgba(0,0,0,1)"]),
+    text = "+",
+    textfont = attr(size = 10, color = "rgba(0,0,0,1)"),
+    hoverinfo="skip",
     name = "anchors"
     )
 starPoint=scatter(
@@ -57,6 +58,7 @@ starPoint=scatter(
     y = [i for i in [4, 10, 16] for j in 1:3],
     mode="markers",
     marker_color="rgb(0,0,0)",
+    hoverinfo="skip",
     name="star points"
     )
 ownership=scatter(
@@ -88,7 +90,7 @@ longVector = scatter(
     ),
     name = "longVector"
 )
-buttons = scatter(
+button = scatter(
     x = [1, 3, 5],
     y = [0, 0, 0],
     mode = "text",
@@ -101,19 +103,19 @@ buttons = scatter(
     name = "buttons"
 )
 
-function plot_board(stones)
+function plot_board(stone)
     Plot(
         [anchorPoint,
         colLine,
         rowLine,
         starPoint,
-        buttons,
-        stones],
+        button,
+        stone],
         boardLayout
         )
 end
 
-function trace_stones(xVector, yVector, colorVector)
+function trace_stone(xVector, yVector, colorVector)
     scatter(
         x = xVector,
         y = yVector,
@@ -124,7 +126,7 @@ function trace_stones(xVector, yVector, colorVector)
         )
 end
 
-board = plot_board(trace_stones(
+board = plot_board(trace_stone(
     repeat([i for i in 1:19], 19), 
     [i for i in 19:-1:1 for j in 1:19], 
     repeat("rgba(0,0,0,0)",361)
