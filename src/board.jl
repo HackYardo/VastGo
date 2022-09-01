@@ -95,7 +95,7 @@ button = scatter(
     y = [0, 0, 0],
     mode = "text",
     textposition = "inside",
-    text = ["pass", "resign", "sync"],
+    text = ["Pass", "Resign", "Sync"],
     textfont = attr(size = 20, color = [
         "rgba(0,0,0,1)", 
         "rgba(255,255,255,1)", 

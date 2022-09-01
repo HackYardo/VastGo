@@ -21,21 +21,8 @@ function color_turn(color)
     end
     colorVector[idx + 1]
 end 
-function move_replenish(proc, color)
-    query(proc, "genmove $color")
-    reply(proc)[3:end-1]
-end
 
-function gtp_turn(proc::Base.Process, color, vertex)
-    query(proc, "play $color $vertex")
-    reply(proc)
-    
-    color = color_turn(color)
-    query(proc, "genmove $color")
-    reply(proc)[3:end-1]
-end
-
-function boardinfo(proc, button_id, color, vertex)
+function boardinfo(proc, button_id, color, x, y)
     botColor = color_turn(color)
     botVertex = "= none\n"
     finalScore = "= W+7.0\n"
