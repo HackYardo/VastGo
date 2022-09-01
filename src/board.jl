@@ -44,9 +44,12 @@ colLine=scatter(
 anchorPoint = scatter(
     # use (z,1) and (u,19) to widen col margin
     x = [0, 20],
-    y = [0, 20],
-    mode = "markers",
-    marker_color = "rgba(0,0,0,0)",
+    y = [20, 0],
+    mode = "text",
+    textposition = "inside",
+    text = ["+"],
+    textfont = attr(size = 10, color = [
+        "rgba(0,0,0,1)"]),
     name = "anchors"
     )
 starPoint=scatter(
@@ -55,14 +58,6 @@ starPoint=scatter(
     mode="markers",
     marker_color="rgb(0,0,0)",
     name="star points"
-    )
-vertex=scatter(
-    x = repeat([i for i in 1:19], 19),
-    y = [i for i in 19:-1:1 for j in 1:19],
-    mode="markers",
-    marker_size = 36,
-    marker_color="rgba(0,0,0,0)",
-    name="vertex"
     )
 ownership=scatter(
     x=['i','k','r'],
@@ -93,32 +88,32 @@ longVector = scatter(
     ),
     name = "longVector"
 )
+buttons = scatter(
+    x = [1, 3, 5],
+    y = [0, 0, 0],
+    mode = "text",
+    textposition = "inside",
+    text = ["pass", "resign", "sync"],
+    textfont = attr(size = 20, color = [
+        "rgba(0,0,0,1)", 
+        "rgba(255,255,255,1)", 
+        "rgba(0,0,0,1)"]),
+    name = "buttons"
+)
 
-function plot_board()
+function plot_board(stones)
     Plot(
         [anchorPoint,
         colLine,
         rowLine,
         starPoint,
-        vertex],
+        buttons,
+        stones],
         boardLayout
         )
 end
 
-#plot_board!(vertex) = plot_board()
-
-function plot_board!(vertex)
-    Plot(
-        [anchorPoint,
-        colLine,
-        rowLine,
-        starPoint,
-        vertex],
-        boardLayout
-        )
-end
-
-function trace_stones(xVector=[], yVector=[],colorVector=[])
+function trace_stones(xVector, yVector, colorVector)
     scatter(
         x = xVector,
         y = yVector,
@@ -128,3 +123,16 @@ function trace_stones(xVector=[], yVector=[],colorVector=[])
         name="stones"
         )
 end
+
+board = plot_board(trace_stones(
+    repeat([i for i in 1:19], 19), 
+    [i for i in 19:-1:1 for j in 1:19], 
+    repeat("rgba(0,0,0,0)",361)
+    ))
+
+boardGraph = dcc_graph(id = "boardGraph", 
+    figure = board
+    )
+infoTextarea = dcc_textarea(id = "infoTextarea",
+    style = Dict("height" => 256, "width" => 800)
+    )

@@ -151,6 +151,20 @@ function split_undo(v::Vector{SubString{String}})::String
 end
 
 """
+`json_pretty(sth)`
+
+Convert a .json to a pretty string.
+
+> JSON3 needed.
+
+"""
+function json_pretty(sth)
+    io = IOBuffer()
+    JSON3.pretty(io, JSON3.write(sth))
+    String(take!(io))
+end 
+
+"""
 `utility()`
 
 Some utilities.
@@ -171,5 +185,6 @@ function utility()
         pkgNames_strFile
         collectrows
         split_undo
+        json_pretty
         """)
 end

@@ -1,7 +1,7 @@
 include("utility.jl")  # match_diy(), split_undo()
 
 function bot_get()
-    GNUGO = (dir="", cmd="gnugo --mode gtp --boardsize 3")
+    GNUGO = (dir="", cmd="gnugo --mode gtp")
     LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
     KATAGO = (dir="../katago1.11avx2/", cmd="./katago gtp -config \
         custom_gtp.cfg -model models/m6.txt.gz")
