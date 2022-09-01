@@ -102,6 +102,20 @@ button = scatter(
         "rgba(0,0,0,1)"]),
     name = "buttons"
 )
+function unichar()
+    u = ['\u2713', '\u2717']
+    scatter(
+    x = [10, 9],
+    y = [10, 10],
+    mode = "text",
+    textposition = "inside",
+    text = u,
+    textfont = attr(size = 25, color = [
+        "rgba(0,0,0,1)", 
+        "rgba(255,255,255,1)"]),
+    name = "unicode"
+    )
+end 
 
 function plot_board(stone)
     Plot(
@@ -110,6 +124,7 @@ function plot_board(stone)
         rowLine,
         starPoint,
         button,
+        unichar(),
         stone],
         boardLayout
         )
