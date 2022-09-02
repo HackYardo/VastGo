@@ -91,28 +91,27 @@ longVector = scatter(
     name = "longVector"
 )
 button = scatter(
-    x = [1, 3, 5],
-    y = [0, 0, 0],
+    x = [1, 2, 4, 6],
+    y = [0, 0, 0, 0],
     mode = "text",
     textposition = "inside",
-    text = ["Pass", "Resign", "Sync"],
-    textfont = attr(size = 20, color = [
-        "rgba(0,0,0,1)", 
-        "rgba(255,255,255,1)", 
-        "rgba(0,0,0,1)"]),
+    text = [Char(0x1f518), '\u2691', "Synch", "ronize"],
+    textfont = attr(size = 25, color = [
+        "rgb(0,0,0)", "rgb(255,255,255)", 
+        "rgb(0,0,0)", "rgb(255,255,255)"]),
     name = "buttons"
 )
 function unichar()
-    u = ['\u2713', '\u2717']
+    u = ['\u26ab', '\u26aa', '\u2713', '\u2717']
     scatter(
-    x = [10, 9],
-    y = [10, 10],
+    x = [1,2,3,4],
+    y = [20,20,20,20],
     mode = "text",
     textposition = "inside",
     text = u,
-    textfont = attr(size = 25, color = [
-        "rgba(0,0,0,1)", 
-        "rgba(255,255,255,1)"]),
+    textfont = attr(size = [25,25,20,20], color = [
+        "rgb(0,0,0)", "rgb(255,255,255)", 
+        "rgb(0,0,0)", "rgb(255,255,255)"]),
     name = "unicode"
     )
 end 
@@ -124,8 +123,8 @@ function plot_board(stone)
         rowLine,
         starPoint,
         button,
-        unichar(),
-        stone],
+        stone,
+        unichar()],
         boardLayout
         )
 end
