@@ -38,7 +38,10 @@ function bot_run(; dir="", cmd="")::Base.Process
     
     cmdVector = split(cmd) # otherwise there will be ' in command
     command = Cmd(`$cmdVector`, dir=dir)
-    println("VastGo will run the command: $cmd\nin the directory: $dir")
+    print("VastGo will run the command: ")
+    printstyled("$cmd\n", color=6)
+    print("in the directory: ")
+    printstyled("$dir\n", color=6)
     #println(command)
 
     process = run(command,inp,out,err;wait=false)
@@ -82,18 +85,17 @@ end
 function gtp_startup_info(proc::Base.Process)
     name = name_get(proc)
     if name == "Leela Zero"
-        info = readuntil(proc.err, "MiB.", keep=true)
+        println(readuntil(proc.err, "MiB.", keep=true))
     elseif name == "KataGo"
-        info = readuntil(proc.err, "loop", keep=true)
+        println(readuntil(proc.err, "loop", keep=true))
     else
-        info = name
     end
-    println(info)
 end 
 
 function gtp_ready(proc::Base.Process)
     gtp_startup_info(proc)
-    @info "GTP ready"
+    printstyled("[ Info: ", color=6, bold=true)
+    println("GTP ready")
 end 
 
 function leelaz_showboard(proc::Base.Process)
@@ -267,7 +269,17 @@ end
 function gtp_loop(proc::Base.Process)
     while true
         sentence = readline()
-        if gtp_valid(sentence)
+        if "exit" in split(sentence)
+            if process_running(proc)
+                query(proc, "quit")
+                reply(proc)
+            end
+            println("= \n")
+            break
+        elseif process_exited(proc)
+            println("= \n")
+            continue
+        elseif gtp_valid(sentence)
             query(proc, sentence)
         else 
             println("? invalid command\n")
@@ -276,7 +288,6 @@ function gtp_loop(proc::Base.Process)
         
         if "quit" in split(sentence)
             bot_end(proc)
-            break
         elseif "showboard" in split(sentence)
             proc |> showboard_get
         elseif "showboardf" in split(sentence)

@@ -44,17 +44,17 @@ callback!(app,
         button_id = split(ctx.triggered[1].prop_id, ".")[1]
     end
     
-    vertex = "none"
+    x = 0
+    y = 0
     if sth != nothing
         sthJSON = JSON3.write(sth)
         sthDict = JSON3.read(sthJSON, Dict)
         point=sthDict["points"][1]
-        x = VERTEX[point["x"]]
+        x = point["x"]
         y = point["y"]
-        vertex = "$x$y"
     end
     
-    boardinfo(botProcess, button_id, color, vertex)
+    boardinfo(botProcess, button_id, color, x, y)
 end
 
 @async run_server(app, "0.0.0.0", debug=false)

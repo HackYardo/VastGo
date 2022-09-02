@@ -22,11 +22,15 @@ function color_turn(color)
     colorVector[idx + 1]
 end 
 
-function boardinfo(proc, button_id, color, vertex)
+function boardinfo(proc, button_id, color, x, y)
     botColor = color_turn(color)
     botVertex = "= none\n"
-    #xChar = VERTEX[x]
-    #vertex = "$xChar$y"
+    if !(x in 1:19) || !(y in 1:19) 
+        vertex = "none"
+    else 
+        xChar = VERTEX[x]
+        vertex = "$xChar$y"
+    end
     finalScore = "= none\n"
     
     if button_id == "colorRadioitems"
@@ -38,7 +42,7 @@ function boardinfo(proc, button_id, color, vertex)
             reply(proc)
             query(proc, "genmove $botColor")
             botVertex = reply(proc)
-        elseif !(vertex in ["C0", "E0"])
+        elseif x in 1:19 && y in 1:19
             query(proc, "play $color $vertex")
             reply(proc)
             query(proc, "genmove $botColor")

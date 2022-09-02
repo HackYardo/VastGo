@@ -39,7 +39,10 @@ function bot_run(; dir="", cmd="")::Base.Process
     
     cmdVector = split(cmd) # otherwise there will be ' in command
     command = Cmd(`$cmdVector`, dir=dir)
-    println("VastGo will run the command: $cmd\nin the directory: $dir")
+    print("VastGo will run the command: ")
+    printstyled("$cmd\n", color=6)
+    print("in the directory: ")
+    printstyled("$dir\n", color=6)
     #println(command)
 
     process = run(command,inp,out,err;wait=false)
@@ -83,18 +86,17 @@ end
 function gtp_startup_info(proc::Base.Process)
     name = name_get(proc)
     if name == "Leela Zero"
-        info = readuntil(proc.err, "MiB.", keep=true)
+        println(readuntil(proc.err, "MiB.", keep=true))
     elseif name == "KataGo"
-        info = readuntil(proc.err, "loop", keep=true)
+        println(readuntil(proc.err, "loop", keep=true))
     else
-        info = name
     end
-    println(info)
 end 
 
 function gtp_ready(proc::Base.Process)
     gtp_startup_info(proc)
-    @info "GTP ready"
+    printstyled("[ Info: ", color=6, bold=true)
+    println("GTP ready")
 end 
 
 function leelaz_showboard(proc::Base.Process)
