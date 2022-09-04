@@ -75,59 +75,44 @@ ownership=scatter(
         ),
     name="ownership"
     )
-longVector = scatter(
-    x = [1, 2, 3, 1, 2, 3, 1, 2, 3],
-    y = [3, 3, 3, 2, 2, 2, 1, 1, 1],
-    mode = "markers",
-    marker = attr(
-        symbol = "circle",
-        color = [
-        "rgba(24,64,125,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 
-        "rgba(0,0,0,0)", "rgba(0,0,0,1)", "rgba(0,0,0,0)", 
-        "rgba(0,0,0,0)", "rgba(255,255,255,1)", "rgba(0,0,0,0)"
-        ],
-        size = 50
-    ),
-    name = "longVector"
-)
-button = scatter(
-    x = [1, 2, 4, 6],
-    y = [0, 0, 0, 0],
-    mode = "text",
-    textposition = "inside",
-    text = [Char(0x1f518), '\u2691', "Synch", "ronize"],
-    textfont = attr(size = 25, color = [
-        "rgb(0,0,0)", "rgb(255,255,255)", 
-        "rgb(0,0,0)", "rgb(255,255,255)"]),
-    name = "buttons"
-)
-function unichar()
-    u = ['\u26ab', '\u26aa', '\u2713', '\u2717']
+function trace_text()
     scatter(
-    x = [1,2,3,4],
-    y = [20,20,20,20],
+        x = [4, 6],
+        y = [0, 0],
+        mode = "text",
+        textposition = "inside",
+        text = ["Synch", "ronize"],
+        textfont = attr(size = 19, color = [
+            "rgb(0,0,0)", "rgb(255,255,255)"]),
+        name = "text"
+    )
+end
+function unicode_original()
+    u = ['\u23f2', '\u26aa', '\u26ab']
+    scatter(
+        x = [1, 1, 2],
+        y = [0, 20, 20],
+        mode = "text",
+        textposition = "inside",
+        text = u,
+        textfont = attr(size = [36, 25, 25], color = [
+            "rgb(0,0,0)", "rgb(0,0,0)", "rgb(0,0,0)"]),
+        name = "original unicode"
+    )
+end
+function unicode_colored()
+    u = [Char(0x1f3f3), '\u2713', '\u2717']
+    scatter(
+    x = [2, 3, 4],
+    y = [0, 20, 20],
     mode = "text",
     textposition = "inside",
     text = u,
-    textfont = attr(size = [25,25,20,20], color = [
-        "rgb(0,0,0)", "rgb(255,255,255)", 
-        "rgb(0,0,0)", "rgb(255,255,255)"]),
-    name = "unicode"
+    textfont = attr(size = [36, 25, 25], color = [
+        "rgb(255,255,255)", "rgb(0,0,0)", "rgb(255,255,255)"]),
+    name = "colored unicode"
     )
 end 
-
-function plot_board(stone)
-    Plot(
-        [anchorPoint,
-        colLine,
-        rowLine,
-        starPoint,
-        button,
-        stone,
-        unichar()],
-        boardLayout
-        )
-end
 
 function trace_stone(xVector, yVector, colorVector)
     scatter(
@@ -137,6 +122,20 @@ function trace_stone(xVector, yVector, colorVector)
         marker_color= colorVector,
         marker_size=25,
         name="stones"
+        )
+end
+
+function plot_board(stone)
+    Plot(
+        [anchorPoint,
+        colLine,
+        rowLine,
+        starPoint,
+        stone,
+        trace_text(),
+        unicode_original(),
+        unicode_colored()],
+        boardLayout
         )
 end
 

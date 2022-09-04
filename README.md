@@ -1,5 +1,3 @@
-[Github](https://github.com/HackYardo/VastGo) | [Gitee](https://gitee.com/vastgo/VastGo) | [English](./README.md) | [简体中文](./README_CN.md)
-
 ![static](assets/board.png)
 future /\ , \\/ current
 ![dynamic](assets/dynamic.gif)
@@ -8,7 +6,7 @@ future /\ , \\/ current
 
 **Note: Still in the very early [stage](doc/versions.md#001-just-work), don't expect to be stable.**
 
-> The repo is about the game of [Go/Baduk/Weiqi](https://www.usgo.org/learn-play), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc.
+> *The README is in both [English](./README.md) and [简体中文](./README_CN.md). The repo is on both [Github](https://github.com/HackYardo/VastGo) and [Gitee](https://gitee.com/vastgo/VastGo).* And it's about the game of [Go/Baduk/Weiqi](https://www.usgo.org/learn-play), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc. 
 
 VastGo is
 - A multi-platform Go GUI that can run on Windows, Linux, Android and perhaps FreeBSD, MacOS, IOS, HarmonyOS. 
@@ -35,7 +33,7 @@ Ideas:
 - **funny**: nonstandard Go, *BEAT AI RIGHT NOW*
 - **green**: uses playtime data to first review, *LESS EXCESSIVE COMPUTING LESS CO₂* 
 - **simple**: doesn't know Go, uses GTP command `showboard`, *LESS CODE LESS GOTCHA*
-- **useful**: move-score-tree curve, 3D ownership, spline... line style, f'(x), f"(x), *RICH AND POWERFUL PLOT*
+- **useful**: game tree - score curve, 3D ownership, spline style, f'(x), f"(x), *RICH AND POWERFUL PLOT*
 - **compatible**: SBKV for winrate and OGSC for score, *THE SAME SGF AS Sabaki AND Ogatak* 
 
 ## Features
@@ -56,6 +54,13 @@ julia | >= 1.6.7 | 1.6.7 - 1.7.2
 KataGo | **PASS** | *fail*
 Leela-Zero | *fail* | *fail*
 GNU Go | *fail* | *fail*
+
+mode | boardsize | stateinfo 
+--- | --- | --- 
+Blind Go | **2² - 19²** | **PASS** 
+One Color Go | **2² - 19²** | **PASS** 
+Phantom Go | **2² - 19²** | **PASS** 
+Magnet Go | *19²* | *captures*, *move history*
 
 </details>
 
@@ -160,10 +165,10 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 
 **uninstall KataGo, Leela-Zero, GNU Go:**
 (If you don't use them anymore...)
-  1. `sudo apt remove leela-zero gnugo`
-  2. `sudo apt autoremove`
-  3. delete KataGo's engine
-  4. delete KataGo's and Leela-Zero's networks
+1. `sudo apt remove leela-zero gnugo`
+2. `sudo apt autoremove`
+3. delete KataGo's engine
+4. delete KataGo's and Leela-Zero's networks
 
 </details>
 
@@ -187,7 +192,7 @@ Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
 [THIRDPARTY](./THIRDPARTY.md)
 
 ## Contribute
-```shell
+```julia
 if sourceCode in contribution
     @goto Issues
 else

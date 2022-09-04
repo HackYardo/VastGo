@@ -57,10 +57,10 @@ callback!(app,
     boardinfo(botProcess, button_id, color, x, y)
 end
 
-@async run_server(app, "0.0.0.0", debug=false)
+run_server(app, "0.0.0.0", debug = true)
 
 function next_app()
     gtp_loop(botProcess)
 end
 
-next_app()
+@async next_app()

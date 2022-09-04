@@ -1,5 +1,3 @@
-[Github](https://github.com/HackYardo/VastGo) | [Gitee](https://gitee.com/vastgo/VastGo) | [English](./README.md) | [简体中文](./README_CN.md)
-
 ![静态的](assets/board.png)
 未来 /\ , \\/ 当前
 ![动态的](assets/dynamic.gif)
@@ -8,7 +6,7 @@
 
 **注意：仍处于上古[时期](doc/versions.md#001-just-work)，代码很混沌。**
 
-> 本仓库与[围棋](https://www.usgo.org/learn-play)、[围棋文本协议(GTP)](http://www.lysator.liu.se/~gunnar/gtp/)、[智能游戏格式(.sgf)](https://www.red-bean.com/sgf/)、[卡塔围棋](https://katagotraining.org/)、[莉拉零](https://zero.sjeng.org/)、[牛羚围棋](https://www.gnu.org/software/gnugo/)、[Julia](https://julialang.org/)、[PlotlyJS.jl](https://plotly.com/julia/)、[Dash.jl](https://dash-julia.plotly.com/)、[Markdown](https://commonmark.org/)、[可放缩向量图(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG)、[正则表达式](https://ryanstutorials.net/linuxtutorial/grep.php)等有关……
+> *README同时具有[中](./README_CN.md)、[英](./README.md)两版，仓库同时在[Gihub](https://github.com/HackYardo/VastGo)和[Gitee](https://gitee.com/vastgo/VastGo)上。*此仓库与[围棋](https://www.usgo.org/learn-play)、[围棋文本协议(GTP)](http://www.lysator.liu.se/~gunnar/gtp/)、[智能游戏格式(.sgf)](https://www.red-bean.com/sgf/)、[卡塔围棋](https://katagotraining.org/)、[莉拉零](https://zero.sjeng.org/)、[牛羚围棋](https://www.gnu.org/software/gnugo/)、[Julia](https://julialang.org/)、[PlotlyJS.jl](https://plotly.com/julia/)、[Dash.jl](https://dash-julia.plotly.com/)、[Markdown](https://commonmark.org/)、[可放缩向量图(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG)、[正则表达式](https://ryanstutorials.net/linuxtutorial/grep.php)等有关……
 
 VastGo是
 - 一个多平台的围棋GUI，能运行于Windows、Linux、Android，或许FreeBSD、MacOS、IOS、HarmonyOS也行。 
@@ -48,7 +46,7 @@ Players <<<======>>> components
 ## 用法
 
 <details>
-  <summary>状态</summary>
+  <summary>当前速览</summary>
 
 软件 | 电脑 | 手机
 --- | --- | ---
@@ -56,6 +54,13 @@ julia | >= 1.6.7 | 1.6.7 - 1.7.2
 KataGo | **PASS** | *fail*
 Leela-Zero | *fail* | *fail*
 GNU Go | *fail* | *fail*
+
+模式 | 棋盘尺寸 | 状态信息
+--- | --- | --- 
+Blind Go | **2² - 19²** | **PASS** 
+One Color Go | **2² - 19²** | **PASS** 
+Phantom Go | **2² - 19²** | **PASS** 
+Magnet Go | *19²* | *captures*, *move history*
 
 </details>
 
@@ -160,10 +165,10 @@ shell> julia app.jl
 
 **卸载卡塔围棋、莉拉零、牛羚围棋：**
 （如果你的设备不需要了……）
-  1. `sudo apt remove leela-zero gnugo`
-  2. `sudo apt autoremove`
-  3. 删除卡塔围棋的引擎
-  4. 删除卡塔围棋和莉拉零的网络
+1. `sudo apt remove leela-zero gnugo`
+2. `sudo apt autoremove`
+3. 删除卡塔围棋的引擎
+4. 删除卡塔围棋和莉拉零的网络
 
 </details>
 
@@ -180,7 +185,7 @@ shell> julia app.jl
 - 为什么选择Julia语言？
   - [听听Evan Miller怎么说](https://www.evanmiller.org/why-im-betting-on-julia.html) 
 - 为什么选择Plotly(JS) Dash框架？
-  - 比同行有更多的[交互式](https://docs.juliaplots.org/latest/backends/)功能。
+  - 有更多的[交互式](https://docs.juliaplots.org/latest/backends/)功能。
 
 ## 许可
 [许可](./LICENSE.md) 
