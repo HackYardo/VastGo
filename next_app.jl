@@ -29,13 +29,29 @@ app.layout = html_div() do
     infoTextarea,
     bottomDiv
 end
-
+app.layout = html_div() do
+    dcc_tabs([
+        dcc_tab(
+            label="Begin",
+            children=[startGame]
+            ),
+        dcc_tab(
+            label="While",
+            children=[playGame]
+            ),
+        dcc_tab(
+            label="After",
+            children=[]
+            )
+        ])
+end
 callback!(app,
     Output("infoTextarea", "value"),
     Output("boardGraph", "figure"),
     Input("boardGraph", "clickData"),
     Input("colorRadioitems", "value"),
-    ) do sth, color
+    Input("boardsizeInput", "value"),
+    ) do sth, color, boardsize
 
     ctx = callback_context()
     if length(ctx.triggered) == 0
@@ -47,9 +63,7 @@ callback!(app,
     x = 0
     y = 0
     if sth != nothing
-        sthJSON = JSON3.write(sth)
-        sthDict = JSON3.read(sthJSON, Dict)
-        point=sthDict["points"][1]
+        point = JSON3.read(JSON3.write(sth), Dict)["points"][1]
         x = point["x"]
         y = point["y"]
     end
@@ -57,10 +71,10 @@ callback!(app,
     boardinfo(botProcess, button_id, color, x, y)
 end
 
-run_server(app, "0.0.0.0", debug = true)
+@async run_server(app, "0.0.0.0", debug = false)
 
 function next_app()
     gtp_loop(botProcess)
 end
 
-@async next_app()
+next_app()
