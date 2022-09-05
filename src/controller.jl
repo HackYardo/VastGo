@@ -33,7 +33,7 @@ function boardinfo(proc, button_id, color, x, y)
     end
     finalScore = "= none\n"
     
-    if button_id == "colorRadioitems"
+    if button_id == "Color"
         query(proc, "genmove $botColor")
         botVertex = reply(proc)
     elseif button_id == "boardGraph"

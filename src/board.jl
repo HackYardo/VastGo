@@ -24,6 +24,7 @@ boardLayout=Layout(
         tickvals = [i for i in 0:20]
         )
     )
+#=
 rowLine=scatter(
     x = repeat([1, 19, nothing], 19),
     y = [i for i in 1:19 for j in 1:3],
@@ -41,7 +42,22 @@ colLine=scatter(
     line_color="rgb(0,0,0)",
     hoverinfo="skip",
     name="col lines"
-    )
+    )=#
+function trace_line(boardsizeX, boardsizeY)
+    range1 = [i for i in 1:boardsizeY for j in 1:3]
+    range2 = repeat([1, boardsizeX, nothing], boardsizeY)
+    range3 = [i for i in 1:boardsizeX for j in 1:3]
+    range4 = repeat([1, boardsizeY, nothing], boardsizeX)
+    scatter(
+        x = cat(range1, range4, dims=1),
+        y = cat(range2, range3, dims=1),
+        mode="lines",
+        line_width=1,
+        line_color="rgb(0,0,0)",
+        hoverinfo="skip",
+        name="board lines"
+        )
+end 
 anchorPoint = scatter(
     # use (z,1) and (u,19) to widen col margin
     x = [0, 20],
@@ -53,6 +69,7 @@ anchorPoint = scatter(
     hoverinfo="skip",
     name = "anchors"
     )
+#=
 starPoint=scatter(
     x = repeat([4, 10, 16], 3),
     y = [i for i in [4, 10, 16] for j in 1:3],
@@ -60,7 +77,62 @@ starPoint=scatter(
     marker_color="rgb(0,0,0)",
     hoverinfo="skip",
     name="star points"
-    )
+    )=#
+function star_count(boardsize)
+    starNum=0
+    if boardsize<7
+        starNum=0
+    else
+        if boardsize==7 || boardsize%2==0
+            starNum=2
+        else
+            starNum=3
+        end
+    end
+    #println(starNum)
+    return starNum
+end
+function star_margin(boardsize)
+    marginStar=4
+    if boardsize<=12 marginStar=3 end
+    #println(marginStar)
+    return marginStar
+end
+function star_cross(boardsize,starNum,starMargin)
+    starCross = Int[]
+    if starNum != 0
+        if starMargin==3
+            starCross = [3, boardsize-2]
+        else
+            starCross = [4,boardsize-3]
+        end
+        if starNum==3
+            starCross = cat(starCross, [div(boardsize+1, 2)], dims=1)
+        end
+    end
+    #println(starCross)
+    return starCross
+end
+function trace_star(boardsizeX, boardsizeY)
+    xBoard=boardSizeX
+    yBoard=boardSizeY
+    rowNum=star_count(xBoard)
+    colNum=star_count(yBoard)
+    rowMargin=star_margin(xBoard)
+    colMargin=star_margin(yBoard)
+    xCross = star_cross(xBoard,rowNum,rowMargin)
+    yCross = star_cross(yBoard,colNum,colMargin)
+    xStar=[xItem for xItem in xCross for k in 1:colNum]
+    yStar=repeat(yCross,rowNum)
+    #println("$xStar\n$yStar")
+    scatter(
+        x=xStar,
+        y=yStar,
+        mode="markers",
+        marker_color="rgb(0,0,0)",
+        name="star points"
+        )
+end
 ownership=scatter(
     x=['i','k','r'],
     y=[10,11,5],
@@ -128,9 +200,8 @@ end
 function plot_board(stone)
     Plot(
         [anchorPoint,
-        colLine,
-        rowLine,
-        starPoint,
+        trace_line(19, 19),
+        trace_star(19, 19),
         stone,
         trace_text(),
         unicode_original(),

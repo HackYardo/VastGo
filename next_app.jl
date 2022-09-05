@@ -23,13 +23,6 @@ gtp_ready(botProcess)
 app = dash()
 app.title = "VastGo"
 app.layout = html_div() do
-    topDiv,
-    colorRadioitems,
-    boardGraph,
-    infoTextarea,
-    bottomDiv
-end
-app.layout = html_div() do
     dcc_tabs([
         dcc_tab(
             label="Begin",
@@ -41,17 +34,20 @@ app.layout = html_div() do
             ),
         dcc_tab(
             label="After",
-            children=[]
+            children=[#=reviewGame=#]
             )
         ])
 end
+
 callback!(app,
     Output("infoTextarea", "value"),
     Output("boardGraph", "figure"),
     Input("boardGraph", "clickData"),
-    Input("colorRadioitems", "value"),
-    Input("boardsizeInput", "value"),
-    ) do sth, color, boardsize
+    Input("Color", "value"),
+    Input("RuleOK", "n_clicks"),
+    State("BoardSizeM", "value"),
+    State("BoardSizeN", "value"),
+    ) do sth, c, m, n
 
     ctx = callback_context()
     if length(ctx.triggered) == 0
