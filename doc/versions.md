@@ -8,10 +8,6 @@
 - Phantom Go
 - Blind Go
 - Magnet Go 
-  - **bugs:**
-    - small board size
-    - move history
-    - captures
 
 # 0.0.2 GTP
 
