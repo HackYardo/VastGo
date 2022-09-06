@@ -15,6 +15,8 @@ include("src/menu.jl")
     # colorRadioitems
 include("src/controller.jl")
     # boardinfo()
+include("src/magnet.jl")
+include("src/visibility.jl")
 
 bot = bot_get()
 botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
@@ -38,17 +40,28 @@ app.layout = html_div() do
             )
         ])
 end
+#=
+callback!(app,
+    Output("RuleCurrent", "value"),
+    Input("RuleOK", "n_clicks"),
+    State("Rule", "value"),
+    State("KM", "value"),
+    ) do n, v, k
+    
+end=#
 
 # the main callback, used to refresh board
 callback!(app,
     Output("infoTextarea", "value"),
     Output("boardGraph", "figure"),
     Input("boardGraph", "clickData"),
-    Input("Color", "value"),
     Input("RuleOK", "n_clicks"),
+    State("Color", "value"),
     State("BoardSizeM", "value"),
     State("BoardSizeN", "value"),
-    ) do sth, c, r, m, n
+    State("ModeVisual", "value"),
+    State("ModeMove", "value"),
+    ) do sth, n_c, color, m, n, modeV, modeM
 
     ctx = callback_context()
     if length(ctx.triggered) == 0
@@ -65,7 +78,7 @@ callback!(app,
         y = point["y"]
     end
     
-    boardinfo(botProcess, button_id, m, n, c, x, y)
+    boardinfo(botProcess, button_id, m, n, color, x, y)
 end
 
 @async run_server(app, "0.0.0.0", debug = false)

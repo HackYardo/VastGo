@@ -122,6 +122,32 @@ ruleDiv = html_div() do
     dcc_input(id="KM",value=7.0,type="number",min=-150,step=0.5,max=150),
     dcc_markdown(""),
     
+    html_label("Nonstandard Go——Visibility:"),
+    dcc_radioitems(id="ModeVisual",
+        options = [
+            Dict("label" => "blind", "value" => "blind"),
+            Dict("label" => "phantom", "value" => "phantom"),
+            Dict("label" => "ghost", "value" => "ghost"),
+            Dict("label" => "one colour", "value" => "oneColour"),
+            Dict("label" => "war fog", "value" => "warFog"),
+            Dict("label" => "standard", "value" => "standard")
+            ],
+        value = "standard"
+        ),
+    dcc_markdown(""),
+    
+    html_label("Nonstandard Go——Move & Position:"),
+    dcc_radioitems(id="ModeMove",
+        options = [
+        Dict("label" => "magnet", "value" => "magnet"),
+        Dict("label" => "quantum", "value" => "quantum"),
+        Dict("label" => "skid", "value" => "skid"),
+        Dict("label" => "standard", "value" => "standard")
+        ],
+        value = "standard"
+        ),
+    dcc_markdown(""),
+    
     html_button("OK", id = "RuleOK"),
     dcc_markdown("")
 end
