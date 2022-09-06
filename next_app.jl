@@ -39,6 +39,7 @@ app.layout = html_div() do
         ])
 end
 
+# the main callback, used to refresh board
 callback!(app,
     Output("infoTextarea", "value"),
     Output("boardGraph", "figure"),
@@ -47,7 +48,7 @@ callback!(app,
     Input("RuleOK", "n_clicks"),
     State("BoardSizeM", "value"),
     State("BoardSizeN", "value"),
-    ) do sth, c, m, n
+    ) do sth, c, r, m, n
 
     ctx = callback_context()
     if length(ctx.triggered) == 0
@@ -64,7 +65,7 @@ callback!(app,
         y = point["y"]
     end
     
-    boardinfo(botProcess, button_id, color, x, y)
+    boardinfo(botProcess, button_id, m, n, c, x, y)
 end
 
 @async run_server(app, "0.0.0.0", debug = false)

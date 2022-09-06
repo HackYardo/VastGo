@@ -98,7 +98,7 @@ whatgui = html_details([whatguisummary,whatguimarkdown])
 guideDiv = html_div([whatgame,isfunny,howplay,gotcha,whatgui])
 
 ruleDiv = html_div() do
-    html_label("To play first or not:"),
+    html_label("To play first or not: "),
     dcc_radioitems(id="Color",
         options = [
             Dict("label" => "None", "value" => "N"),
@@ -110,7 +110,7 @@ ruleDiv = html_div() do
         ),
     dcc_markdown(""),
     
-    html_label("Board Size M,N:"),
+    html_label("Board Size M,N: "),
     dcc_input(id="BoardSizeM",
         value=19,
         type="number",
@@ -118,8 +118,11 @@ ruleDiv = html_div() do
     dcc_input(id="BoardSizeN",value=19,type="number",min=2,step=1,max=19),
     dcc_markdown(""),
     
-    html_label("Komi:"),
+    html_label("Komi: "),
     dcc_input(id="KM",value=7.0,type="number",min=-150,step=0.5,max=150),
+    dcc_markdown(""),
+    
+    html_button("OK", id = "RuleOK"),
     dcc_markdown("")
 end
 

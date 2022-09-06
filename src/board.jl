@@ -24,25 +24,7 @@ boardLayout=Layout(
         tickvals = [i for i in 0:20]
         )
     )
-#=
-rowLine=scatter(
-    x = repeat([1, 19, nothing], 19),
-    y = [i for i in 1:19 for j in 1:3],
-    mode="lines",
-    line_width=1,
-    line_color="rgb(0,0,0)",
-    hoverinfo="skip",
-    name="row lines"
-    )
-colLine=scatter(
-    x = [c for c in 1:19 for j in 1:3],
-    y = repeat([1, 19, nothing], 19),
-    mode="lines",
-    line_width=1,
-    line_color="rgb(0,0,0)",
-    hoverinfo="skip",
-    name="col lines"
-    )=#
+
 function trace_line(boardsizeX, boardsizeY)
     range1 = [i for i in 1:boardsizeY for j in 1:3]
     range2 = repeat([1, boardsizeX, nothing], boardsizeY)
@@ -58,26 +40,19 @@ function trace_line(boardsizeX, boardsizeY)
         name="board lines"
         )
 end 
-anchorPoint = scatter(
-    # use (z,1) and (u,19) to widen col margin
-    x = [0, 20],
-    y = [20, 0],
+function trace_anchor(m, n)
+    scatter(
+    x = [0, n],
+    y = [m, 0],
     mode = "text",
     textposition = "inside",
     text = "+",
     textfont = attr(size = 10, color = "rgba(0,0,0,1)"),
-    hoverinfo="skip",
+    hoverinfo = "skip",
     name = "anchors"
     )
-#=
-starPoint=scatter(
-    x = repeat([4, 10, 16], 3),
-    y = [i for i in [4, 10, 16] for j in 1:3],
-    mode="markers",
-    marker_color="rgb(0,0,0)",
-    hoverinfo="skip",
-    name="star points"
-    )=#
+end
+
 function star_count(boardsize)
     starNum=0
     if boardsize<7
@@ -114,8 +89,8 @@ function star_cross(boardsize,starNum,starMargin)
     return starCross
 end
 function trace_star(boardsizeX, boardsizeY)
-    xBoard=boardSizeX
-    yBoard=boardSizeY
+    xBoard=boardsizeX
+    yBoard=boardsizeY
     rowNum=star_count(xBoard)
     colNum=star_count(yBoard)
     rowMargin=star_margin(xBoard)
@@ -148,43 +123,25 @@ ownership=scatter(
     name="ownership"
     )
 function trace_text()
+    u = ['\u23f2', Char(0x1f3f3), "Synch","ronize"#=,
+        '\u2713', '\u2717', '\u26aa', '\u26ab'=#]
     scatter(
-        x = [4, 6],
-        y = [0, 0],
-        mode = "text",
-        textposition = "inside",
-        text = ["Synch", "ronize"],
-        textfont = attr(size = 19, color = [
-            "rgb(0,0,0)", "rgb(255,255,255)"]),
-        name = "text"
-    )
-end
-function unicode_original()
-    u = ['\u23f2', '\u26aa', '\u26ab']
-    scatter(
-        x = [1, 1, 2],
-        y = [0, 20, 20],
+        x = [1, 2.25, 4, 6, 8, 10, 12, 14],
+        y = [0, 0, 0, 0, 0, 0, 0, 0],
         mode = "text",
         textposition = "inside",
         text = u,
-        textfont = attr(size = [36, 25, 25], color = [
-            "rgb(0,0,0)", "rgb(0,0,0)", "rgb(0,0,0)"]),
-        name = "original unicode"
+        textfont = attr(
+            size = [60, 32, 22, 22, 25, 25, 25, 25], 
+            color = [
+            "rgb(0,0,0)", "rgb(255,255,255)",
+            "rgb(0,0,0)", "rgb(255,255,255)",
+            "rgb(0,0,0)", "rgb(255,255,255)",
+            "rgb(0,0,0)", "rgb(255,255,255)"]
+        ),
+        name = "text"
     )
 end
-function unicode_colored()
-    u = [Char(0x1f3f3), '\u2713', '\u2717']
-    scatter(
-    x = [2, 3, 4],
-    y = [0, 20, 20],
-    mode = "text",
-    textposition = "inside",
-    text = u,
-    textfont = attr(size = [36, 25, 25], color = [
-        "rgb(255,255,255)", "rgb(0,0,0)", "rgb(255,255,255)"]),
-    name = "colored unicode"
-    )
-end 
 
 function trace_stone(xVector, yVector, colorVector)
     scatter(
@@ -197,28 +154,28 @@ function trace_stone(xVector, yVector, colorVector)
         )
 end
 
-function plot_board(stone)
+function plot_board(m, n, stone)
     Plot(
-        [anchorPoint,
-        trace_line(19, 19),
-        trace_star(19, 19),
+        [trace_anchor(m, n),
+        trace_line(m, n),
+        trace_star(m, n),
         stone,
-        trace_text(),
-        unicode_original(),
-        unicode_colored()],
+        trace_text()],
         boardLayout
         )
 end
 
-board = plot_board(trace_stone(
-    repeat([i for i in 1:19], 19), 
-    [i for i in 19:-1:1 for j in 1:19], 
-    repeat("rgba(0,0,0,0)",361)
-    ))
+board = plot_board(19, 19, 
+    trace_stone(
+        repeat([i for i in 1:19], 19), 
+        [i for i in 19:-1:1 for j in 1:19], 
+        repeat("rgba(0,0,0,0)",361)
+        )
+    )
 
 boardGraph = dcc_graph(id = "boardGraph", 
     figure = board
     )
 infoTextarea = dcc_textarea(id = "infoTextarea",
-    style = Dict("height" => 256, "width" => 800)
+    style = Dict("height" => 361, "width" => 800)
     )

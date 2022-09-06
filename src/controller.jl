@@ -22,45 +22,56 @@ function color_turn(color)
     colorVector[idx + 1]
 end 
 
-function boardinfo(proc, button_id, color, x, y)
+function info_final(proc::Base.Process)
+    query(proc, "final_score")
+    finalScore = reply(proc)
+    query(proc, "final_status_list seki")
+    finalSeki = reply(proc)
+    query(proc, "final_status_list dead")
+    finalDead = reply(proc)
+    
+    "Final Score $finalScore Seki: $finalSeki Pre-Captured: $finalDead"
+end
+
+function boardinfo(proc, button_id, m, n, color, x, y)
     botColor = color_turn(color)
     botVertex = "= none\n"
-    if !(x in 1:19) || !(y in 1:19) 
+    if !(x in 1:n) || !(y in 1:m) 
         vertex = "none"
     else 
         xChar = VERTEX[x]
         vertex = "$xChar$y"
     end
-    finalScore = "= none\n"
+    info = ""
     
     if button_id == "Color"
         query(proc, "genmove $botColor")
         botVertex = reply(proc)
     elseif button_id == "boardGraph"
-        if vertex == "A0"
+        if x == 1 && y == 0
             query(proc, "play $color pass")
             reply(proc)
             query(proc, "genmove $botColor")
             botVertex = reply(proc)
-        elseif x in 1:19 && y in 1:19
+        elseif x == 2.25 && y == 0
+            info = info_final(proc)
+        elseif vertex != "none"
             query(proc, "play $color $vertex")
             reply(proc)
             query(proc, "genmove $botColor")
             botVertex = reply(proc)
         else
         end
+        
+        if "resign" in split(botVertex)
+            info = info_final(proc)
+        end
     else
     end
 
     query(proc, "showboard")
     board = showboard_format(proc, ifprint=false)
-    info = board.i * "Bot move $botVertex"
+    info = board.i * "Bot move $botVertex" * info
     
-    if vertex == "C0"
-        query(proc, "final_score")
-        finalScore = reply(proc)
-        info = info * "Final Score $finalScore"
-    end
-    
-    return info, plot_board(trace_stone(board.x,board.y,board.c))
+    return info, plot_board(board.m, board.n, trace_stone(board.x,board.y,board.c))
 end

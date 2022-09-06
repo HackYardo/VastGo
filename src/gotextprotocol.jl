@@ -142,7 +142,7 @@ function leelaz_showboardf(paragraph)  # f: _format
     x = repeat([p for p in 1:n], m)
     y = [p for p in m:-1:1 for q in 1:n]
 
-    (x = x, y = y, c = c, i = info)
+    (m = m, n = n, x = x, y = y, c = c, i = info)
 end
 
 function gnugo_showboardf(paragraph)  # f: _format
@@ -200,7 +200,7 @@ function gnugo_showboardf(paragraph)  # f: _format
     W stones captured: $whiteCaptured
     """
 
-    (x = x, y = y, c = c, i = info)
+    (m = m, n = n, x = x, y = y, c = c, i = info)
 end
 
 function katago_showboardf(paragraph)
@@ -233,7 +233,7 @@ function katago_showboardf(paragraph)
     infoAll = cat(infoUp, infoDown, dims=1)
     info = split_undo(infoAll)
 
-    (x = x, y = y, c = c, i = info)
+    (m = m, n = n, x = x, y = y, c = c, i = info)
 end
 
 function showboard_get(proc::Base.Process; ifprint = true)
