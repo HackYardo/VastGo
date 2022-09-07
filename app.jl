@@ -5,7 +5,7 @@ using Dash, JSON3, PlotlyJS
 #engineProcess=open(katagoCommand,"r+")
 function run_engine()
     katagoCommand = Cmd(`./katago gtp -config custom_gtp.cfg -model \
-        models/m6.txt.gz`, dir="../katago1.11avx2/")
+        elo_10020.txt.gz`, dir="../KataGo1.11Eigen/")
     katagoProcess=open(katagoCommand,"r+")
     return katagoProcess
 end

@@ -3,8 +3,8 @@ include("utility.jl")  # match_diy(), split_undo()
 function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp")
     LEELAZ = (dir="../lzweights/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
-    KATAGO = (dir="../katago1.11avx2/", cmd="./katago gtp -config \
-        custom_gtp.cfg -model models/m6.txt.gz")
+    KATAGO = (dir="../KataGo1.11Eigen/", cmd="./katago gtp -config \
+        custom_gtp.cfg -model elo_10020.txt.gz")
     botDict = Dict("g"=>GNUGO, "l"=>LEELAZ, "k"=>KATAGO)
     
     botDict[ARGS[1]]
