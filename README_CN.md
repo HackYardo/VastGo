@@ -51,7 +51,7 @@ Players <<<======>>> components
 软件 | 电脑 | 手机
 --- | --- | ---
 julia | >= 1.6.7 | 1.6.7 - 1.7.2
-KataGo | **PASS** | *fail*
+KataGo | **PASS** | **PASS**
 Leela-Zero | *fail* | *fail*
 GNU Go | *fail* | *fail*
 
@@ -151,8 +151,9 @@ shell> julia app.jl
 1. 下载安装[Termux](https://termux.com/)
 2. 安装[ubuntu in termux](https://github.com/MFDGaming/ubuntu-in-termux)
 3. 下载[julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **注意：不是x86-64，而是aarch64或armv7l**
+4. 通过[9条命令](https://github.com/lightvector/KataGo/blob/master/Compiling.md#linux)，下载和编译卡塔围棋的引擎
 
-之后就和在x86-64上是一样的了。 **注意：没有公开的ARM版卡塔围棋的资源**
+之后就和在x86-64上是一样的了。
 </details>
 
 <details>

@@ -51,7 +51,7 @@ Ideas:
 software | computer | phone
 --- | --- | ---
 julia | >= 1.6.7 | 1.6.7 - 1.7.2
-KataGo | **PASS** | *fail*
+KataGo | **PASS** | **PASS**
 Leela-Zero | *fail* | *fail*
 GNU Go | *fail* | *fail*
 
@@ -151,8 +151,9 @@ Because Android phones are arm and not x86-64, you need more steps:
 1. download and install [Termux](https://termux.com/)
 2. install [ubuntu in termux](https://github.com/MFDGaming/ubuntu-in-termux)
 3. download [julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **Note: instead of x86-64, use aarch64 or armv7l**
+4. download and compile KataGo engine via [9 commands](https://github.com/lightvector/KataGo/blob/master/Compiling.md#linux)
 
-Now the same as on x86-64. **Note: there are no open KataGo ARM resource**
+Now the same as on x86-64. 
 </details>
 
 <details>
