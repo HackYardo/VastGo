@@ -6,7 +6,7 @@
 
 **注意：仍处于上古[时期](doc/versions.md#001-just-work)，代码很混沌。**
 
-> *README同时具有[中](./README_CN.md)、[英](./README.md)两版，仓库同时在[Gihub](https://github.com/HackYardo/VastGo)和[Gitee](https://gitee.com/vastgo/VastGo)上。*此仓库与[围棋](https://www.usgo.org/learn-play)、[围棋文本协议(GTP)](http://www.lysator.liu.se/~gunnar/gtp/)、[智能游戏格式(.sgf)](https://www.red-bean.com/sgf/)、[卡塔围棋](https://katagotraining.org/)、[莉拉零](https://zero.sjeng.org/)、[牛羚围棋](https://www.gnu.org/software/gnugo/)、[Julia](https://julialang.org/)、[PlotlyJS.jl](https://plotly.com/julia/)、[Dash.jl](https://dash-julia.plotly.com/)、[Markdown](https://commonmark.org/)、[可放缩向量图(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG)、[正则表达式](https://ryanstutorials.net/linuxtutorial/grep.php)等有关……
+>  * README同时具有[简体中文](./README_CN.md)、[English](./README.md)两版，仓库同时在[Gihub](https://github.com/HackYardo/VastGo)和[Gitee](https://gitee.com/vastgo/VastGo)上。 * 此仓库与[围棋](https://www.usgo.org/learn-play)、[围棋文本协议(GTP)](http://www.lysator.liu.se/~gunnar/gtp/)、[智能游戏格式(.sgf)](https://www.red-bean.com/sgf/)、[卡塔围棋](https://katagotraining.org/)、[莉拉零](https://zero.sjeng.org/)、[牛羚围棋](https://www.gnu.org/software/gnugo/)、[Julia](https://julialang.org/)、[PlotlyJS.jl](https://plotly.com/julia/)、[Dash.jl](https://dash-julia.plotly.com/)、[Markdown](https://commonmark.org/)、[可放缩向量图(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG)、[正则表达式](https://ryanstutorials.net/linuxtutorial/grep.php)等有关……
 
 VastGo是
 - 一个多平台的围棋GUI，能运行于Windows、Linux、Android，或许FreeBSD、MacOS、IOS、HarmonyOS也行。 
