@@ -7,8 +7,10 @@ function bot_get()
     KATAGO = (dir="../KataGo1.11Eigen/", cmd="./katago gtp -config \
         custom_gtp.cfg -model ../networks/m6_elo10020.txt.gz")
     KATAGOAVX2 = (dir="../KataGo1.11AVX2/", cmd = KATAGO.cmd)    
-
-    botDict = Dict("g"=>GNUGO, "l"=>LEELAZ, "k"=>KATAGO, "ka"=>KATAGOAVX2)
+    KATAGO2 = (dir=KATAGO.dir, cmd=
+        "./katago gtp -config custom_gtp.cfg -model ../networks/m20.bin.gz")
+    
+    botDict = Dict("g"=>GNUGO, "l"=>LEELAZ, "k"=>KATAGO, "ka"=>KATAGOAVX2, "k2"=>KATAGO2)
     
     botDict[ARGS[1]]
 end 
@@ -263,6 +265,14 @@ function showboard_format((paragraph, name))
     board 
 end
 
+function gtp_analyze(proc::Base.Process)
+    println(readline(proc))
+    println(readline(proc))
+    query(proc, "z")
+    reply(proc)
+    println()
+end
+
 function gtp_loop(proc::Base.Process)
     while true
         sentence = readline()
@@ -278,6 +288,8 @@ function gtp_loop(proc::Base.Process)
             break
         elseif "showboard" in split(sentence)
             proc |> showboard_get #|> showboard_format
+        elseif occursin("analyze", sentence)
+            gtp_analyze(proc)
         else
             println(reply(proc))
         end
