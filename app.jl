@@ -4,8 +4,10 @@ using Dash, JSON3, PlotlyJS
 #katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
 #engineProcess=open(katagoCommand,"r+")
 function run_engine()
-    katagoCommand = Cmd(`./katago gtp -config custom_gtp.cfg -model \
-        elo_10020.txt.gz`, dir="../KataGo1.11Eigen/")
+    katagoCommand = Cmd(
+    `./katago gtp -config custom_gtp.cfg -model \
+        ../networks/m6_elo10020.txt.gz`, 
+        dir="../KataGo1.11Eigen/")
     katagoProcess=open(katagoCommand,"r+")
     return katagoProcess
 end
