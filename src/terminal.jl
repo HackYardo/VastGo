@@ -5,7 +5,7 @@ function bot_get()
     GNUGO = (dir="", cmd="gnugo --mode gtp --boardsize 3")
     LEELAZ = (dir="../networks/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
     KATAGO = (dir="../KataGo1.11Eigen/", cmd="./katago gtp -config \
-        custom_gtp.cfg -model ../networks/m6_elo10020.txt.gz")
+        custom_gtp.cfg -model ../networks/m6.txt.gz")
     KATAGOAVX2 = (dir="../KataGo1.11AVX2/", cmd = KATAGO.cmd)    
     KATAGO2 = (dir=KATAGO.dir, cmd=
         "./katago gtp -config custom_gtp.cfg -model ../networks/m20.bin.gz")

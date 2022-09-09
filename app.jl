@@ -1,13 +1,29 @@
 using Dash, JSON3, PlotlyJS
 
 #include("gtp.jl")
-#katagoCommand=`./katago gtp -config gtp_custom.cfg -model b6/model.txt.gz`
+#katagoCommand=
+#   `./katago gtp -config custom_gtp.cfg -model ../networks/m6.txt.gz`
 #engineProcess=open(katagoCommand,"r+")
 function run_engine()
-    katagoCommand = Cmd(
-    `./katago gtp -config custom_gtp.cfg -model \
-        ../networks/m6_elo10020.txt.gz`, 
-        dir="../KataGo1.11Eigen/")
+    KATAGOEIGEN = (
+        cmd="./katago gtp -config custom_gtp.cfg -model ../networks/m6.txt.gz", 
+        dir="../KataGo1.11Eigen/"
+        )
+    KATAGOAVX2 = (cmd = KATAGOEIGEN.cmd, dir = "../KataGo1.11AVX2/")
+
+    botDict = Dict("k" => KATAGOEIGEN, "ka" => KATAGOAVX2)    
+    
+    id = ""
+    if length(ARGS) == 0
+        id = "k"
+    else
+        id = ARGS[1]
+    end
+    
+    cmd = split(botDict[id].cmd)
+    dir = botDict[id].dir
+    katagoCommand = Cmd(`$cmd`, dir = dir)
+    
     katagoProcess=open(katagoCommand,"r+")
     return katagoProcess
 end
