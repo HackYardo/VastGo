@@ -148,7 +148,7 @@ shell> julia app.jl
   <summary>在Android上</summary>
 
 由于Android手机是arm而非x86-64，所以额外需要几个步骤：
-1. 下载安装[Termux](https://termux.com/)
+1. 下载安装[Termux](https://f-droid.org/zh_Hans/packages/com.termux/)
 2. 安装[ubuntu in termux](https://github.com/MFDGaming/ubuntu-in-termux)
 3. 下载[julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **注意：不是x86-64，而是aarch64或armv7l**
 4. 通过[9条命令](https://github.com/lightvector/KataGo/blob/master/Compiling.md#linux)，下载和编译卡塔围棋的引擎
