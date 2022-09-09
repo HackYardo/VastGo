@@ -148,7 +148,7 @@ shell> julia app.jl
   <summary>on Android</summary>
 
 Because Android phones are arm and not x86-64, you need more steps:
-1. download and install [Termux](https://f-droid.org/en/packages/com.termux/)
+1. download and install [Termux](https://github.com/termux/termux-app/)
 2. install [ubuntu in termux](https://github.com/MFDGaming/ubuntu-in-termux)
 3. download [julia for Generic Linux on ARM](https://julialang.org/downloads/platform/#linux_and_freebsd), **Note: instead of x86-64, use aarch64 or armv7l**
 4. download and compile KataGo engine via [9 commands](https://github.com/lightvector/KataGo/blob/master/Compiling.md#linux)
