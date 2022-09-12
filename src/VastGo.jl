@@ -3,7 +3,7 @@
 A Web App for the Game of Go/Baduk/Weiqi.
 # Examples
 ```
-\$ julia path/to/git-repo/app.jl
+shell> julia app.jl
 ```
 """
 module VastGo

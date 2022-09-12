@@ -6,7 +6,7 @@ using Dash, JSON3, PlotlyJS
 #engineProcess=open(katagoCommand,"r+")
 function run_engine()
     KATAGOEIGEN = (
-        cmd="./katago gtp -config custom_gtp.cfg -model ../networks/m6.txt.gz", 
+        cmd="./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz", 
         dir="../KataGo1.11Eigen/"
         )
     KATAGOAVX2 = (cmd = KATAGOEIGEN.cmd, dir = "../KataGo1.11AVX2/")
@@ -269,7 +269,17 @@ function layout_board()
             ticktext=UI_Y,
             tickvals=GTP_Y
             ),
-        transition_duration = 500
+        transition_duration = 500,
+        #=dragmode="drawopenpath",
+        newshape_line_color="cyan",
+        #title_text="Draw a path to separate versicolor and virginica",
+        modebar_add=[
+            "drawline",
+            "drawopenpath",
+            "drawclosedpath",
+            "drawcircle",
+            "drawrect",
+            "eraseshape"]=#
     )
 end
 
@@ -535,6 +545,24 @@ function trace_chess()
             ),
         name = "chess pieces"
         ) 
+end
+
+function plot_config()
+    none = nothing
+    PlotConfig(
+        scrollZoom = true,
+        responsive = true,
+        staticPlot = false,
+        displayModeBar = true,
+        doubleClickDelay = 300,
+        toImageButtonOptions=attr(
+            format="svg", # one of png, svg, jpeg, webp
+            filename="custom_image", 
+            height = none,  # to download at the currently-rendered size
+            width = none,  # to download at the currently-rendered size
+            scale=1 # Multiply title/legend/axis/canvas sizes by this factor
+        ).fields
+    )   
 end
 
 function plot_board(boardSize,stones)

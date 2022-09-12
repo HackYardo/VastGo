@@ -1,18 +1,56 @@
 #import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
 include("utility.jl")  # match_diy(), split_undo()
+#include("../data/bots.jl")  # bots::Dict{NamedTuple}
+
 
 function bot_get()
-    GNUGO = (dir="", cmd="gnugo --mode gtp --boardsize 3")
-    LEELAZ = (dir="../networks/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
-    KATAGO = (dir="../KataGo1.11Eigen/", cmd="./katago gtp -config \
-        custom_gtp.cfg -model ../networks/m6.txt.gz")
-    KATAGOAVX2 = (dir="../KataGo1.11AVX2/", cmd = KATAGO.cmd)    
-    KATAGO2 = (dir=KATAGO.dir, cmd=
-        "./katago gtp -config custom_gtp.cfg -model ../networks/m20.bin.gz")
     
-    botDict = Dict("g"=>GNUGO, "l"=>LEELAZ, "k"=>KATAGO, "ka"=>KATAGOAVX2, "k2"=>KATAGO2)
+    bots = Dict(
+"g"   => (dir = "", 
+          cmd = "gnugo --mode gtp"),
+"l"   => (dir = "../networks/", 
+          cmd = "leelaz --cpu-only -g -v 8 -w w6.gz"),
+"k"   => (dir = "../KataGo1.11Eigen/", 
+          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
+"k2"  => (dir = "../KataGo1.11Eigen/", 
+          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz"),
+"ka"  => (dir = "../KataGo1.11AVX2/", 
+          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
+"ka2" => (dir = "../KataGo1.11AVX2/", 
+          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz")
+)
+
+    defaultBot = ["k"]
+
+    id = ARGS[1]
+    #=
+    id = ""
+    if length(ARGS) == 0
+        id = "k"
+    elseif length(ARGS) == 1
+        if ARGS[1] in keys(bots)
+            id = ARGS[1]
+        elseif ARGS[1] in ["-h", "?", "help"]
+            println("""
+                Usage: shell> julia src/terminal.jl
+
+                list, ls, -l: list all bots
+
+                add, -a: add a bot
+
+                remove, rm, -r: remove a bot by its id
+
+                set default bot
+
+                help, -h, ?: show this information
+                """)
+        elseif ARGS[1] in ["list","ls","-l"]
+            println("0.0.1")
+        elseif 
+
+    end=#
     
-    botDict[ARGS[1]]
+    bots[id]
 end 
 
 function bot_ready(proc::Base.Process)
