@@ -61,6 +61,7 @@
   - [ ] rank, rating, ladder match 
   - [ ] opening book of modern Go community? *(exercise opening and dissecting sequences)*
   - [ ] i18n
+  - [ ] CSS theme
 
 # Nonstandard Go
 

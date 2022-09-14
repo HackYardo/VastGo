@@ -77,7 +77,7 @@
 # 0.0.7 Speed
 
 - Matrix Row to Col
-- startup faster even with with sysimage
+- startup faster even with sysimage
   - in terminal
   - in browser
 
