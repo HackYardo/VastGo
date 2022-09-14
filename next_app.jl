@@ -28,15 +28,15 @@ app.layout = html_div() do
     dcc_tabs([
         dcc_tab(
             label="Begin",
-            children=[startGame]
+            children=[start]
             ),
         dcc_tab(
             label="While",
-            children=[playGame]
+            children=[play]
             ),
         dcc_tab(
             label="After",
-            children=[#=reviewGame=#]
+            children=[after]
             )
         ])
 end
@@ -55,13 +55,14 @@ callback!(app,
     Output("infoTextarea", "value"),
     Output("boardGraph", "figure"),
     Input("boardGraph", "clickData"),
-    Input("RuleOK", "n_clicks"),
-    State("Color", "value"),
-    State("BoardSizeM", "value"),
-    State("BoardSizeN", "value"),
-    State("ModeVisual", "value"),
-    State("ModeMove", "value"),
-    ) do sth, n_c, color, m, n, modeV, modeM
+    Input("submitButton", "n_clicks"),
+    State("colorRadioitems", "value"),
+    State("boardsizeM", "value"),
+    State("boardsizeN", "value"),
+    State("modeVisual", "value"),
+    State("modeMove", "value"),
+    State("ruleset", "value"),
+    ) do click, s, color, m, n, modeV, modeM, r
 
     ctx = callback_context()
     if length(ctx.triggered) == 0

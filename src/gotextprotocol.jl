@@ -1,15 +1,26 @@
 include("utility.jl")  # match_diy(), split_undo()
 
 function bot_get()
-    GNUGO = (dir="", cmd="gnugo --mode gtp")
-    LEELAZ = (dir="../networks/", cmd="leelaz --cpu-only -g -v 8 -w w6.gz")
-    KATAGO = (dir="../KataGo1.11Eigen/", cmd="./katago gtp -config \
-        custom_gtp.cfg -model ../networks/m6.txt.gz")
-    KATAGOAVX2 = (dir="../KataGo1.11AVX2/", cmd=KATAGO.cmd)
+    bots = Dict(
+"g"   => (dir = "", 
+          cmd = "gnugo --mode gtp"),
+"l"   => (dir = "../networks/", 
+          cmd = "leelaz --cpu-only -g -v 8 -w w6.gz"),
+"k"   => (dir = "../KataGo1.11Eigen/", 
+          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
+"k2"  => (dir = "../KataGo1.11Eigen/", 
+          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz"),
+"ka"  => (dir = "../KataGo1.11AVX2/", 
+          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
+"ka2" => (dir = "../KataGo1.11AVX2/", 
+          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz")
+)
+
+    defaultBot = ["k"]
+
+    id = ARGS[1]
     
-    botDict = Dict("g"=>GNUGO, "l"=>LEELAZ, "k"=>KATAGO, "ka"=>KATAGOAVX2)
-    
-    botDict[ARGS[1]]
+    bots[id]
 end 
 
 function bot_ready(proc::Base.Process)
