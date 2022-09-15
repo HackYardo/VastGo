@@ -21,7 +21,7 @@ function bot_get()
 )
 
     defaultBot = ["k"]
-
+    mainBot = "k"
     id = ARGS[1]
     #=
     id = ""
@@ -310,7 +310,22 @@ function gtp_analyze(proc::Base.Process)
     reply(proc)
     println()
 end
-
+#=
+function gtp_loop(procs::Vector{Base.Process})
+    
+    proc = procs[1]
+    while true 
+        sentence = readline()
+        if ! gtp_valid(sentence)
+            println("? invalid command\n")
+            continue
+        end 
+        sentenceVector = split(sentence)
+        if "switch" in sentenceVector
+            include_string("proc = $(sentenceVector[2])")
+        end
+            
+end =#
 function gtp_loop(proc::Base.Process)
     while true
         sentence = readline()
