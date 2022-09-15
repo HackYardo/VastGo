@@ -4,36 +4,22 @@ include("utility.jl")
 
 const COMPONENT = r"^[dh][a-z]{2,3}_.{1,}"
 
-# pkgNames_strFile(Dash)
-vector = file_match(COMPONENT, "../Navigator/namesofDash.txt")
-string = vector[8]
-string = "$string()"
-symbal = quote
-    string
-end
-cpm = eval(symbal)
-eval(:(meta = cpm))
-println(typeof(meta),'\n',meta)
+#pkgNames_strFile(Dash)
 
-println()
-str = "html_h1()"
-#str = Symbol(str)
-str = eval(:(str))
-qte = quote
-    mid = str
+lines = readlines("../nvg/namesofDash.txt")
+vector = match_diy(COMPONENT, lines)
+vectorNullValid = cat(vector[1:19], vector[23:end], dims=1)
+ground = Vector{Component}()
+for cpnStr in vectorNullValid
+    push!(ground, include_string(Main, "$cpnStr()"))
+    #println(typeof(component),'\n',component)
+    #println()
 end
-eval(qte)
-println(typeof(mid),'\n',mid)
-
-println()
-normal = dcc_textarea()
-println(typeof(normal),'\n',normal)
 
 app = dash()
 app.title = "A playground of Dash components"
-app.layout = html_div() do
-    meta,
-    normal
+app.layout = html_div() do 
+    ground
 end
 
 #run_server(app, "0.0.0.0", 8050, debug=true)

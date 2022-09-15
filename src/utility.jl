@@ -122,8 +122,8 @@ Then open "namesofPkg.txt"...
 """
 function pkgNames_strFile(pkg)
     open("namesof$pkg.txt", "w") do io
-        names = String.(names(pkg))
-        for name in names
+        nameVector = String.(names(pkg))
+        for name in nameVector
             println(io, name)
         end
     end
