@@ -2,13 +2,26 @@
 include("utility.jl")  # match_diy(), split_undo()
 #include("../data/bots.jl")  # bots::Dict{NamedTuple}
 
+struct Bot 
+  dir::String 
+  cmd::String
+end
+
+mutable struct BotSet
+  dict::Dict{String , Bot}
+  default::Vector{String}
+  main::String
+end 
+
+function Base.convert(::Type{Bot}, t::NamedTuple)
+    Bot(t.dir, t.cmd)
+end 
+
 function bot_get()
     
-    bots = Dict(
-"g"   => (dir = "", 
-          cmd = "gnugo --mode gtp"),
-"l"   => (dir = "../networks/", 
-          cmd = "leelaz --cpu-only -g -v 8 -w w6.gz"),
+    botDict = Dict(
+"g"   => Bot("", "gnugo --mode gtp"),
+"l"   => Bot("../networks/", "leelaz --cpu-only -g -v 8 -w w6.gz"),
 "k"   => (dir = "../KataGo1.11Eigen/", 
           cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
 "k2"  => (dir = "../KataGo1.11Eigen/", 
@@ -18,17 +31,18 @@ function bot_get()
 "ka2" => (dir = "../KataGo1.11AVX2/", 
           cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz")
 )
-
     defaultBot = ["k"]
     mainBot = "k"
-    id = ARGS[1]
+    botSet = BotSet(botDict, defaultBot, mainBot)
+    
+    key = ARGS[1]
     #=
-    id = ""
+    key = ""
     if length(ARGS) == 0
-        id = "k"
+        key = "k"
     elseif length(ARGS) == 1
         if ARGS[1] in keys(bots)
-            id = ARGS[1]
+            key = ARGS[1]
         elseif ARGS[1] in ["-h", "?", "help"]
             println("""
                 Usage: shell> julia src/terminal.jl
@@ -49,7 +63,7 @@ function bot_get()
 
     end=#
     
-    bots[id]
+    botSet
 end 
 
 function bot_ready(proc::Base.Process)
@@ -349,7 +363,8 @@ function gtp_loop(proc::Base.Process)
 end
 
 function terminal()
-    bot = bot_get()
+    botSet = bot_get()
+    bot = botSet.dict[botSet.main]
     botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
     gtp_ready(botProcess)
     gtp_loop(botProcess)
