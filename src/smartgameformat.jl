@@ -12,3 +12,9 @@ c = TreeNode(2, a, b)
 t = c
 
 println(dump(t))
+
+mutable struct Node
+    vertex::String
+end 
+
+A = Node[]
