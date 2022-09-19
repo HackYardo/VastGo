@@ -100,14 +100,17 @@ julia> ]
 <details>
   <summary>in terminal——run src/terminal.jl</summary>
 
-1. edit the first function of `terminal.jl` to indicate **the command** of running a bot, **the directory** where to run the command and the **id=>bot** in Dict(), e.g.
+1. edit `data/config.txt` to indicate **the command** of running a bot, **the directory** where to run the command and **a name** to call it, e.g.
 ```julia
-KATAGOOPENCL = (dir="../KataGoOpenCL/", cmd="./katago gtp -model elo9000.txt.gz")
-botDict = Dict(..., "ko"=>KATAGOOPENCL)
+botDict = Dict(
+...,
+"ko" => (dir = "../KataGoOpenCL/",
+         cmd = "./katago gtp -model elo9000.txt.gz")
+)
 ```
 **Note: DO NOT use `-q` in Leela-Zero's command, since `showboard` will GONE.**
 
-2. in VastGo/, run `terminal.jl` with a bot's id, e.g.
+2. run `src/terminal.jl` with a bot's name, e.g.
 ```shell
 shell> julia src/terminal.jl ko
 ```

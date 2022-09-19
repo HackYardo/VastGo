@@ -1,31 +1,43 @@
 using Dash, JSON3, PlotlyJS
 
-#include("gtp.jl")
-#katagoCommand=
-#   `./katago gtp -config custom_gtp.cfg -model ../networks/m6.txt.gz`
-#engineProcess=open(katagoCommand,"r+")
-function run_engine()
-    KATAGOEIGEN = (
-        cmd="./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz", 
-        dir="../KataGo1.11Eigen/"
-        )
-    KATAGOAVX2 = (cmd = KATAGOEIGEN.cmd, dir = "../KataGo1.11AVX2/")
+struct Bot 
+    dir::String
+    cmd::String
+end
 
-    botDict = Dict("k" => KATAGOEIGEN, "ka" => KATAGOAVX2)    
+function Base.convert(::Type{Bot}, t::NamedTuple)
+    Bot(t.dir, t.cmd)
+end 
+function Base.convert(::Type{Bot}, t::Tuple)
+    Bot(t[1], t[2])
+end 
+function Base.convert(::Type{Bot}, d::Dict)
+    Bot(d["dir"], d["cmd"])
+end 
+function Base.convert(::Type{Bot}, v::Vector)
+    Bot(v[1], v[2])
+end 
+
+#include("gtp.jl")
+
+function run_engine()
+    include_string(Main, readchomp("data/config.txt"))
     
-    id = ""
+    key = ""
     if length(ARGS) == 0
-        id = "k"
+        key = "k"
     else
-        id = ARGS[1]
+        key = ARGS[1]
     end
     
-    cmd = split(botDict[id].cmd)
-    dir = botDict[id].dir
-    katagoCommand = Cmd(`$cmd`, dir = dir)
+    bot = convert(Bot, botDict[key])
+
+    cmd = split(bot.cmd)
+    dir = bot.dir
+    botCommand = Cmd(`$cmd`, dir = dir)
     
-    katagoProcess=open(katagoCommand,"r+")
-    return katagoProcess
+    botProcess=open(botCommand,"r+")
+    return botProcess
 end
 
 function end_engine()

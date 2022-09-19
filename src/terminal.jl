@@ -1,6 +1,9 @@
-#import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
-include("utility.jl")  # match_diy(), split_undo()
-#include("../data/bots.jl")  # bots::Dict{NamedTuple}
+#import JSON3  
+    # JSON3.read(), JSON3.write(), JSON3.pretty()
+include("utility.jl")  
+    # match_diy(), split_undo()
+#include_string(Main, readchomp("data/config.txt")) 
+    # bot_config()
 
 struct Bot 
   dir::String 
@@ -10,11 +13,13 @@ end
 mutable struct BotSet
   dict::Dict{String , Bot}
   default::Vector{String}
-  main::String
 end 
 
 function Base.convert(::Type{Bot}, t::NamedTuple)
     Bot(t.dir, t.cmd)
+end 
+function Base.convert(::Type{Bot}, t::Tuple)
+    Bot(t[1], t[2])
 end 
 function Base.convert(::Type{Bot}, d::Dict)
     Bot(d["dir"], d["cmd"])
@@ -23,51 +28,21 @@ function Base.convert(::Type{Bot}, v::Vector)
     Bot(v[1], v[2])
 end 
 
+function bot_config()
+    include_string(Main, readchomp("data/config.txt"))
+    return botDefault, botDict
+end
+
 function bot_get()
+    botDefault, botDict = bot_config()
+    botSet = BotSet(botDict, botDefault)
     
-    botDict = Dict(
-"g"   => Bot("", "gnugo --mode gtp"),
-"l"   => Bot("../networks/", "leelaz --cpu-only -g -v 8 -w w6.gz"),
-"k"   => Dict("dir" => "../KataGo1.11Eigen/", 
-          "cmd" => "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
-"k2"  => ["../KataGo1.11Eigen/", 
-          "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz"],
-"ka"  => (dir = "../KataGo1.11AVX2/", 
-          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
-"ka2" => (dir = "../KataGo1.11AVX2/", 
-          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz")
-)
-    defaultBot = ["k"]
-    mainBot = "k"
-    botSet = BotSet(botDict, defaultBot, mainBot)
-    
-    key = ARGS[1]
-    #=
-    key = ""
-    if length(ARGS) == 0
-        key = "k"
-    elseif length(ARGS) == 1
-        if ARGS[1] in keys(bots)
-            key = ARGS[1]
-        elseif ARGS[1] in ["-h", "?", "help"]
-            println("""
-                Usage: shell> julia src/terminal.jl
-
-                list, ls, -l: list all bots
-
-                add, -a: add a bot
-
-                remove, rm, -r: remove a bot by its id
-
-                set default bot
-
-                help, -h, ?: show this information
-                """)
-        elseif ARGS[1] in ["list","ls","-l"]
-            println("0.0.1")
-        elseif 
-
-    end=#
+    botToRun = String[]
+    if length(ARGS) == 0 
+        botToRun = botDefault
+    else
+        botToRun = ARGS
+    end
     
     botSet
 end 
@@ -370,7 +345,7 @@ end
 
 function terminal()
     botSet = bot_get()
-    bot = botSet.dict[botSet.main]
+    bot = botSet.dict[ARGS[1]]
     botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
     gtp_ready(botProcess)
     gtp_loop(botProcess)
