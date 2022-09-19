@@ -2,8 +2,6 @@
     # JSON3.read(), JSON3.write(), JSON3.pretty()
 include("utility.jl")  
     # match_diy(), split_undo()
-#include_string(Main, readchomp("data/config.txt")) 
-    # bot_config()
 
 struct Bot 
   dir::String 
@@ -11,7 +9,7 @@ struct Bot
 end
 
 mutable struct BotSet
-  dict::Dict{String , Bot}
+  dict::Dict{String, Bot}
   default::Vector{String}
 end 
 
@@ -100,6 +98,7 @@ function gtp_valid(sentence::String)::Bool
     end 
 end 
 
+query((proc, sentence)) = query(proc, sentence)
 function query(proc::Base.Process, sentence::String)
     println(proc, sentence)
 end
@@ -279,11 +278,13 @@ function showboard_get(proc::Base.Process)
     if name == "Leela Zero"
         paragraph = paragraph * leelaz_showboard(proc)
     end
-    println(paragraph)
-    paragraph, name
+    #println(paragraph)
+    paragraph
 end 
 
-function showboard_format((paragraph, name))
+showboard_format((paragraph, name)) = showboard_format(paragraph, name)
+function showboard_format(paragraph, name)
+    name = name_get(proc)
     board = NamedTuple()
     if name == "GNU Go"
         board = gnugo_showboardf(paragraph)
@@ -304,6 +305,32 @@ function gtp_analyze(proc::Base.Process)
     reply(proc)
     println()
 end
+
+function gtp_exit()
+    println("=\n")
+    exit()
+end
+
+function gtp_ps()
+
+end
+
+function gtp_run()
+
+end
+
+function gtp_kill()
+
+end
+
+function gtp_switch()
+
+end
+
+function gtp_help()
+
+end
+
 #=
 function gtp_loop(procs::Vector{Base.Process})
     
@@ -323,18 +350,30 @@ end =#
 function gtp_loop(proc::Base.Process)
     while true
         sentence = readline()
-        if gtp_valid(sentence)
+        sentenceVector = split(sentence)
+        if "exit" in sentenceVector
+            gtp_exit()
+        elseif "ps" in sentenceVector
+        elseif "run" in sentenceVector  # [id] cmd [args]
+        elseif "kill" in sentenceVector  # [id] cmd [args]
+        elseif "switch" in sentenceVector  # [id] cmd [args]
+        elseif "help" in sentenceVector
+
+        elseif gtp_valid(sentence)
             query(proc, sentence)
         else 
             println("? invalid command\n")
             continue
         end 
         
-        if "quit" in split(sentence)
+        if "quit" in sentenceVector
             bot_end(proc)
-            break
-        elseif "showboard" in split(sentence)
-            proc |> showboard_get #|> showboard_format
+        elseif "showboard" in sentenceVector
+            proc |> showboard_get |> println
+        elseif "showboardf" in sentenceVector
+            proc |> reply
+            (proc, "showboard") |> query
+            proc |> showboard_get |> showboard_format
         elseif occursin("analyze", sentence)
             gtp_analyze(proc)
         else

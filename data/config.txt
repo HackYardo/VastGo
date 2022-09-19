@@ -1,13 +1,15 @@
 #= 
 There are many ways to add bots:
     ...,
-    "x" => (dir = "somewhere", cmd = "somecommand"),
-    "y" => ("somewhere", "somecommand"),
+    "a" => (dir = "somewhere", cmd = "somecommand"),
+    "b" => ("somewhere", "somecommand"),
+    "c" => ["somewhere",
+            "somecommand"],
     ...
-To run "x" bot:
-    shell> julia xxx.jl x
+To run "a" bot:
+    shell> julia xxx.jl a
 To run many bots:
-    shell> julia xxx.jl x y
+    shell> julia xxx.jl a b c
 =#
 botDict = Dict(
 "g"   => (dir = "", 
