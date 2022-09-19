@@ -16,16 +16,22 @@ end
 function Base.convert(::Type{Bot}, t::NamedTuple)
     Bot(t.dir, t.cmd)
 end 
+function Base.convert(::Type{Bot}, d::Dict)
+    Bot(d["dir"], d["cmd"])
+end 
+function Base.convert(::Type{Bot}, v::Vector)
+    Bot(v[1], v[2])
+end 
 
 function bot_get()
     
     botDict = Dict(
 "g"   => Bot("", "gnugo --mode gtp"),
 "l"   => Bot("../networks/", "leelaz --cpu-only -g -v 8 -w w6.gz"),
-"k"   => (dir = "../KataGo1.11Eigen/", 
-          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
-"k2"  => (dir = "../KataGo1.11Eigen/", 
-          cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz"),
+"k"   => Dict("dir" => "../KataGo1.11Eigen/", 
+          "cmd" => "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
+"k2"  => ["../KataGo1.11Eigen/", 
+          "./katago gtp -config v8t5.cfg -model ../networks/m20.txt.gz"],
 "ka"  => (dir = "../KataGo1.11AVX2/", 
           cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
 "ka2" => (dir = "../KataGo1.11AVX2/", 
