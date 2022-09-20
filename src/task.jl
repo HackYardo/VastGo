@@ -7,6 +7,31 @@ and will try not only one approaches:
 4. stack
 =#
 
+function gtp_exit()
+    println("=\n")
+    exit()
+end
+
+function gtp_ps()
+
+end
+
+function gtp_run()
+
+end
+
+function gtp_kill()
+
+end
+
+function gtp_switch()
+
+end
+
+function gtp_help()
+
+end
+
 g = `gnugo --mode gtp`
 botDict = Dict(
 "a" => (dir = "", cmd = g),

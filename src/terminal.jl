@@ -42,7 +42,7 @@ function bot_get()
         botToRun = ARGS
     end
     
-    botSet
+    botSet.dict[botToRun[1]]
 end 
 
 function bot_ready(proc::Base.Process)
@@ -282,8 +282,8 @@ function showboard_get(proc::Base.Process)
     paragraph
 end 
 
-showboard_format((paragraph, name)) = showboard_format(paragraph, name)
-function showboard_format(paragraph, name)
+function showboard_format(proc::Base.Process)
+    paragraph = showboard_get(proc)
     name = name_get(proc)
     board = NamedTuple()
     if name == "GNU Go"
@@ -294,8 +294,8 @@ function showboard_format(paragraph, name)
         board = katago_showboardf(paragraph)
     else
     end
-    println(dump(board))
-    board 
+    #println(dump(board))
+    "=\n$board\n"
 end
 
 function gtp_analyze(proc::Base.Process)
@@ -304,31 +304,6 @@ function gtp_analyze(proc::Base.Process)
     query(proc, "z")
     reply(proc)
     println()
-end
-
-function gtp_exit()
-    println("=\n")
-    exit()
-end
-
-function gtp_ps()
-
-end
-
-function gtp_run()
-
-end
-
-function gtp_kill()
-
-end
-
-function gtp_switch()
-
-end
-
-function gtp_help()
-
 end
 
 #=
@@ -351,40 +326,34 @@ function gtp_loop(proc::Base.Process)
     while true
         sentence = readline()
         sentenceVector = split(sentence)
-        if "exit" in sentenceVector
-            gtp_exit()
-        elseif "ps" in sentenceVector
-        elseif "run" in sentenceVector  # [id] cmd [args]
-        elseif "kill" in sentenceVector  # [id] cmd [args]
-        elseif "switch" in sentenceVector  # [id] cmd [args]
-        elseif "help" in sentenceVector
 
-        elseif gtp_valid(sentence)
-            query(proc, sentence)
-        else 
+        if ! gtp_valid(sentence)
             println("? invalid command\n")
             continue
         end 
         
         if "quit" in sentenceVector
+            query(proc, sentence)
             bot_end(proc)
+            break
         elseif "showboard" in sentenceVector
+            query(proc, sentence)
             proc |> showboard_get |> println
         elseif "showboardf" in sentenceVector
-            proc |> reply
-            (proc, "showboard") |> query
-            proc |> showboard_get |> showboard_format
+            (proc, sentence[1:end-1]) |> query
+            proc |> showboard_format |> println
         elseif occursin("analyze", sentence)
+            query(proc, sentence)
             gtp_analyze(proc)
         else
+            query(proc, sentence)
             println(reply(proc))
         end
     end
 end
 
 function terminal()
-    botSet = bot_get()
-    bot = botSet.dict[ARGS[1]]
+    bot = bot_get()
     botProcess = bot_run(dir=bot.dir, cmd=bot.cmd)
     gtp_ready(botProcess)
     gtp_loop(botProcess)
