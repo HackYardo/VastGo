@@ -13,18 +13,10 @@ mutable struct BotSet
   default::Vector{String}
 end 
 
-function Base.convert(::Type{Bot}, t::NamedTuple)
-    Bot(t.dir, t.cmd)
-end 
-function Base.convert(::Type{Bot}, t::Tuple)
-    Bot(t[1], t[2])
-end 
-function Base.convert(::Type{Bot}, d::Dict)
-    Bot(d["dir"], d["cmd"])
-end 
-function Base.convert(::Type{Bot}, v::Vector)
-    Bot(v[1], v[2])
-end 
+Base.convert(::Type{Bot}, t::NamedTuple) = Bot(   t.dir,    t.cmd)
+Base.convert(::Type{Bot}, t::Tuple)      = Bot(    t[1],     t[2])
+Base.convert(::Type{Bot}, d::Dict)       = Bot(d["dir"], d["cmd"])
+Base.convert(::Type{Bot}, v::Vector)     = Bot(    v[1],     v[2])
 
 function bot_config()
     include_string(Main, readchomp("data/config.txt"))

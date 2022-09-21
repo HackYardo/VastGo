@@ -10,29 +10,45 @@ and will try not only one approaches:
 function gtp_exit(botProcDict)
     println("=")
 
-    for (key,value) in botProcDict
-        println(value, "quit")
-        print_info("$key gone")
+    for (bot,botProc) in botProcDict
+        println(botProc, "quit")
+        readuntil(botProc, "\n\n")
+        close(botProc)
+        print_info("$bot gone")
     end
     
     println()
 end
 
-function gtp_status(botDict, botProcDict)
+function gtp_quit()
+    println(botProc, sentence)
+    readuntil(botProc, "\n\n")
+    close(botProc)
+
+end
+
+function gtp_status(botDictKey, botProcKey)
     print("=")
-    botDictKey = collect(keys(botDict))
+
     for key in botDictKey
-        if haskey(botProcDict, key)
+        if key in botProcKey
             printstyled(" $key", color=6)
         else
             print(" $key")
         end
     end
+
     println("\n")
 end
 
-function gtp_run()
-
+function gtp_run(botDict, botProcDict, key)
+    if haskey(botProcDict, key)
+        println("= already running\n")
+    elseif haskey(botDict, key)
+        botProcDict[key] = bot_run(key)
+    else
+        println("= not found\n")
+    end
 end
 
 function gtp_kill()
@@ -47,30 +63,15 @@ function gtp_help()
 
 end
 
-struct Bot 
-  dir::String 
-  cmd::String
-end
-
-mutable struct BotSet
-  dict::Dict{String, Bot}
-  default::Vector{String}
-end 
-
-Base.convert(::Type{Bot}, t::NamedTuple) = Bot(t.dir, t.cmd)
-Base.convert(::Type{Bot}, t::Tuple) = Bot(t[1], t[2])
-Base.convert(::Type{Bot}, d::Dict) = Bot(d["dir"], d["cmd"])
-Base.convert(::Type{Bot}, v::Vector) = Bot(v[1], v[2])
-
 function bot_config()
     include_string(Main, readchomp("data/config.txt"))
-    return botDefault, botDict
+    botDictKey = collect(keys(botDict))
+    return botDefault, botDictKey
 end
 
 function bot_get()
-    botDefault, botDict = bot_config()
-    botSet = BotSet(botDict, botDefault)
-    
+    botDefault, botDictKey = bot_config()
+
     botToRun = String[]
     if length(ARGS) == 0 
         botToRun = botDefault
@@ -78,54 +79,68 @@ function bot_get()
         botToRun = ARGS
     end
     
-    botDict, botToRun
+    botDictKey, botToRun
 end
 
-function bot_run()
-    botDict, botToRun = bot_get()
-    
+function bot_run(bot::String)
+    open(`julia src/terminal.jl $bot`, "r+")
+end
+function bot_run(botToRun::Vector{String})
     botProcDict = Dict{String, Base.Process}()
     for bot in botToRun
-        botProcDict[bot] = open(`julia src/terminal.jl $bot`, "r+")
+        botProcDict[bot] = bot_run(bot)
     end
     #println(botProcDict)
     
-    botDict, botProcDict
+    botProcDict
 end 
 
 function bot_startup_info(botProcDict)
     for (key,value) in botProcDict
-         print(readuntil(botProcDict[key], "[ Info: GTP ready\n"))
+        printstyled(readuntil(botProcDict[key], "[ Info: GTP ready\n"))
         print_info("$key ready")
     end
 end
 
-function print_info(s::String)
-    printstyled("[ Info: ", color=6, bold=true)
+print_info(s::String)            = print_info("[ Info: ", s)
+print_info(a::String, s::String) = print_info(         a, s, 6)
+function print_info(a::String, s::String, c::Int)
+    printstyled("a", color=c, bold=true)
     println(s)
 end
 
+gtp_print(b::String)            = gtp_print(    [""], b)
+gtp_print(a::String, b::String) = gtp_print(split(a), b)
+function gtp_print(va::Vector{String}, b::String)
+    println("=$(va[1]) $b\n")
+end
+
 function gtp_loop()
-    botDict, botProcDict = bot_run()
+    botDictKey, botToRun = bot_get()
+    botProcDict = bot_run(botToRun)
     botProcKey = collect(keys(botProcDict))
     
     bot_startup_info(botProcDict)
     
     key = botProcKey[1]
     botProc = botProcDict[key]
-    print_info("GTP ready (talk to $key first)")
+    print_info("GTP ready ($key first)")
     while true
         sentence = readline()
-        sentenceVector = split(sentence)
-        if "exit" in sentenceVector
+        words = split(sentence)
+        if "exit" in words
             gtp_exit(botProcDict)
             break
-        elseif "status" in sentenceVector
-            gtp_status(botDict, botProcDict)
-        elseif "switch" in sentenceVector
-            key = sentenceVector[end]
+        elseif "quit" in words
+
+        elseif "status" in words
+            gtp_status(botDictKey, botProcKey)
+        elseif "switch" in words
+            key = words[end]
             botProc = botProcDict[key]
             println("= $key\n")
+        elseif "run" in words
+            gtp_run(botDict, botProcDict, words[end])
         else
             println(botProc, sentence)
             print(readuntil(botProc, "\n\n", keep=true))
