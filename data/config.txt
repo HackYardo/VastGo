@@ -4,7 +4,9 @@ There are many ways to add bots:
     "a" => (dir = "somewhere", cmd = "somecommand"),
     "b" => ("somewhere", "somecommand"),
     "c" => ["somewhere",
-            "somecommand"],
+            "some \
+             long \
+             command"],
     ...
 To run "a" bot:
     shell> julia xxx.jl a
@@ -23,7 +25,11 @@ botDict = Dict(
 "ka"  => Bot("../KataGo1.11AVX2/", 
           "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
 "ka2" => Dict("dir" => "../KataGo1.11AVX2/", 
-          "cmd" => "./katago gtp -config v8t5.cfg -model ../networks/m20.bin.gz")
+          "cmd" => "./katago gtp -config v8t5.cfg -model ../networks/m20.bin.gz"),
+"ks"  => ("../KataGo1.11Eigen/",
+          "./katago gtp -config v8t5.cfg \
+           -override-config defaultBoardSize=8,maxVisits=64 \
+           -model ../networks/m6.txt.gz")
 )
 
 # These bots will run if no args:
