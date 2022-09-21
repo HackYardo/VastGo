@@ -7,24 +7,41 @@ and will try not only one approaches:
 4. stack
 =#
 
+using Distributed
+
 function gtp_exit(botProcDict)
     println("=")
 
-    for (bot,botProc) in botProcDict
+    @distributed for (key,botProc) = botProcDict
         println(botProc, "quit")
         readuntil(botProc, "\n\n")
         close(botProc)
-        print_info("$bot gone")
+        print_info("$key gone")
     end
     
     println()
 end
 
 function gtp_quit()
-    println(botProc, sentence)
+
+    println(botProc, "quit")
     readuntil(botProc, "\n\n")
     close(botProc)
 
+    println("= ")
+
+    print_info("$key gone")
+
+    pop!(botProcDict, key)
+    if length(botProcDict) == 0
+        print_info("no bot left, `run` a bot or `exit`\n")
+    else
+        botProcKey = collect(keys(botProcDict))
+        key = botProcKey[1]
+        botProc = botProcDict[key]
+        print_info("auto switch to $key\n")
+        return key, botProc
+    end
 end
 
 function gtp_status(botDictKey, botProcKey)
@@ -87,7 +104,7 @@ function bot_run(bot::String)
 end
 function bot_run(botToRun::Vector{String})
     botProcDict = Dict{String, Base.Process}()
-    for bot in botToRun
+    @distributed for bot = botToRun
         botProcDict[bot] = bot_run(bot)
     end
     #println(botProcDict)
