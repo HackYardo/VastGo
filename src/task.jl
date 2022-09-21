@@ -6,14 +6,29 @@ and will try not only one approaches:
 3. Task()
 4. stack
 =#
-#=
-function gtp_exit()
-    println("=\n")
-    exit()
+
+function gtp_exit(botProcDict)
+    println("=")
+
+    for (key,value) in botProcDict
+        println(value, "quit")
+        print_info("$key gone")
+    end
+    
+    println()
 end
 
-function gtp_ps()
-
+function gtp_status(botDict, botProcDict)
+    print("=")
+    botDictKey = collect(keys(botDict))
+    for key in botDictKey
+        if haskey(botProcDict, key)
+            printstyled(" $key", color=6)
+        else
+            print(" $key")
+        end
+    end
+    println("\n")
 end
 
 function gtp_run()
@@ -31,30 +46,6 @@ end
 function gtp_help()
 
 end
-
-g = `gnugo --mode gtp`
-botDict = Dict(
-"a" => (dir = "", cmd = g),
-"b" => (dir = "", cmd = g),
-"c" => (dir = "", cmd = g)
-)
-botToRun = ["a", "b"]
-function str_exe(s)
-    include_string(Main, s)
-    s 
-end
-botProcDict = Dict{String, Base.Process}()
-for bot in botToRun
-botCmd = botDict[bot].cmd
-str_exe("""botProcDict["$bot"] = open($botCmd, "r+")""")
-end
-println(botProcDict)
-println(botProcDict["a"], "name")
-println(botProcDict["b"], "version")
-println(readline(botProcDict["a"]))
-println(readline(botProcDict["b"]))
-=#
-
 
 struct Bot 
   dir::String 
@@ -99,8 +90,15 @@ function bot_run()
     end
     #println(botProcDict)
     
-    botProcDict
+    botDict, botProcDict
 end 
+
+function bot_startup_info(botProcDict)
+    for (key,value) in botProcDict
+         print(readuntil(botProcDict[key], "[ Info: GTP ready\n"))
+        print_info("$key ready")
+    end
+end
 
 function print_info(s::String)
     printstyled("[ Info: ", color=6, bold=true)
@@ -108,30 +106,26 @@ function print_info(s::String)
 end
 
 function gtp_loop()
-    botProcDict = bot_run()
+    botDict, botProcDict = bot_run()
     botProcKey = collect(keys(botProcDict))
     
-    for key in botProcKey
-        print(readuntil(botProcDict[key], "[ Info: GTP ready\n"))
-        print_info("$key ready")
-    end
+    bot_startup_info(botProcDict)
     
-    botProc = botProcDict[botProcKey[1]]
-    print_info("GTP ready, bot: $(botProcKey[1])")
+    key = botProcKey[1]
+    botProc = botProcDict[key]
+    print_info("GTP ready (talk to $key first)")
     while true
         sentence = readline()
         sentenceVector = split(sentence)
         if "exit" in sentenceVector
-            println("=")
-            println(botProcDict["k"], "quit")
-            print_info("k quit")
-            println(botProcDict["g"], "quit")
-            print_info("g quit")
-            println()
+            gtp_exit(botProcDict)
             break
+        elseif "status" in sentenceVector
+            gtp_status(botDict, botProcDict)
         elseif "switch" in sentenceVector
-            botProc = botProcDict[sentenceVector[end]]
-            println("= $botProc\n")
+            key = sentenceVector[end]
+            botProc = botProcDict[key]
+            println("= $key\n")
         else
             println(botProc, sentence)
             print(readuntil(botProc, "\n\n", keep=true))
