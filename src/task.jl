@@ -38,14 +38,18 @@ botDict = Dict(
 "b" => (dir = "", cmd = g),
 "c" => (dir = "", cmd = g)
 )
-botToRun = ["a", "a", "b"]
-function strExe(s)
+botToRun = ["a", "b"]
+function str_exe(s)
     include_string(Main, s)
     s 
 end
+botProcDict = Dict{String, Base.Process}()
 for bot in botToRun
 botCmd = botDict[bot].cmd
-include_string(Main, 
-    """$bot = open($botCmd, "r+")""")
+str_exe("""botProcDict["$bot"] = open($botCmd, "r+")""")
 end
-println(str_var("a"))
+println(botProcDict)
+println(botProcDict["a"], "name")
+println(botProcDict["b"], "version")
+println(readline(botProcDict["a"]))
+println(readline(botProcDict["b"]))
