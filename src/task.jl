@@ -9,10 +9,27 @@ and will try not only one approaches:
 
 using Distributed
 
+struct Bot 
+  dir::String 
+  cmd::String
+end
+
+mutable struct BotSet
+  dict::Dict{String, Bot}
+  default::Vector{String}
+end 
+
+Base.convert(::Type{Bot}, t::NamedTuple) = Bot(   t.dir,    t.cmd)
+Base.convert(::Type{Bot}, t::Tuple)      = Bot(    t[1],     t[2])
+Base.convert(::Type{Bot}, d::Dict)       = Bot(d["dir"], d["cmd"])
+Base.convert(::Type{Bot}, v::Vector)     = Bot(    v[1],     v[2])
+
 function gtp_exit(botProcDict)
     println("=")
-
-    @distributed for (key,botProc) = botProcDict
+    
+    botProcKey = collect(keys(botProcDict))
+    @sync @distributed for key = botProcKey
+        botProc = botProcDict[key]
         println(botProc, "quit")
         readuntil(botProc, "\n\n")
         close(botProc)
@@ -22,29 +39,31 @@ function gtp_exit(botProcDict)
     println()
 end
 
-function gtp_quit()
-
+function gtp_quit(key, botProcDict)
+    botProc = botProcDict[key]
     println(botProc, "quit")
     readuntil(botProc, "\n\n")
     close(botProc)
 
     println("= ")
-
     print_info("$key gone")
 
     pop!(botProcDict, key)
     if length(botProcDict) == 0
+        key = ""
         print_info("no bot left, `run` a bot or `exit`\n")
     else
-        botProcKey = collect(keys(botProcDict))
-        key = botProcKey[1]
-        botProc = botProcDict[key]
+        key = collect(keys(botProcDict))[1]
         print_info("auto switch to $key\n")
-        return key, botProc
     end
+    
+    return key, botProcDict
 end
 
-function gtp_status(botDictKey, botProcKey)
+function gtp_status(botDict, botProcDict)
+    botDictKey = collect(keys(botDict))
+    botProcKey = collect(keys(botProcDict))
+    
     print("=")
 
     for key in botDictKey
@@ -59,53 +78,91 @@ function gtp_status(botDictKey, botProcKey)
 end
 
 function gtp_run(botDict, botProcDict, key)
+    print("= ")
     if haskey(botProcDict, key)
-        println("= already running\n")
+        println("already running")
     elseif haskey(botDict, key)
         botProcDict[key] = bot_run(key)
+        println()
+        bot_startup_info(Dict(key => botProcDict[key]))
     else
-        println("= not found\n")
+        println("not found")
     end
+    println()
+    return botProcDict
 end
 
-function gtp_kill()
-
-end
-
-function gtp_switch()
-
+function gtp_switch(key1, botProcDict, key2)
+    print("=")
+    if ! haskey(botProcDict, key2)
+        print(" not found")
+        key2 = key1
+    end
+    println("\n")
+    return key2
 end
 
 function gtp_help()
-
+    println("=")
+    printstyled("status", color=6, bold=true)
+    println("  list all bot")
+    printstyled("run   ", color=6, bold=true)
+    println("  run a bot")
+    printstyled("kill  ", color=6, bold=true)
+    println("  quit a bot")
+    printstyled("switch", color=6, bold=true)
+    println("  switch to a bot")
+    printstyled("exit  ", color=6, bold=true)
+    println("  quit all bots and exit")
+    println()
 end
 
 function bot_config()
     include_string(Main, readchomp("data/config.txt"))
-    botDictKey = collect(keys(botDict))
-    return botDefault, botDictKey
+    return botDefault, botDict
 end
 
 function bot_get()
-    botDefault, botDictKey = bot_config()
-
+    botDefault, botDict = bot_config()
+    
     botToRun = String[]
     if length(ARGS) == 0 
         botToRun = botDefault
     else
         botToRun = ARGS
     end
+    unique!(botToRun)
+    #println(botDict)
+    #println(botToRun)
+    botToRunValid = Vector{String}()
+    for key in botToRun
+        if haskey(botDict, key)
+            push!(botToRunValid, key)
+        else 
+            print_info("$key not found")
+        end
+    end
     
-    botDictKey, botToRun
+    botDict, botToRunValid
 end
 
 function bot_run(bot::String)
-    open(`julia src/terminal.jl $bot`, "r+")
+    proc = open(`julia src/terminal.jl $bot`, "r+")
+    
+    println(proc, "!")
+    if readline(proc)[1] != '?'
+        proc = nothing
+    end
+    
+    return proc
 end
 function bot_run(botToRun::Vector{String})
     botProcDict = Dict{String, Base.Process}()
-    @distributed for bot = botToRun
-        botProcDict[bot] = bot_run(bot)
+    @sync @distributed for bot = botToRun
+        proc = bot_run(bot)
+        if proc != nothing
+            botProcDict[bot] = proc
+        end
     end
     #println(botProcDict)
     
@@ -113,16 +170,17 @@ function bot_run(botToRun::Vector{String})
 end 
 
 function bot_startup_info(botProcDict)
-    for (key,value) in botProcDict
+    botProcKey = collect(keys(botProcDict))
+    @sync @distributed for key = botProcKey
         printstyled(readuntil(botProcDict[key], "[ Info: GTP ready\n"))
         print_info("$key ready")
     end
 end
 
-print_info(s::String)            = print_info("[ Info: ", s)
-print_info(a::String, s::String) = print_info(         a, s, 6)
-function print_info(a::String, s::String, c::Int)
-    printstyled("a", color=c, bold=true)
+print_info(s)    = print_info("[ Info: ", s)
+print_info(a, s) = print_info(         a, s, 6)
+function print_info(a, s, c)
+    printstyled(a, color=c, bold=true)
     println(s)
 end
 
@@ -133,34 +191,39 @@ function gtp_print(va::Vector{String}, b::String)
 end
 
 function gtp_loop()
-    botDictKey, botToRun = bot_get()
+    botDict, botToRun = bot_get()
     botProcDict = bot_run(botToRun)
-    botProcKey = collect(keys(botProcDict))
     
+    if length(botProcDict) == 0
+        print_info("[ Warning: ", "no bot can run", 3)
+        exit()
+    end
     bot_startup_info(botProcDict)
     
-    key = botProcKey[1]
-    botProc = botProcDict[key]
+    key = collect(keys(botProcDict))[1]
     print_info("GTP ready ($key first)")
     while true
         sentence = readline()
         words = split(sentence)
+        
         if "exit" in words
             gtp_exit(botProcDict)
             break
         elseif "quit" in words
-
+            key, botProcDict = gtp_quit(key, botProcDict)
+        elseif "kill" in words
+            key, botProcDict = gtp_quit(String(words[end]), botProcDict)
         elseif "status" in words
-            gtp_status(botDictKey, botProcKey)
+            gtp_status(botDict, botProcDict)
         elseif "switch" in words
-            key = words[end]
-            botProc = botProcDict[key]
-            println("= $key\n")
+            key = gtp_switch(key, botProcDict, String(words[end]))
         elseif "run" in words
-            gtp_run(botDict, botProcDict, words[end])
+            botProcDict = gtp_run(botDict, botProcDict, String(words[end]))
+        elseif "help" in words
+            gtp_help()
         else
-            println(botProc, sentence)
-            print(readuntil(botProc, "\n\n", keep=true))
+            println(botProcDict[key], sentence)
+            print(readuntil(botProcDict[key], "\n\n", keep=true))
         end
     end
 end
