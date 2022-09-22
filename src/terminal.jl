@@ -3,20 +3,9 @@
 include("utility.jl")  
     # match_diy(), split_undo()
 
-struct Bot 
-  dir::String 
-  cmd::String
-end
-
-mutable struct BotSet
-  dict::Dict{String, Bot}
-  default::Vector{String}
-end 
-
-Base.convert(::Type{Bot}, t::NamedTuple) = Bot(   t.dir,    t.cmd)
-Base.convert(::Type{Bot}, t::Tuple)      = Bot(    t[1],     t[2])
-Base.convert(::Type{Bot}, d::Dict)       = Bot(d["dir"], d["cmd"])
-Base.convert(::Type{Bot}, v::Vector)     = Bot(    v[1],     v[2])
+Base.convert(::Type{NamedTuple}, t::Tuple)  = (dir =     t[1], cmd =     t[2])
+Base.convert(::Type{NamedTuple}, d::Dict)   = (dir = d["dir"], cmd = d["cmd"])
+Base.convert(::Type{NamedTuple}, v::Vector) = (dir =     v[1], cmd =     v[2])
 
 function bot_config()
     include_string(Main, readchomp("data/config.txt"))
@@ -25,7 +14,6 @@ end
 
 function bot_get()
     botDefault, botDict = bot_config()
-    botSet = BotSet(botDict, botDefault)
     
     botToRun = String[]
     if length(ARGS) == 0 
@@ -34,7 +22,31 @@ function bot_get()
         botToRun = ARGS
     end
     
-    botSet.dict[botToRun[1]]
+    bot = botDict[botToRun[1]]
+    #=
+    type = typeof(bot)
+    if type == Type{NamedTuple}
+        return bot
+    elseif type in [Tuple, Vector]
+        return (dir = bot[1], cmd = bot[2])
+    elseif type == Dict
+        return (dir = bot["dir"], cmd = bot["cmd"])
+    else
+        printstyled("[ ERROR: ", color=:red, bold=true)
+        println("wrong type")
+        exit()
+    end
+    =#
+    botValid = NamedTuple{}()
+    try
+        botValid = convert(NamedTuple, bot)
+    catch
+        printstyled("[ Error: ", color=:red, bold=true)
+        println("wrong type")
+        exit()
+    end
+
+    return botValid
 end 
 
 function bot_ready(proc::Base.Process)

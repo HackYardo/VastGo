@@ -15,7 +15,7 @@ To run many bots:
 =#
 botDict = Dict(
 
-"g"   => (dir = "", 
+"g"   => (dir = "",
           cmd = "gnugo --mode gtp"),
 
 "l"   => (dir = "../networks/", 

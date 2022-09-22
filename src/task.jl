@@ -28,6 +28,8 @@ function gtp_exit(botProcDict)
         print_info("$key gone")
     end
     
+    print_info("bye")
+
     println()
 end
 
@@ -49,7 +51,7 @@ function gtp_quit(key1, botProcDict, key2)
         key = collect(keys(botProcDict))[1]
         print_info("auto switch to $key")
     else 
-        print_info("$key not found")
+        print_info("[ Warning: ", "$key not found", :yellow)
         key = key1
     end
     println()
@@ -65,7 +67,7 @@ function gtp_status(botDict, botProcDict, key)
     for k in botDictKey
         if k in botProcKey
             if k == key
-                printstyled(" $k", color=:green)
+                printstyled(" $k", color=:green, bold=true)
             else
                 printstyled(" $k", color=6)
             end
@@ -79,7 +81,8 @@ end
 
 function gtp_run(botDict, botProcDict, key)
     if haskey(botProcDict, key)
-        println("= already running")
+        print("= ")
+        print_info("$key already running")
     elseif haskey(botDict, key)
         println("=")
         flag, proc = bot_run(key)
@@ -87,19 +90,22 @@ function gtp_run(botDict, botProcDict, key)
             botProcDict[key] = proc
         end
     else
-        println("= not found")
+        print("= ")
+        print_info("[ Warning: ", "$key not found", :yellow)
     end
     println()
     return botProcDict
 end
 
 function gtp_switch(key1, botProcDict, key2)
-    print("=")
+    print("= ")
     if ! haskey(botProcDict, key2)
-        print(" not found")
+        print_info("[ Warning: ", "$key2 not found", :yellow)
         key2 = key1
+    else
+        println()
     end
-    println("\n")
+    println()
     return key2
 end
 
@@ -142,7 +148,7 @@ function bot_get()
         if haskey(botDict, key)
             push!(botToRunValid, key)
         else 
-            print_info("$key not found")
+            print_info("[ Warning: ", "$key not found", :yellow)
         end
     end
     
@@ -155,7 +161,7 @@ function bot_run(bot::String)
     startupInfo = readuntil(proc, "[ Info: GTP ready\n")
     print(startupInfo)
     if occursin("Error", startupInfo)
-        print_info("$bot can not run")
+        print_info("[ ERROR: ", "$bot can not run", :red)
         proc = nothing
         flag = false
     else 
