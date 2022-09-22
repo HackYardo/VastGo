@@ -14,18 +14,26 @@ To run many bots:
     shell> julia xxx.jl a b c
 =#
 botDict = Dict(
+
 "g"   => (dir = "", 
           cmd = "gnugo --mode gtp"),
+
 "l"   => (dir = "../networks/", 
           cmd = "leelaz --cpu-only -g -v 8 -w w6.gz"),
+
 "k"   => ("../KataGo1.11Eigen/", 
           "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
+
 "k2"  => ["../KataGo1.11Eigen/", 
           "./katago gtp -config v8t5.cfg -model ../networks/m20.bin.gz"],
-"ka"  => Bot("../KataGo1.11AVX2/", 
+
+"ka"  => ("../KataGo1.11AVX2/",
           "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
+
 "ka2" => Dict("dir" => "../KataGo1.11AVX2/", 
-          "cmd" => "./katago gtp -config v8t5.cfg -model ../networks/m20.bin.gz"),
+              "cmd" => "./katago gtp -config v8t5.cfg \
+               -model ../networks/m20.bin.gz"),
+
 "ks"  => ("../KataGo1.11Eigen/",
           "./katago gtp -config v8t5.cfg \
            -override-config defaultBoardSize=8,maxVisits=64 \

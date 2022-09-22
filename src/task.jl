@@ -7,20 +7,14 @@ and will try not only one approaches:
 4. stack
 =#
 
-struct Bot 
-  dir::String 
-  cmd::String
+function Base.in(a::Vector{String}, b)
+    for s in a
+        if s in b
+            return true
+        end
+    end
+    return false
 end
-
-mutable struct BotSet
-  dict::Dict{String, Bot}
-  default::Vector{String}
-end 
-
-Base.convert(::Type{Bot}, t::NamedTuple) = Bot(   t.dir,    t.cmd)
-Base.convert(::Type{Bot}, t::Tuple)      = Bot(    t[1],     t[2])
-Base.convert(::Type{Bot}, d::Dict)       = Bot(d["dir"], d["cmd"])
-Base.convert(::Type{Bot}, v::Vector)     = Bot(    v[1],     v[2])
 
 function gtp_exit(botProcDict)
     println("=")
@@ -37,10 +31,12 @@ function gtp_exit(botProcDict)
     println()
 end
 
-function gtp_quit(key, botProcDict)
+function gtp_quit(key1, botProcDict, key2)
+    key = key2
     print("= ")
     if length(botProcDict) == 1 
-        print_info("as least one bot")
+        print_info("at least one bot")
+        key = key1
     elseif haskey(botProcDict, key)
         botProc = botProcDict[key]
         println(botProc, "quit")
@@ -53,23 +49,28 @@ function gtp_quit(key, botProcDict)
         key = collect(keys(botProcDict))[1]
         print_info("auto switch to $key")
     else 
-        print_info("not found")
+        print_info("$key not found")
+        key = key1
     end
     println()
     return key, botProcDict
 end
 
-function gtp_status(botDict, botProcDict)
+function gtp_status(botDict, botProcDict, key)
     botDictKey = collect(keys(botDict))
     botProcKey = collect(keys(botProcDict))
     
     print("=")
 
-    for key in botDictKey
-        if key in botProcKey
-            printstyled(" $key", color=6)
+    for k in botDictKey
+        if k in botProcKey
+            if k == key
+                printstyled(" $k", color=:green)
+            else
+                printstyled(" $k", color=6)
+            end
         else
-            print(" $key")
+            print(" $k")
         end
     end
 
@@ -104,16 +105,18 @@ end
 
 function gtp_help()
     println("=")
-    printstyled("status", color=6, bold=true)
-    println("  list all bot")
-    printstyled("run   ", color=6, bold=true)
-    println("  run a bot")
-    printstyled("kill  ", color=6, bold=true)
-    println("  quit a bot")
-    printstyled("switch", color=6, bold=true)
-    println("  switch to a bot")
-    printstyled("exit  ", color=6, bold=true)
-    println("  quit all bots and exit")
+    printstyled("status, st  ", color=6, bold=true)
+    println(": list all bot")
+    printstyled("  open, run ", color=6, bold=true)
+    println(": run a bot")
+    printstyled(" close, kill", color=6, bold=true)
+    println(": quit a bot")
+    printstyled("switch, turn", color=6, bold=true)
+    println(": switch to a bot")
+    printstyled("  exit, bye ", color=6, bold=true)
+    println(": quit all bots and exit")
+    printstyled("  help, ?   ", color=6, bold=true)
+    println(": show this message")
     println()
 end
 
@@ -184,6 +187,7 @@ function print_info(a, s, c)
     println(s)
 end
 
+# GTP with ID number
 gtp_print(b::String)            = gtp_print(    [""], b)
 gtp_print(a::String, b::String) = gtp_print(split(a), b)
 function gtp_print(va::Vector{String}, b::String)
@@ -200,20 +204,20 @@ function gtp_loop()
         sentence = readline()
         words = split(sentence)
         
-        if "exit" in words
+        if ["exit", "bye"] in words
             gtp_exit(botProcDict)
             break
         elseif "quit" in words
-            key, botProcDict = gtp_quit(key, botProcDict)
-        elseif "kill" in words
-            key, botProcDict = gtp_quit(String(words[end]), botProcDict)
-        elseif "status" in words
-            gtp_status(botDict, botProcDict)
-        elseif "switch" in words
+            key, botProcDict = gtp_quit(key, botProcDict, key)
+        elseif ["close", "kill"] in words
+            key, botProcDict = gtp_quit(key, botProcDict, String(words[end]))
+        elseif ["status", "st"] in words
+            gtp_status(botDict, botProcDict, key)
+        elseif ["switch", "turn"] in words
             key = gtp_switch(key, botProcDict, String(words[end]))
-        elseif "run" in words
+        elseif ["open", "run"] in words
             botProcDict = gtp_run(botDict, botProcDict, String(words[end]))
-        elseif "help" in words
+        elseif ["help", "?"] in words
             gtp_help()
         else
             println(botProcDict[key], sentence)
