@@ -77,17 +77,16 @@ function gtp_status(botDict, botProcDict)
 end
 
 function gtp_run(botDict, botProcDict, key)
-    print("= ")
     if haskey(botProcDict, key)
-        println("already running")
+        println("= already running")
     elseif haskey(botDict, key)
+        println("=")
         flag, proc = bot_run(key)
         if flag
             botProcDict[key] = proc
         end
-        println()
     else
-        println("not found")
+        println("= not found")
     end
     println()
     return botProcDict
@@ -170,6 +169,11 @@ function bot_run(botToRun::Vector{String})
         end
     end
     #println(botProcDict)
+    if length(botProcDict) == 0
+        print_info("[ ERROR: ", "no bot can run", :red)
+        exit()
+    end
+    
     botProcDict
 end 
 
@@ -189,11 +193,6 @@ end
 function gtp_loop()
     botDict, botToRun = bot_get()
     botProcDict = bot_run(botToRun)
-    
-    if length(botProcDict) == 0
-        print_info("[ ERROR: ", "no bot can run", :red)
-        exit()
-    end
     
     key = collect(keys(botProcDict))[1]
     print_info("GTP ready ($key first)")
