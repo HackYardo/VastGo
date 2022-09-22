@@ -43,9 +43,12 @@ function bot_ready(proc::Base.Process)
     
     if outInfo[1] != '?'
         errInfo = reply(proc.err)
-        @info "stdout:\n$outInfo"
-        @info "stderr:\n$errInfo"
-        @error "Please look at the above ↑↑↑"
+        info = "stdout:\n$outInfo\nstderr:\n$errInfo"
+        infoLines = split(info, "\n", keepempty=false)
+        printstyled("[ Error:\n", color=:red, bold=true)
+        for line in infoLines
+            println(line)
+        end
         exit()
     end
 
@@ -70,8 +73,17 @@ function bot_run(; dir="", cmd="")::Base.Process
     print("in the directory: ")
     printstyled("$dir\n", color=6)
     #println(command)
-
-    process = run(command,inp,out,err;wait=false)
+    proc = Base.Process[]
+    try
+        process = run(command,inp,out,err;wait=false)
+        push!(proc, process)
+    catch
+        printstyled("[ Error:\n", color=:red, bold=true)
+        println("no such file or directory")
+        exit()
+    end
+    process = proc[1]
+    
     bot_ready(process)
     
     return process
