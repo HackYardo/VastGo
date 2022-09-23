@@ -16,6 +16,84 @@ function Base.in(a::Vector{String}, b)
     return false
 end
 
+function bot_config()
+    include_string(Main, readchomp("data/config.txt"))
+    return botDefault, botDict
+end
+
+function bot_get()
+    botDefault, botDict = bot_config()
+    
+    botToRun = String[]
+    if length(ARGS) == 0 
+        botToRun = botDefault
+    else
+        botToRun = ARGS
+    end
+    unique!(botToRun)
+    #println(botDict)
+    #println(botToRun)
+    botToRunValid = Vector{String}()
+    for key in botToRun
+        if haskey(botDict, key)
+            push!(botToRunValid, key)
+        else 
+            print_info("[ Warning: ", "$key not found", :yellow)
+        end
+    end
+    
+    botDict, botToRunValid
+end
+
+function bot_run(bot::String)
+    flag = true
+    proc = open(`julia src/terminal.jl $bot`, "r+")
+    startupInfo = readuntil(proc, "[ Info: GTP ready\n")
+    print(startupInfo)
+    if occursin("Error", startupInfo)
+        print_info("[ ERROR: ", "$bot can not run", :red)
+        proc = nothing
+        flag = false
+    else 
+        print_info("$bot ready")
+    end
+    return flag, proc
+end
+function bot_run(botToRun::Vector{String})
+    botProcDict = Dict{String, Base.Process}()
+    for bot in botToRun
+        flag, proc = bot_run(bot)
+        if flag
+            botProcDict[bot] = proc
+        end
+    end
+    #println(botProcDict)
+    if length(botProcDict) == 0
+        print_info("[ ERROR: ", "no bot can run", :red)
+        exit()
+    end
+    
+    botProcDict
+end 
+
+function gtp_run(botDict, botProcDict, key)
+    if haskey(botProcDict, key)
+        print("= ")
+        print_info("$key already running")
+    elseif haskey(botDict, key)
+        println("=")
+        flag, proc = bot_run(key)
+        if flag
+            botProcDict[key] = proc
+        end
+    else
+        print("= ")
+        print_info("[ Warning: ", "$key not found", :yellow)
+    end
+    println()
+    return botProcDict
+end
+
 function gtp_exit(botProcDict)
     println("=")
     
@@ -79,24 +157,6 @@ function gtp_status(botDict, botProcDict, key)
     println("\n")
 end
 
-function gtp_run(botDict, botProcDict, key)
-    if haskey(botProcDict, key)
-        print("= ")
-        print_info("$key already running")
-    elseif haskey(botDict, key)
-        println("=")
-        flag, proc = bot_run(key)
-        if flag
-            botProcDict[key] = proc
-        end
-    else
-        print("= ")
-        print_info("[ Warning: ", "$key not found", :yellow)
-    end
-    println()
-    return botProcDict
-end
-
 function gtp_switch(key1, botProcDict, key2)
     print("= ")
     if ! haskey(botProcDict, key2)
@@ -123,68 +183,11 @@ function gtp_help()
     println(": quit all bots and exit")
     printstyled("  help, ?   ", color=6, bold=true)
     println(": show this message")
+    printstyled("gtp_command.", color=6, bold=true)
+    println(": broadcast a GTP command to all running bots")
+    println("-----Example:\nname.\ng = GNU Go\nl = Leela Zero")
     println()
 end
-
-function bot_config()
-    include_string(Main, readchomp("data/config.txt"))
-    return botDefault, botDict
-end
-
-function bot_get()
-    botDefault, botDict = bot_config()
-    
-    botToRun = String[]
-    if length(ARGS) == 0 
-        botToRun = botDefault
-    else
-        botToRun = ARGS
-    end
-    unique!(botToRun)
-    #println(botDict)
-    #println(botToRun)
-    botToRunValid = Vector{String}()
-    for key in botToRun
-        if haskey(botDict, key)
-            push!(botToRunValid, key)
-        else 
-            print_info("[ Warning: ", "$key not found", :yellow)
-        end
-    end
-    
-    botDict, botToRunValid
-end
-
-function bot_run(bot::String)
-    flag = true
-    proc = open(`julia src/terminal.jl $bot`, "r+")
-    startupInfo = readuntil(proc, "[ Info: GTP ready\n")
-    print(startupInfo)
-    if occursin("Error", startupInfo)
-        print_info("[ ERROR: ", "$bot can not run", :red)
-        proc = nothing
-        flag = false
-    else 
-        print_info("$bot ready")
-    end
-    return flag, proc
-end
-function bot_run(botToRun::Vector{String})
-    botProcDict = Dict{String, Base.Process}()
-    for bot in botToRun
-        flag, proc = bot_run(bot)
-        if flag
-            botProcDict[bot] = proc
-        end
-    end
-    #println(botProcDict)
-    if length(botProcDict) == 0
-        print_info("[ ERROR: ", "no bot can run", :red)
-        exit()
-    end
-    
-    botProcDict
-end 
 
 print_info(s)    = print_info("[ Info: ", s)
 print_info(a, s) = print_info(         a, s, 6)
@@ -225,6 +228,14 @@ function gtp_loop()
             botProcDict = gtp_run(botDict, botProcDict, String(words[end]))
         elseif ["help", "?"] in words
             gtp_help()
+        elseif sentence[end] == '.'
+            sentence = sentence[1:end-1]
+            for (bot,proc) in botProcDict
+                println(proc, sentence)
+                print("$bot ")
+                println(readuntil(proc, "\n\n"))
+            end
+            println()
         else
             println(botProcDict[key], sentence)
             print(readuntil(botProcDict[key], "\n\n", keep=true))
