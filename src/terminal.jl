@@ -1,6 +1,6 @@
 #import JSON3  
     # JSON3.read(), JSON3.write(), JSON3.pretty()
-include("utility.jl")  
+#include("utility.jl")  
     # match_diy(), split_undo()
 
 Base.convert(::Type{NamedTuple}, t::Tuple)  = (dir =     t[1], cmd =     t[2])
@@ -10,6 +10,35 @@ Base.convert(::Type{NamedTuple}, v::Vector) = (dir =     v[1], cmd =     v[2])
 function bot_config()
     include_string(Main, readchomp("data/config.txt"))
     return botDefault, botDict
+end
+
+function split_undo(v::Vector{SubString{String}})::String
+    s = ""
+    for el in v 
+        s = s * el * "\n" 
+    end 
+    s
+end
+
+function match_diy(r::Regex, lines::Vector)
+    mlines = match.(r, lines)
+    v = Vector{String}()
+    for line in mlines
+        if isnothing(line)
+            continue
+        else 
+            v = cat(v, line.match, dims=1)
+        end
+    end
+    v 
+end
+function match_diy(r::Vector{Regex}, lines::Vector)
+    v = Vector{String}()
+    for i in r
+        v = match_diy(i, lines)
+        lines = v 
+    end
+    v 
 end
 
 function bot_get()
