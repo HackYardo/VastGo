@@ -18,11 +18,12 @@ end
 
 function bot_config()
     include_string(Main, readchomp("data/config.txt"))
-    return botDefault, botDict
+    botDictKey = collect(keys(botDict))
+    return botDefault, botDictKey
 end
 
 function bot_get()
-    botDefault, botDict = bot_config()
+    botDefault, botDictKey = bot_config()
     
     botToRun = String[]
     if length(ARGS) == 0 
@@ -35,14 +36,14 @@ function bot_get()
     #println(botToRun)
     botToRunValid = Vector{String}()
     for key in botToRun
-        if haskey(botDict, key)
+        if key in botDictKey
             push!(botToRunValid, key)
         else 
             print_info("[ Warning: ", "$key not found", :yellow)
         end
     end
     
-    botDict, botToRunValid
+    botDictKey, botToRunValid
 end
 
 function bot_run(bot::String)
@@ -61,10 +62,14 @@ function bot_run(bot::String)
 end
 function bot_run(botToRun::Vector{String})
     botProcDict = Dict{String, Base.Process}()
-    for bot in botToRun
-        flag, proc = bot_run(bot)
-        if flag
-            botProcDict[bot] = proc
+    @sync begin
+        for bot in botToRun
+            @async begin
+                flag, proc = bot_run(bot)
+                if flag
+                    botProcDict[bot] = proc
+                end
+            end
         end
     end
     #println(botProcDict)
@@ -76,11 +81,11 @@ function bot_run(botToRun::Vector{String})
     botProcDict
 end 
 
-function gtp_run(botDict, botProcDict, key)
+function gtp_run(botDictKey, botProcDict, key)
     if haskey(botProcDict, key)
         print("= ")
         print_info("$key already running")
-    elseif haskey(botDict, key)
+    elseif key in botDictKey
         println("=")
         flag, proc = bot_run(key)
         if flag
@@ -136,8 +141,7 @@ function gtp_quit(key1, botProcDict, key2)
     return key, botProcDict
 end
 
-function gtp_status(botDict, botProcDict, key)
-    botDictKey = collect(keys(botDict))
+function gtp_status(botDictKey, botProcDict, key)
     botProcKey = collect(keys(botProcDict))
     
     print("=")
@@ -204,7 +208,7 @@ function gtp_print(va::Vector{String}, b::String)
 end
 
 function gtp_loop()
-    botDict, botToRun = bot_get()
+    botDictKey, botToRun = bot_get()
     botProcDict = bot_run(botToRun)
     
     key = collect(keys(botProcDict))[1]
@@ -221,11 +225,11 @@ function gtp_loop()
         elseif ["close", "kill"] in words
             key, botProcDict = gtp_quit(key, botProcDict, String(words[end]))
         elseif ["status", "st"] in words
-            gtp_status(botDict, botProcDict, key)
+            gtp_status(botDictKey, botProcDict, key)
         elseif ["switch", "turn"] in words
             key = gtp_switch(key, botProcDict, String(words[end]))
         elseif ["open", "run"] in words
-            botProcDict = gtp_run(botDict, botProcDict, String(words[end]))
+            botProcDict = gtp_run(botDictKey, botProcDict, String(words[end]))
         elseif ["help", "?"] in words
             gtp_help()
         elseif sentence[end] == '.'
