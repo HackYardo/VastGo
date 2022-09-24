@@ -3,13 +3,13 @@
 #include("utility.jl")  
     # match_diy(), split_undo()
 
-Base.convert(::Type{NamedTuple}, t::Tuple)  = (dir =     t[1], cmd =     t[2])
-Base.convert(::Type{NamedTuple}, d::Dict)   = (dir = d["dir"], cmd = d["cmd"])
-Base.convert(::Type{NamedTuple}, v::Vector) = (dir =     v[1], cmd =     v[2])
+#Base.convert(::Type{NamedTuple}, t::Tuple)  = (dir =     t[1], cmd =     t[2])
+#Base.convert(::Type{NamedTuple}, d::Dict)   = (dir = d["dir"], cmd = d["cmd"])
+#Base.convert(::Type{NamedTuple}, v::Vector) = (dir =     v[1], cmd =     v[2])
 
-function bot_config()
-    include_string(Main, readchomp("data/config.txt"))
-    #=botDict = Dict(
+function bot_config()::Tuple
+    #include_string(Main, readchomp("data/config.txt"))
+    botDict = Dict(
 
 "g"   =>  Dict("dir" =>"",
           "cmd" => "gnugo --mode gtp"),
@@ -35,11 +35,21 @@ function bot_config()
            -override-config defaultBoardSize=8,maxVisits=64 \
            -model ../networks/m6.txt.gz")
 )
+    botDefault = ["g", "k"]
 
-# These bots will run if no args:
-#   shell> julia xxx.jl
-botDefault = ["g", "k"]=#
     return botDefault, botDict
+end
+
+function findindex(element, collection)
+    m = 1
+    n = Vector{Int64}()
+    for el in collection
+        if el == element
+            n = cat(n, m, dims=1)
+        end
+        m = m + 1
+    end
+    n
 end
 
 function split_undo(v::Vector{SubString{String}})::String
@@ -50,7 +60,7 @@ function split_undo(v::Vector{SubString{String}})::String
     s
 end
 
-function match_diy(r::Regex, lines::Vector)
+function match_diy(r::Regex, lines::Vector)::Vector{String}
     mlines = match.(r, lines)
     v = Vector{String}()
     for line in mlines
@@ -62,7 +72,7 @@ function match_diy(r::Regex, lines::Vector)
     end
     v 
 end
-function match_diy(r::Vector{Regex}, lines::Vector)
+function match_diy(r::Vector{Regex}, lines::Vector)::Vector{String}
     v = Vector{String}()
     for i in r
         v = match_diy(i, lines)
@@ -71,67 +81,65 @@ function match_diy(r::Vector{Regex}, lines::Vector)
     v 
 end
 
-function bot_get()
-    mid1 = "[ Error: "
-    mid2 = "wrong type"
+function bot_get()::Tuple{String, String, Bool}
+    dir = ""
+    cmd = ""
+    flag = true
     botDefault, botDict = bot_config()
 
-    botToRun = ""
+    key = ""
     if length(ARGS) == 0 
-        botToRun = botDefault[1]
+        key = botDefault[1]
     else
-        botToRun = ARGS[1]
+        key = ARGS[1]
     end
     
-    bot = botDict[botToRun]
-    #=
-    type = typeof(bot)
-    if type == Type{NamedTuple}
-        return bot
-    elseif type in [Tuple, Vector]
-        return (dir = bot[1], cmd = bot[2])
-    elseif type == Dict
-        return (dir = bot["dir"], cmd = bot["cmd"])
+    bot = botDict[key]
+    if bot isa NamedTuple && hasproperty(bot, :dir) && hasproperty(bot, :cmd)
+        dir = bot.dir
+        cmd = bot.cmd
+    elseif (bot isa Tuple || bot isa Vector) && length(bot) > 1
+        dir = bot[1]
+        cmd = bot[2]
+    elseif bot isa Dict && "dir" in keys(bot) && "cmd" in keys(bot)
+        dir = bot["dir"]
+        cmd = bot["cmd"]
     else
-        printstyled("[ ERROR: ", color=:red, bold=true)
+        printstyled("[ Error: ", color=:red, bold=true)
         println("wrong type")
-        exit()
+        flag = false
     end
-    =#
 
-    botValid = NamedTuple{}()
+    return dir, cmd, flag
+end
 
-    try
-        botValid = convert(NamedTuple, bot)
-    catch
-        printstyled(mid1, color=:red, bold=true)
-        println(mid2)
-        exit()
-    end
-    dir = botValid.dir
-    cmd = botValid.cmd
-    return dir, cmd
-end 
-
-function bot_ready(proc::Base.Process)
-    mid1 = "!"
-    mid2 = "[ Error:\n"
-
-    query(proc, mid1)
+function bot_ready(proc::Base.Process)::Bool
+    flag = true
+    query(proc, "name")
     outInfo = reply(proc)
+    name = outInfo[3:end-1]
     
-    if outInfo[1] != '?'
+    if outInfo[1] != '='
         errInfo = reply(proc.err)
         info = "stdout:\n$outInfo\nstderr:\n$errInfo"
         infoLines = split(info, "\n", keepempty=false)
-        printstyled(mid2, color=:red, bold=true)
+        printstyled("[ Error:\n", color=:red, bold=true)
         for line in infoLines
             println(line)
         end
-        exit()
+        flag = false
+    else
+        if name == "Leela Zero"
+            println(readuntil(proc.err, "Mib.", keep=true))
+        end
+        if name == "KataGo"
+            println(readuntil(proc.err, "loop", keep=true))
+        end
+        printstyled("[ Info: ", color=6, bold=true)
+        println("GTP ready")
     end
 
-    #println("$proc")
+    return flag
 end
 
 #=
@@ -140,120 +148,73 @@ Because stderr is hard to talk with, source:
 https://discourse.julialang.org/t/avoiding-readavailable-when-communicating-
 with-long-lived-external-program/61611/25
 =#
-function bot_run(dir, cmd)::Base.Process
-    mid1 = "VastGo will run the command: "
-    mid2 = "in the directory: "
-    mid3 = "[ Error:\n"
-    mid4 = "no such file or directory"
-
+function bot_run(dir::String, cmd::String)::Tuple{Base.Process, Bool}
+    flag = true
     inp = Base.PipeEndpoint()
     out = Base.PipeEndpoint()
     err = Base.PipeEndpoint()
     
     cmdVector = split(cmd) # otherwise there will be ' in command
     command = Cmd(`$cmdVector`, dir=dir)
-    print(mid1)
+    print("VastGo will run the command: ")
     printstyled(cmd, color=6)
     println()
-    print(mid2)
+    print("in the directory: ")
     printstyled(dir, color=6)
     println()
-    #println(command)
-    proc = Base.Process[]
+
+    process = Base.Process(``, Ptr{Nothing}())
     try
-        process = run(command,inp,out,err;wait=false)
-        push!(proc, process)
+        process = run(command, inp, out, err; wait=false)
+        flag = bot_ready(process)
     catch
-        printstyled(mid3, color=:red, bold=true)
-        println(mid4)
-        exit()
+        printstyled("[ Error: ", color=:red, bold=true)
+        println("no such file or directory")
+        flag = false
     end
-    process = proc[1]
-    
-    bot_ready(process)
-    
-    return process
+
+    return process, flag
 end
 
-function bot_end(proc::Base.Process)
-    println(reply(proc))
-    close(proc)
-end
-
-function gtp_valid(sentence::String)::Bool
-    if "" in split(sentence, keepempty=true)
-        return false
-    else 
-        return true
-    end 
-end 
-
-query((proc, sentence)) = query(proc, sentence)
+query((proc, sentence)::Tuple{Base.Process, String}) = query(proc, sentence)
 function query(proc::Base.Process, sentence::String)
     println(proc, sentence)
 end
 
-function reply(proc::Union{Base.Process, Base.PipeEndpoint})
-    mid = "\n\n"
-    paragraph = readuntil(proc, mid)
-    return "$paragraph\n"
+function reply(proc::Union{Base.Process, Base.PipeEndpoint})::String
+    paragraph = readuntil(proc, "\n\n") * "\n"
+    paragraph
 end
 
-function name_get(proc::Base.Process)
-    mid = "name"
-
-    query(proc, mid)
-    reply(proc)[3:end-1]
+function name_get(proc::Base.Process)::String
+    query(proc, "name")
+    name = reply(proc)[3:end-1]
+    name
 end
 
-function version_get(proc::Base.Process)
-    mid = "version"
-
-    query(proc, mid)
-    reply(proc)[3:end-1]
+function version_get(proc::Base.Process)::String
+    query(proc, "version")
+    version = reply(proc)[3:end-1]
+    version
 end 
 
-function gtp_startup_info(proc::Base.Process)
-    name = name_get(proc)
-    if name == "Leela Zero"
-        mid = "MiB."
-        println(readuntil(proc.err, mid, keep=true))
-    elseif name == "KataGo"
-        mid = "loop"
-        println(readuntil(proc.err, mid, keep=true))
-    else
-    end
-end 
-
-function gtp_ready(proc::Base.Process)
-    mid1 = "[ Info: "
-    mid2 = "GTP ready"
-    gtp_startup_info(proc)
-    printstyled(mid1, color=6, bold=true)
-    println(mid2)
-end 
-
-function leelaz_showboard(proc::Base.Process)
-    mid1 = "Passes:"
-    mid2 = "\n"
-    mid3 = "White time:"
-
-    readuntil(proc.err, mid1)
-    paragraphErr = mid1 * readuntil(proc.err, mid2) * mid2
+function leelaz_showboard(proc::Base.Process)::String
+    readuntil(proc.err, "Passes:")
+    paragraphErr = "Passes:" * readuntil(proc.err, "\n") * "\n"
     while true
         line = readline(proc.err)
         if line == ""
             continue
         end
-        paragraphErr = paragraphErr * line * mid2
-        if occursin(mid3, line)
+        paragraphErr = paragraphErr * line * "\n"
+        if occursin("White time:", line)
             break
         end
     end
     paragraphErr
 end
 
-function leelaz_showboardf(paragraph)  # f: _format
+function leelaz_showboardf(paragraph::String)::NamedTuple  # f: _format
     lines = split(paragraph, "\n")
     
     infoUp = lines[2:3]
@@ -284,7 +245,7 @@ function leelaz_showboardf(paragraph)  # f: _format
     (x = x, y = y, c = c, i = info)
 end
 
-function gnugo_showboardf(paragraph)  # f: _format
+function gnugo_showboardf(paragraph::String)::NamedTuple  # f: _format
     r = r"captured \d{1,}"
     lines = split(paragraph, '\n')
     
@@ -342,7 +303,7 @@ function gnugo_showboardf(paragraph)  # f: _format
     (x = x, y = y, c = c, i = info)
 end
 
-function katago_showboardf(paragraph)
+function katago_showboardf(paragraph::String)::NamedTuple
     lines = split(paragraph, "\n")
 
     infoUp = lines[1][3:end]
@@ -375,7 +336,7 @@ function katago_showboardf(paragraph)
     (x = x, y = y, c = c, i = info)
 end
 
-function showboard_get(proc::Base.Process)
+function showboard_get(proc::Base.Process)::String
     paragraph = reply(proc)
     name = name_get(proc)
     if name == "Leela Zero"
@@ -385,7 +346,7 @@ function showboard_get(proc::Base.Process)
     paragraph
 end 
 
-function showboard_format(proc::Base.Process)
+function showboard_format(proc::Base.Process)::String
     paragraph = showboard_get(proc)
     name = name_get(proc)
     board = NamedTuple()
@@ -398,64 +359,84 @@ function showboard_format(proc::Base.Process)
     else
     end
     #println(dump(board))
-    "=\n$board\n"
+    boardf = "=\n$board\n"
+
+    boardf
 end
 
-function gtp_analyze(proc::Base.Process)
-    println(readline(proc))
-    println(readline(proc))
-    query(proc, "z")
+function gtp_qr((proc, sentence)::Tuple{Base.Process, String})
+    query(proc, sentence)
+    println(reply(proc))
+end
+
+function gtp_quit((proc, sentence)::Tuple{Base.Process, String})
+    query(proc, sentence)
+    println(reply(proc))
+    close(proc)
+end
+
+function gtp_showboard((proc, sentence)::Tuple{Base.Process, String})
+    query(proc, sentence)
+    proc |> showboard_get |> println
+end
+
+function gtp_showboardf((proc, sentence)::Tuple{Base.Process, String})
+    sentence = sentence[1:end-1]
+    (proc, sentence) |> query
+    proc |> showboard_format |> println
+end
+
+function gtp_analyze((proc, sentence)::Tuple{Base.Process, String})
+    query(proc, sentence)
+    line = readline(proc)
+    println(line)
+    flag = line[1]
+    if flag == '='
+        println(readline(proc))
+    end
+    query(proc, "stop_analyze")
     reply(proc)
     println()
 end
 
-#=
-function gtp_loop(procs::Vector{Base.Process})
-    
-    proc = procs[1]
-    while true 
-        sentence = readline()
-        if ! gtp_valid(sentence)
+function gtp_loop((proc, sentence)::Tuple{Base.Process, String})::Bool
+    flag = true
+    funs =  [    gtp_quit, gtp_showboard, gtp_showboardf, gtp_analyze]
+    words = ["",   "quit",   "showboard",   "showboardf",   "analyze"]
+    sentenceVector = split(sentence, [' ','-'], keepempty=true)
+
+    cross = sentenceVector ∩ words
+    word = "qr"
+    fun = gtp_qr
+    if length(cross) != 0
+        word = cross[1]
+        if word == ""
             println("? invalid command\n")
-            continue
-        end 
-        sentenceVector = split(sentence)
-        if "switch" in sentenceVector
-            include_string("proc = $(sentenceVector[2])")
-        end
-            
-end =#
-function gtp_loop(proc::Base.Process)
-    while true
-        sentence = readline()
-        sentenceVector = split(sentence)
-        if ! gtp_valid(sentence)
-            println("? invalid command\n")
-        elseif "quit" in sentenceVector
-            query(proc, sentence)
-            bot_end(proc)
-            break
-        elseif "showboard" in sentenceVector
-            query(proc, sentence)
-            proc |> showboard_get |> println
-        elseif "showboardf" in sentenceVector
-            (proc, sentence[1:end-1]) |> query
-            proc |> showboard_format |> println
-        elseif occursin("analyze", sentence)
-            query(proc, sentence)
-            gtp_analyze(proc)
         else
-            query(proc, sentence)
-            println(reply(proc))
+            fun = funs[findindex(word, words)[1]-1]
+            (proc, sentence) |> fun
+
+            if word == "quit"
+                flag = false
+            end
         end
+    else
+        (proc, sentence) |> fun
     end
+
+    return flag
 end
 
 function terminal()
-    dir, cmd = bot_get()
-    botProcess = bot_run(dir, cmd)
-    gtp_ready(botProcess)
-    gtp_loop(botProcess)
+    dir, cmd, get = bot_get()
+    if get
+        proc, run = bot_run(dir, cmd)
+        while run
+            sentence = readline()
+            run = (proc, sentence) |> gtp_loop
+            #sentence == "quit" ? break : continue #**save 1s, 1.5a, 80Mib**
+        end
+    end
 end
 
 terminal()
