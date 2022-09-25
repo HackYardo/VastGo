@@ -83,7 +83,7 @@ julia> ]
 ```
 4. install packages
 ```julia
-(@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra PlotlyBase
+(@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra TOML PlotlyBase
 ```
 5. download this repo
 

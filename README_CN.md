@@ -83,7 +83,7 @@ julia> ]
 ```
 4. 安装包
 ```julia
-(@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra PlotlyBase
+(@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler LinearAlgebra TOML PlotlyBase
 ```
 5. 下载本仓库
 
