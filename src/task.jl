@@ -7,6 +7,8 @@ and will try not only one approaches:
 4. stack
 =#
 
+using TOML
+
 function Base.in(a::Vector{String}, b)
     for s in a
         if s in b
@@ -17,7 +19,12 @@ function Base.in(a::Vector{String}, b)
 end
 
 function bot_config()
-    include_string(Main, readchomp("data/config.txt"))
+    botConfig = open("data/config.toml", "r") do io
+        TOML.parse(io)
+    end
+
+    botDefault = botConfig["default"]
+    botDict = delete!(botConfig, "default")
     botDictKey = collect(keys(botDict))
     return botDefault, botDictKey
 end

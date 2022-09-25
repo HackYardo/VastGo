@@ -4,19 +4,14 @@ using TOML
 #include("utility.jl")  
     # match_diy(), split_undo()
 
-#Base.convert(::Type{NamedTuple}, t::Tuple)  = (dir =     t[1], cmd =     t[2])
-#Base.convert(::Type{NamedTuple}, d::Dict)   = (dir = d["dir"], cmd = d["cmd"])
-#Base.convert(::Type{NamedTuple}, v::Vector) = (dir =     v[1], cmd =     v[2])
-
 function bot_config()::Tuple
-    #include_string(Main, readchomp("data/config.txt"))
     botConfig = open("data/config.toml", "r") do io
         TOML.parse(io)
     end
 
     botDefault = botConfig["default"]
     botDict = delete!(botConfig, "default")
-    #println(typeof(botDict))
+    println(botDict)
     return botDefault, botDict
 end
 
@@ -407,7 +402,7 @@ function gtp_loop((proc, sentence)::Tuple{Base.Process, String})::Bool
     return flag
 end
 
-function terminal()
+function main()
     dir, cmd, get = bot_get()
     if get
         proc, run = bot_run(dir, cmd)
@@ -419,4 +414,9 @@ function terminal()
     end
 end
 
-terminal()
+main()
+
+# can not run Leela-Zero
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
