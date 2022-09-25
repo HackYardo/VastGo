@@ -1,3 +1,4 @@
+using TOML
 #import JSON3  
     # JSON3.read(), JSON3.write(), JSON3.pretty()
 #include("utility.jl")  
@@ -9,38 +10,17 @@
 
 function bot_config()::Tuple
     #include_string(Main, readchomp("data/config.txt"))
-    botDict = Dict(
+    botConfig = open("data/config.toml", "r") do io
+        TOML.parse(io)
+    end
 
-"g"   =>  Dict("dir" =>"",
-          "cmd" => "gnugo --mode gtp"),
-
-"l"   =>  Dict("dir" =>"../networks/",
-          "cmd" => "leelaz --cpu-only -g -v 8 -w w6.gz"),
-
-"k"   =>  Dict("dir" =>"../KataGo1.11Eigen/",
-          "cmd" => "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
-
-"k2"  =>  Dict("dir" =>"../KataGo1.11Eigen/",
-          "cmd" => "./katago gtp -config v8t5.cfg -model ../networks/m20.bin.gz"),
-
-"ka"  =>  Dict("dir" =>"../KataGo1.11AVX2/",
-          "cmd" => "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"),
-
-"ka2" => Dict("dir" => "../KataGo1.11AVX2/",
-              "cmd" => "./katago gtp -config v8t5.cfg \
-               -model ../networks/m20.bin.gz"),
-
-"ks"  => Dict("dir" =>"../KataGo1.11Eigen/",
-          "cmd" => "./katago gtp -config v8t5.cfg \
-           -override-config defaultBoardSize=8,maxVisits=64 \
-           -model ../networks/m6.txt.gz")
-)
-    botDefault = ["g", "k"]
-
+    botDefault = botConfig["default"]
+    botDict = delete!(botConfig, "default")
+    #println(typeof(botDict))
     return botDefault, botDict
 end
 
-function findindex(element, collection)
+function findindex(element, collection)::Vector{Int64}
     m = 1
     n = Vector{Int64}()
     for el in collection
@@ -93,7 +73,7 @@ function bot_get()::Tuple{String, String, Bool}
     else
         key = ARGS[1]
     end
-    
+
     bot = botDict[key]
     if bot isa NamedTuple && hasproperty(bot, :dir) && hasproperty(bot, :cmd)
         dir = bot.dir

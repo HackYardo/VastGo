@@ -100,13 +100,11 @@ julia> ]
 <details>
   <summary>in terminal——run src/terminal.jl</summary>
 
-1. edit `data/config.txt` to indicate **the command** of running a bot, **the directory** where to run the command and **a name** to call it, e.g.
-```julia
-botDict = Dict(
-...,
-"ko" => (dir = "../KataGoOpenCL/",
-         cmd = "./katago gtp -model elo9000.txt.gz")
-)
+1. edit `data/config.toml` to indicate **the command** of running a bot, **the directory** where to run the command and **a name** to call it, e.g.
+```toml
+["ko"]
+cmd = "./katago gtp -model elo9000.txt.gz"
+dir = "../KataGoOpenCL/"
 ```
 **Note: DO NOT use `-q` in Leela-Zero's command, since `showboard` will GONE.**
 

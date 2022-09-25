@@ -100,13 +100,11 @@ julia> ]
 <details>
   <summary>在终端里——运行src/terminal.jl</summary>
 
-1. 编辑`data/config.txt`，指示运行bot的**命令**、运行命令的**文件夹**, 以及**一个名字**来称呼它，例如
-```julia
-botDict = Dict(
-...,
-"ko" => (dir = "../KataGoOpenCL/",
-         cmd = "./katago gtp -model elo9000.txt.gz")
-)
+1. 编辑`data/config.toml`，指示运行bot的**命令**、运行命令的**文件夹**, 以及**一个名字**来称呼它，例如
+```toml
+["ko"]
+cmd = "./katago gtp -model elo9000.txt.gz"
+dir = "../KataGoOpenCL/"
 ```
 **注意：不要在莉拉零的命令中用`-q`，因为`showboard`会消失**
 
