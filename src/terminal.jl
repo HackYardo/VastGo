@@ -11,7 +11,7 @@ function bot_config()::Tuple
 
     botDefault = botConfig["default"]
     botDict = delete!(botConfig, "default")
-    println(botDict)
+    #println(botDict)
     return botDefault, botDict
 end
 
@@ -105,7 +105,7 @@ function bot_ready(proc::Base.Process)::Bool
         flag = false
     else
         if name == "Leela Zero"
-            println(readuntil(proc.err, "Mib.", keep=true))
+            println(readuntil(proc.err, "MiB.", keep=true))
         end
         if name == "KataGo"
             println(readuntil(proc.err, "loop", keep=true))
@@ -414,9 +414,6 @@ function main()
     end
 end
 
-main()
-
-# can not run Leela-Zero
 if abspath(PROGRAM_FILE) == @__FILE__
     main()
 end
