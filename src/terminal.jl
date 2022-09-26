@@ -4,15 +4,13 @@ using TOML
 #include("utility.jl")  
     # match_diy(), split_undo()
 
-function bot_config()::Tuple
-    botConfig = open("data/config.toml", "r") do io
-        TOML.parse(io)
+function Base.in(a::Vector{String}, b)
+    for s in a
+        if s in b
+            return true
+        end
     end
-
-    botDefault = botConfig["default"]
-    botDict = delete!(botConfig, "default")
-    #println(botDict)
-    return botDefault, botDict
+    return false
 end
 
 function findindex(element, collection)::Vector{Int64}
@@ -56,6 +54,47 @@ function match_diy(r::Vector{Regex}, lines::Vector)::Vector{String}
     v 
 end
 
+function bot_key(default::String)::String
+    if length(ARGS) != 0 
+        default = ARGS[1]
+    end
+    default
+end
+
+function bot_config()::Tuple
+    flag = true
+    botConfig = Dict("default"=>String[], ""=>Dict())
+    try 
+        botConfig = open("data/config.toml", "r") do io
+            TOML.parse(io)
+        end
+    catch
+        printstyled("[ Error: ", color=:red, bold=true)
+        println("no such file or TOML.parse err")
+        flag = false
+    end
+    botConfig, flag
+end
+function bot_get(botConfig::Dict)::Tuple
+    flag = true
+    dir = ""
+    cmd = ""
+    try 
+        botDefault = botConfig["default"]
+        botDict = delete!(botConfig, "default")
+        default = botDefault[1]
+        key = bot_key(default)
+        bot::Dict = botDict[key]
+        dir = bot["dir"]
+        cmd = bot["cmd"]
+    catch
+        printstyled("[ Error: ", color=:red, bold=true)
+        println("bot not found or Dict key err")
+        flag = false
+    end
+    dir, cmd, flag
+end
+#=
 function bot_get()::Tuple{String, String, Bool}
     dir = ""
     cmd = ""
@@ -81,13 +120,13 @@ function bot_get()::Tuple{String, String, Bool}
         cmd = bot["cmd"]
     else
         printstyled("[ Error: ", color=:red, bold=true)
-        println("wrong type")
+        println("type err")
         flag = false
     end
 
     return dir, cmd, flag
 end
-
+=#
 function bot_ready(proc::Base.Process)::Bool
     flag = true
     query(proc, "name")
@@ -144,7 +183,7 @@ function bot_run(dir::String, cmd::String)::Tuple{Base.Process, Bool}
         flag = bot_ready(process)
     catch
         printstyled("[ Error: ", color=:red, bold=true)
-        println("no such file or directory")
+        println("no such file, directory or program")
         flag = false
     end
 
@@ -374,7 +413,7 @@ function gtp_analyze((proc, sentence)::Tuple{Base.Process, String})
     println()
 end
 
-function gtp_loop((proc, sentence)::Tuple{Base.Process, String})::Bool
+function gtp_loop(proc::Base.Process, sentence::String)::Bool
     flag = true
     funs =  [    gtp_quit, gtp_showboard, gtp_showboardf, gtp_analyze]
     words = ["",   "quit",   "showboard",   "showboardf",   "analyze"]
@@ -403,13 +442,16 @@ function gtp_loop((proc, sentence)::Tuple{Base.Process, String})::Bool
 end
 
 function main()
-    dir, cmd, get = bot_get()
-    if get
-        proc, run = bot_run(dir, cmd)
-        while run
-            sentence = readline()
-            run = (proc, sentence) |> gtp_loop
-            #sentence == "quit" ? break : continue #**save 1s, 1.5a, 80Mib**
+    config, set = bot_config()
+    if set
+        dir, cmd, get = bot_get(config)
+        if get
+            proc, run = bot_run(dir, cmd)
+            while run
+                sentence = readline()
+                run = gtp_loop(proc, sentence)
+                #sentence == "quit" ? break : continue #**save 1s, 1.5a, 80MiB**
+            end
         end
     end
 end
