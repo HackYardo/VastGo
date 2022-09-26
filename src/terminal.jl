@@ -4,15 +4,6 @@ using TOML
 #include("utility.jl")  
     # match_diy(), split_undo()
 
-function Base.in(a::Vector{String}, b)
-    for s in a
-        if s in b
-            return true
-        end
-    end
-    return false
-end
-
 function findindex(element, collection)::Vector{Int64}
     m = 1
     n = Vector{Int64}()
@@ -63,16 +54,23 @@ end
 
 function bot_config()::Tuple
     flag = true
-    botConfig = Dict("default"=>String[], ""=>Dict())
-    try 
-        botConfig = open("data/config.toml", "r") do io
-            TOML.parse(io)
-        end
-    catch
+    botConfig = Dict{String, Any}()
+    if "data" in readdir() && "config.toml" in readdir(joinpath(pwd(), "data"))
+            botConfig = TOML.tryparsefile("data/config.toml")
+            if botConfig isa TOML.ParserError
+                errType = botConfig.type
+                errRow = botConfig.line 
+                errCol = botConfig.column
+                printstyled("[ Error: ", color=:red, bold=true)
+                println(errType, " at ", errRow, ',', errCol)
+                flag = false
+            end
+    else
         printstyled("[ Error: ", color=:red, bold=true)
-        println("no such file or TOML.parse err")
+        println(joinpath(pwd(), "data/config.toml"), " not found")
         flag = false
     end
+    
     botConfig, flag
 end
 function bot_get(botConfig::Dict)::Tuple
