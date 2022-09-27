@@ -1,7 +1,3 @@
-# X.509 Certificate Authorities(CA) Wed Jul 22 03:12:14 2020 GMT.gitignore
-
-*.pem
-
 # VastGo.gitignore
 
 */
@@ -18,6 +14,7 @@
 # KataGo.gitignore
 
 *.cfg
+*.pem
 README.txt
 /katago
 
