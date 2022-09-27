@@ -4,6 +4,12 @@ using TOML
 #include("utility.jl")  
     # match_diy(), split_undo()
 
+const FILE = @__FILE__
+const SRC = dirname(FILE)
+const VASTGO = joinpath(SRC, "..")
+const DATA = joinpath(VASTGO, "data")
+const CONFIG = joinpath(DATA, "config.toml")
+    
 function findindex(element, collection)::Vector{Int64}
     m = 1
     n = Vector{Int64}()
@@ -54,9 +60,10 @@ end
 
 function bot_config()::Tuple
     flag = true
-    botConfig = Dict{String, Any}()
-    if "data" in readdir() && "config.toml" in readdir(joinpath(pwd(), "data"))
-            botConfig = TOML.tryparsefile("data/config.toml")
+    botConfig = Dict{String, Union{Vector{String},Dict{String,String}}}()
+    
+    if "data" in readdir(VASTGO) && "config.toml" in readdir(DATA)
+            botConfig = TOML.tryparsefile(CONFIG)
             if botConfig isa TOML.ParserError
                 errType = botConfig.type
                 errRow = botConfig.line 
@@ -67,12 +74,13 @@ function bot_config()::Tuple
             end
     else
         printstyled("[ Error: ", color=:red, bold=true)
-        println(joinpath(pwd(), "data/config.toml"), " not found")
+        println(CONFIG, " not found")
         flag = false
     end
     
     botConfig, flag
 end
+
 function bot_get(botConfig::Dict)::Tuple
     flag = true
     dir = ""
@@ -83,7 +91,7 @@ function bot_get(botConfig::Dict)::Tuple
         default = botDefault[1]
         key = bot_key(default)
         bot::Dict = botDict[key]
-        dir = bot["dir"]
+        dir = joinpath(VASTGO, bot["dir"])
         cmd = bot["cmd"]
     catch
         printstyled("[ Error: ", color=:red, bold=true)
@@ -453,7 +461,10 @@ function main()
         end
     end
 end
-
-if abspath(PROGRAM_FILE) == @__FILE__
+#println(PROGRAM_FILE)
+#println(abspath(PROGRAM_FILE))
+#println(pwd())
+#println(joinpath(pwd(), "terminal.jl"))
+if abspath(PROGRAM_FILE) == FILE
     main()
 end
