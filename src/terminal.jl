@@ -88,15 +88,21 @@ function bot_get(botConfig::Dict)::Tuple
     
     if haskey(botConfig, "default") 
         defaultVector = botConfig["default"]
-        if typeof(defaultVector) == Vector{String}
+        if typeof(defaultVector) == Vector{String} && length(defaultVector) > 0
             default = defaultVector[1]
             key = bot_key(default)
             if haskey(botConfig, key)
                 bot = botConfig[key]
                 if typeof(bot) == Dict{String,Any} && haskey(bot, "dir") && haskey(bot, "cmd")
-                    dirRaw = bot["dir"]
-                    dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
                     cmd = bot["cmd"]
+                    dirRaw = bot["dir"]
+                    if cmd isa String && dirRaw isa String
+                        dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
+                    else 
+                        printstyled("[ Error: ", color=:red, bold=true)
+                        println(cmd, "or", dirRaw, " is not string: ", CONFIG)
+                        flag = false
+                    end 
                 else 
                     printstyled("[ Error: ", color=:red, bold=true)
                     println(bot, " Dict format or key err :", CONFIG)
@@ -104,7 +110,7 @@ function bot_get(botConfig::Dict)::Tuple
                 end 
             else 
                 printstyled("[ Error: ", color=:red, bold=true)
-                println(bot, " not found: ", CONFIG)
+                println(key, " not found: ", CONFIG)
                 flag = false
             end 
         else 
