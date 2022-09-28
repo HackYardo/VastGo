@@ -175,10 +175,11 @@ function bot_run(dir::String, cmd::String)::Tuple{Base.Process, Bool}
     out = Base.PipeEndpoint()
     err = Base.PipeEndpoint()
     
-    cmdVector = split(cmd) # otherwise there will be ' in command
-    command = Cmd(`$cmdVector`, dir=dir)
+    cmdVector = Cmd(convert(Vector{String}, split(cmd)))  # otherwise there will be ' in command
+    #println(cmdVector)
+    command = Cmd(cmdVector, dir=dir, ignorestatus=true)
     process = Base.Process(``, Ptr{Nothing}())
-    try 
+    try
         process = run(command, inp, out, err; wait=false)
         flag = bot_ready(process)
     catch
@@ -455,10 +456,7 @@ function main()
         end
     end
 end
-#println(PROGRAM_FILE)
-#println(abspath(PROGRAM_FILE))
-#println(pwd())
-#println(joinpath(pwd(), "terminal.jl"))
+
 if abspath(PROGRAM_FILE) == FILE
     main()
 end
