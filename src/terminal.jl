@@ -4,10 +4,10 @@ using TOML
 #include("utility.jl")  
     # match_diy(), split_undo()
 
-const FILE = @__FILE__
-const SRC = dirname(FILE)
+const FILE   = @__FILE__
+const SRC    = dirname(FILE)
 const VASTGO = normpath(joinpath(SRC, ".."))
-const DATA = joinpath(VASTGO, "data")
+const DATA   = joinpath(VASTGO, "data")
 const CONFIG = joinpath(DATA, "config.toml")
     
 function findindex(element, collection)::Vector{Int64}
@@ -81,10 +81,9 @@ function bot_config()::Tuple{Dict, Bool}
     botConfig, flag
 end
 
-function bot_get(botConfig::Dict)::Tuple{String, String, Bool}
+function bot_get(botConfig::Dict)::Tuple{Cmd, Bool}
     flag = true
-    dir = ""
-    cmd = ""
+    cmd = ``
     
     if haskey(botConfig, "default") 
         defaultVector = botConfig["default"]
@@ -94,13 +93,11 @@ function bot_get(botConfig::Dict)::Tuple{String, String, Bool}
             if haskey(botConfig, key)
                 bot = botConfig[key]
                 if typeof(bot) == Dict{String,Any} && haskey(bot, "dir") && haskey(bot, "cmd")
-                    cmd = bot["cmd"]
+                    cmdRaw = bot["cmd"]
                     dirRaw = bot["dir"]
-                    if cmd isa String && dirRaw isa String
-                        dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
-                    else 
+                    if ! ( cmdRaw isa String || dirRaw isa String )
                         printstyled("[ Error: ", color=:red, bold=true)
-                        println(cmd, " or ", dirRaw, " of ", key, " is not String: ", CONFIG)
+                        println(cmdRaw, " or ", dirRaw, " of ", key, " is not String: ", CONFIG)
                         flag = false
                     end 
                 else 
@@ -122,16 +119,20 @@ function bot_get(botConfig::Dict)::Tuple{String, String, Bool}
         printstyled("[ Error: ", color=:red, bold=true)
         println("default bot not found: ", CONFIG)
         flag = false
-    end 
+    end
+    
+    dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
+    cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))  # otherwise there will be ' in command
+    cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
     
     print("VastGo will run the command: ")
-    printstyled(cmd, color=6)
+    printstyled(cmdRaw, color=6)
     println()
     print("in the directory: ")
     printstyled(dir, color=6)
     println()
     
-    dir, cmd, flag
+    cmd, flag
 end
 
 function bot_ready(proc::Base.Process)::Bool
@@ -169,26 +170,26 @@ Because stderr is hard to talk with, source:
 https://discourse.julialang.org/t/avoiding-readavailable-when-communicating-
 with-long-lived-external-program/61611/25
 =#
-function bot_run(dir::String, cmd::String)::Tuple{Base.Process, Bool}
+function bot_run(cmd::Cmd)::Tuple{Base.Process, Bool}
     flag = true
     inp = Base.PipeEndpoint()
     out = Base.PipeEndpoint()
     err = Base.PipeEndpoint()
-    
-    cmdVector = Cmd(convert(Vector{String}, split(cmd)))  # otherwise there will be ' in command
-    #println(cmdVector)
-    command = Cmd(cmdVector, dir=dir, ignorestatus=true)
-    process = Base.Process(``, Ptr{Nothing}())
+                   
+    proc = Base.Process(``, Ptr{Nothing}())
     try
-        process = run(command, inp, out, err; wait=false)
-        flag = bot_ready(process)
+        proc = run(cmd, inp, out, err; wait=false)
     catch
         printstyled("[ Error: ", color=:red, bold=true)
         println("no such file, directory or program")
         flag = false
     end
-
-    return process, flag
+    
+    if flag
+        flag = bot_ready(proc)
+    end
+    
+    return proc, flag
 end
 
 query((proc, sentence)::Tuple{Base.Process, String}) = query(proc, sentence)
@@ -445,9 +446,9 @@ end
 function main()
     config, set = bot_config()
     if set
-        dir, cmd, get = bot_get(config)
+        cmd, get = bot_get(config)
         if get
-            proc, run = bot_run(dir, cmd)
+            proc, run = bot_run(cmd)
             while run
                 sentence = readline()
                 run = gtp_loop(proc, sentence)
