@@ -9,6 +9,12 @@ and will try not only one approaches:
 
 using TOML
 
+const FILE = @__FILE__
+const SRC = dirname(FILE)
+const VASTGO = normpath(joinpath(SRC, ".."))
+const DATA = joinpath(VASTGO, "data")
+const CONFIG = joinpath(DATA, "config.toml")
+    
 function Base.in(a::Vector{String}, b)
     for s in a
         if s in b
@@ -19,7 +25,7 @@ function Base.in(a::Vector{String}, b)
 end
 
 function bot_config()
-    botConfig = open("data/config.toml", "r") do io
+    botConfig = open(CONFIG, "r") do io
         TOML.parse(io)
     end
 
@@ -55,7 +61,7 @@ end
 
 function bot_run(bot::String)
     flag = true
-    proc = open(`julia src/terminal.jl $bot`, "r+")
+    proc = open(Cmd(`julia terminal.jl $bot`, dir=SRC), "r+")
     startupInfo = readuntil(proc, "[ Info: GTP ready\n")
     print(startupInfo)
     if occursin("Error", startupInfo)
@@ -254,4 +260,6 @@ function gtp_loop()
     end
 end
 
-gtp_loop()
+if abspath(PROGRAM_FILE) == FILE
+    gtp_loop()
+end
