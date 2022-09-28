@@ -51,6 +51,19 @@ function match_diy(r::Vector{Regex}, lines::Vector)::Vector{String}
     v 
 end
 
+function print_info(str1::String, str2::String; ln::Bool=true, flag::Bool=true, c::Union{Int64,Symbol}=6, b::Bool=true)
+    if ln
+        str2 = str2 * '\n'
+    end
+    if flag
+        printstyled(str1, color=c, bold=b)
+        print(str2)
+    else 
+        print(str1)
+        printstyled(str2, color=c, bold=b)
+    end
+end
+
 function bot_key(default::String)::String
     if length(ARGS) != 0 
         default = ARGS[1]
@@ -68,13 +81,14 @@ function bot_config()::Tuple{Dict, Bool}
                 errType = botConfig.type
                 errRow = botConfig.line 
                 errCol = botConfig.column
-                printstyled("[ Error: ", color=:red, bold=true)
-                println(errType, " at ", CONFIG, ':',  errRow, ',', errCol)
+                
+                info = errType * " at " * CONFIG * ':' * errRow * ',' * errCol
+                printstyled("[ Error: ", info, c=:red)
                 flag = false
             end
     else
-        printstyled("[ Error: ", color=:red, bold=true)
-        println(CONFIG, " not found")
+        info = CONFIG * " not found"
+        print_info("[ Error: ", info, c=:red)
         flag = false
     end
     
@@ -96,28 +110,28 @@ function bot_get(botConfig::Dict)::Tuple{Cmd, Bool}
                     cmdRaw = bot["cmd"]
                     dirRaw = bot["dir"]
                     if ! ( cmdRaw isa String || dirRaw isa String )
-                        printstyled("[ Error: ", color=:red, bold=true)
-                        println(cmdRaw, " or ", dirRaw, " of ", key, " is not String: ", CONFIG)
+                        info = cmdRaw * " or " * dirRaw * " of " * key * " is not String: " * CONFIG
+                        print_info("[ Error: ", info, c=:red)
                         flag = false
                     end 
                 else 
-                    printstyled("[ Error: ", color=:red, bold=true)
-                    println(bot, " Dict format or key err : ", CONFIG)
+                    info = bot * " Dict format or key err : " * CONFIG
+                    print_info("[ Error: ", info, c=:red)
                     flag = false
                 end 
             else 
-                printstyled("[ Error: ", color=:red, bold=true)
-                println(key, " not found: ", CONFIG)
+                info = key * " not found: " * CONFIG
+                print_info("[ Error: ", info, c=:red)
                 flag = false
             end 
         else 
-            printstyled("[ Error: ", color=:red, bold=true)
-            println(defaultVector, " format err: ", CONFIG)
+            info = defaultVector * " format err: " * CONFIG
+            print_info("[ Error: ", info, c=:red)
             flag = false
         end 
     else 
-        printstyled("[ Error: ", color=:red, bold=true)
-        println("default bot not found: ", CONFIG)
+        info = "default bot not found: " * CONFIG
+        print_info("[ Error: ", info, c=:red)
         flag = false
     end
     
@@ -125,12 +139,8 @@ function bot_get(botConfig::Dict)::Tuple{Cmd, Bool}
     cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))  # otherwise there will be ' in command
     cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
     
-    print("VastGo will run the command: ")
-    printstyled(cmdRaw, color=6)
-    println()
-    print("in the directory: ")
-    printstyled(dir, color=6)
-    println()
+    print_info("VastGo will run the command: ", cmdRaw, flag=false, b=false)
+    print_info("in the directory: ", dir, flag=false, b=false)
     
     cmd, flag
 end
@@ -157,8 +167,7 @@ function bot_ready(proc::Base.Process)::Bool
         if name == "KataGo"
             println(readuntil(proc.err, "loop", keep=true))
         end
-        printstyled("[ Info: ", color=6, bold=true)
-        println("GTP ready")
+        print_info("[ Info: ", "GTP ready")
     end
 
     return flag
@@ -180,8 +189,7 @@ function bot_run(cmd::Cmd)::Tuple{Base.Process, Bool}
     try
         proc = run(cmd, inp, out, err; wait=false)
     catch
-        printstyled("[ Error: ", color=:red, bold=true)
-        println("no such file, directory or program")
+        print_info("[ Error: ", "no such file, directory or program", c=:red)
         flag = false
     end
     
