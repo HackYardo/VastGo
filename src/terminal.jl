@@ -58,9 +58,9 @@ function bot_key(default::String)::String
     default
 end
 
-function bot_config()::Tuple
+function bot_config()::Tuple{Dict, Bool}
     flag = true
-    botConfig = Dict{String, Union{Vector{String},Dict{String,String}}}()
+    botConfig = Dict()
     
     if ispath(CONFIG)
             botConfig = TOML.tryparsefile(CONFIG)
@@ -69,7 +69,7 @@ function bot_config()::Tuple
                 errRow = botConfig.line 
                 errCol = botConfig.column
                 printstyled("[ Error: ", color=:red, bold=true)
-                println(errType, " at ", errRow, ',', errCol)
+                println(errType, " at ", CONFIG, ':',  errRow, ',', errCol)
                 flag = false
             end
     else
@@ -81,7 +81,7 @@ function bot_config()::Tuple
     botConfig, flag
 end
 
-function bot_get(botConfig::Dict)::Tuple
+function bot_get(botConfig::Dict)::Tuple{String, String, Bool}
     flag = true
     dir = ""
     cmd = ""
@@ -100,12 +100,12 @@ function bot_get(botConfig::Dict)::Tuple
                         dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
                     else 
                         printstyled("[ Error: ", color=:red, bold=true)
-                        println(cmd, "or", dirRaw, " is not string: ", CONFIG)
+                        println(cmd, " or ", dirRaw, " of ", key, " is not String: ", CONFIG)
                         flag = false
                     end 
                 else 
                     printstyled("[ Error: ", color=:red, bold=true)
-                    println(bot, " Dict format or key err :", CONFIG)
+                    println(bot, " Dict format or key err : ", CONFIG)
                     flag = false
                 end 
             else 
@@ -123,22 +123,6 @@ function bot_get(botConfig::Dict)::Tuple
         println("default bot not found: ", CONFIG)
         flag = false
     end 
-    #=
-    try 
-        botDefault::Vector{String} = botConfig["default"]
-        botDict::Dict{String, Dict{String, String}} = delete!(botConfig, "default")
-        default = botDefault[1]
-        key = bot_key(default)
-        bot = botDict[key]
-        dirRaw = bot["dir"]
-        dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
-        cmd = bot["cmd"]
-    catch
-        printstyled("[ Error: ", color=:red, bold=true)
-        println("bot not found or Dict key err")
-        flag = false
-    end
-    =#
     
     print("VastGo will run the command: ")
     printstyled(cmd, color=6)
@@ -149,39 +133,7 @@ function bot_get(botConfig::Dict)::Tuple
     
     dir, cmd, flag
 end
-#=
-function bot_get()::Tuple{String, String, Bool}
-    dir = ""
-    cmd = ""
-    flag = true
-    botDefault, botDict = bot_config()
 
-    key = ""
-    if length(ARGS) == 0 
-        key = botDefault[1]
-    else
-        key = ARGS[1]
-    end
-
-    bot = botDict[key]
-    if bot isa NamedTuple && hasproperty(bot, :dir) && hasproperty(bot, :cmd)
-        dir = bot.dir
-        cmd = bot.cmd
-    elseif (bot isa Tuple || bot isa Vector) && length(bot) > 1
-        dir = bot[1]
-        cmd = bot[2]
-    elseif bot isa Dict && "dir" in keys(bot) && "cmd" in keys(bot)
-        dir = bot["dir"]
-        cmd = bot["cmd"]
-    else
-        printstyled("[ Error: ", color=:red, bold=true)
-        println("type err")
-        flag = false
-    end
-
-    return dir, cmd, flag
-end
-=#
 function bot_ready(proc::Base.Process)::Bool
     flag = true
     query(proc, "name")
@@ -226,7 +178,7 @@ function bot_run(dir::String, cmd::String)::Tuple{Base.Process, Bool}
     cmdVector = split(cmd) # otherwise there will be ' in command
     command = Cmd(`$cmdVector`, dir=dir)
     process = Base.Process(``, Ptr{Nothing}())
-    try
+    try 
         process = run(command, inp, out, err; wait=false)
         flag = bot_ready(process)
     catch
