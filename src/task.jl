@@ -116,16 +116,19 @@ function gtp_exit(botProcDict)
     println("=")
     
     botProcKey = collect(keys(botProcDict))
-    for key in botProcKey
-        botProc = botProcDict[key]
-        println(botProc, "quit")
-        readuntil(botProc, "\n\n")
-        close(botProc)
-        print_info("$key gone")
-    end
+    @sync begin
+        for key in botProcKey
+            @async begin
+                botProc = botProcDict[key]
+                println(botProc, "quit")
+                readuntil(botProc, "\n\n")
+                close(botProc)
+                print_info("$key gone")
+            end
+        end
+    end 
     
     print_info("bye")
-
     println()
 end
 
@@ -206,6 +209,19 @@ function gtp_help()
     println()
 end
 
+function gtp_broadcast(botProcDict, sentence)
+    @sync begin
+        for (bot,proc) in botProcDict
+            @async begin
+                println(proc, sentence)
+                println("$bot ")
+                println(readuntil(proc, "\n\n"))                   
+            end
+        end
+    end
+    println()
+end
+
 print_info(s)    = print_info("[ Info: ", s)
 print_info(a, s) = print_info(         a, s, 6)
 function print_info(a, s, c)
@@ -247,12 +263,7 @@ function gtp_loop()
             gtp_help()
         elseif sentence[end] == '.'
             sentence = sentence[1:end-1]
-            for (bot,proc) in botProcDict
-                println(proc, sentence)
-                print("$bot ")
-                println(readuntil(proc, "\n\n"))
-            end
-            println()
+            gtp_broadcast(botProcDict, sentence)
         else
             println(botProcDict[key], sentence)
             print(readuntil(botProcDict[key], "\n\n", keep=true))
