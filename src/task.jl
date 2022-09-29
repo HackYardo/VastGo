@@ -52,7 +52,7 @@ function bot_get()
         if key in botDictKey
             push!(botToRunValid, key)
         else 
-            print_info("[ Warning: ", "$key not found", :yellow)
+            print_info("[ Warning: ", key * " not found", :yellow)
         end
     end
     
@@ -65,18 +65,17 @@ function bot_run(bot::String)
     startupInfo = readuntil(proc, "[ Info: GTP ready\n")
     print(startupInfo)
     if occursin("Error", startupInfo)
-        print_info("[ ERROR: ", "$bot can not run", :red)
+        print_info("[ ERROR: ", bot * " can not run", :red)
         proc = nothing
         flag = false
     else 
-        print_info("$bot ready")
+        print_info(bot * " ready")
     end
     return flag, proc
 end
 function bot_run(botToRun::Vector{String})
     botProcDict = Dict{String, Base.Process}()
-    @sync begin
-        for bot in botToRun
+    @sync for bot in botToRun
             @async begin
                 flag, proc = bot_run(bot)
                 if flag
@@ -84,7 +83,6 @@ function bot_run(botToRun::Vector{String})
                 end
             end
         end
-    end
     #println(botProcDict)
     if length(botProcDict) == 0
         print_info("[ ERROR: ", "no bot can run", :red)
@@ -97,7 +95,7 @@ end
 function gtp_run(botDictKey, botProcDict, key)
     if haskey(botProcDict, key)
         print("= ")
-        print_info("$key already running")
+        print_info(key * " already running")
     elseif key in botDictKey
         println("=")
         flag, proc = bot_run(key)
@@ -106,28 +104,26 @@ function gtp_run(botDictKey, botProcDict, key)
         end
     else
         print("= ")
-        print_info("[ Warning: ", "$key not found", :yellow)
+        print_info("[ Warning: ", key * " not found", :yellow)
     end
     println()
     return botProcDict
 end
 
 function gtp_exit(botProcDict)
-    println("=")
+    print('=')
     
     botProcKey = collect(keys(botProcDict))
-    @sync begin
-        for key in botProcKey
-            @async begin
-                botProc = botProcDict[key]
-                println(botProc, "quit")
-                readuntil(botProc, "\n\n")
-                close(botProc)
-                print_info("$key gone")
-            end
+    @sync for key in botProcKey
+        @async begin
+            botProc = botProcDict[key]
+            println(botProc, "quit")
+            readuntil(botProc, "\n\n")
+            close(botProc)
+            print(' ', key)
         end
     end 
-    
+    println()
     print_info("bye")
     println()
 end
@@ -144,13 +140,13 @@ function gtp_quit(key1, botProcDict, key2)
         readuntil(botProc, "\n\n")
         close(botProc)
         println()
-        print_info("$key gone")
+        print_info(key * " gone")
 
         pop!(botProcDict, key)
         key = collect(keys(botProcDict))[1]
-        print_info("auto switch to $key")
+        print_info("auto switch to " * key)
     else 
-        print_info("[ Warning: ", "$key not found", :yellow)
+        print_info("[ Warning: ", key * " not found", :yellow)
         key = key1
     end
     println()
@@ -160,27 +156,27 @@ end
 function gtp_status(botDictKey, botProcDict, key)
     botProcKey = collect(keys(botProcDict))
     
-    print("=")
+    print('=')
 
     for k in botDictKey
         if k in botProcKey
             if k == key
-                printstyled(" $k", color=:green, bold=true)
+                printstyled(' ' * k, color=:green, bold=true)
             else
-                printstyled(" $k", color=6)
+                printstyled(' ' * k, color=6)
             end
         else
-            print(" $k")
+            print(' ' * k)
         end
     end
 
-    println("\n")
+    println('\n')
 end
 
 function gtp_switch(key1, botProcDict, key2)
     print("= ")
     if ! haskey(botProcDict, key2)
-        print_info("[ Warning: ", "$key2 not found", :yellow)
+        print_info("[ Warning: ", key2 * " not found", :yellow)
         key2 = key1
     else
         println()
@@ -210,15 +206,13 @@ function gtp_help()
 end
 
 function gtp_broadcast(botProcDict, sentence)
-    @sync begin
-        for (bot,proc) in botProcDict
+    @sync for (bot,proc) in botProcDict
             @async begin
                 println(proc, sentence)
-                println("$bot ")
-                println(readuntil(proc, "\n\n"))                   
+                println(bot, ' ', readuntil(proc, "\n\n"))                   
             end
         end
-    end
+    
     println()
 end
 
@@ -233,7 +227,7 @@ end
 gtp_print(b::String)            = gtp_print(    [""], b)
 gtp_print(a::String, b::String) = gtp_print(split(a), b)
 function gtp_print(va::Vector{String}, b::String)
-    println("=$(va[1]) $b\n")
+    println('=', va[1], b, '\n')
 end
 
 function gtp_loop()
@@ -241,7 +235,7 @@ function gtp_loop()
     botProcDict = bot_run(botToRun)
     
     key = collect(keys(botProcDict))[1]
-    print_info("GTP ready ($key first)")
+    print_info("GTP ready (" * key * " first)")
     while true
         sentence = readline()
         words = split(sentence)
