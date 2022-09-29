@@ -123,18 +123,17 @@ function gtp_exit(botProcDict)
             print(' ', key)
         end
     end 
-    println()
-    print_info("bye")
-    println()
+    println('\n')
 end
 
 function gtp_quit(key1, botProcDict, key2)
     key = key2
     print("= ")
-    if length(botProcDict) == 1 
-        print_info("at least one bot")
+    if length(botProcDict) == 1
         key = key1
-    elseif haskey(botProcDict, key)
+    end
+    
+    if haskey(botProcDict, key)
         botProc = botProcDict[key]
         println(botProc, "quit")
         readuntil(botProc, "\n\n")
@@ -144,7 +143,10 @@ function gtp_quit(key1, botProcDict, key2)
 
         pop!(botProcDict, key)
         key = collect(keys(botProcDict))[1]
-        print_info("auto switch to " * key)
+        
+        if key2 == key1
+            print_info("auto switch to " * key)
+        end
     else 
         print_info("[ Warning: ", key * " not found", :yellow)
         key = key1
@@ -204,6 +206,22 @@ function gtp_help()
     println("-----Example:\nname.\ng = GNU Go\nl = Leela Zero")
     println()
 end
+function gtp_quitplus(key, botProcDict, sentence)
+    flag = true
+    key2 = key
+    if length(sentence) > 5
+        key2 = sentence[6:end]
+    end
+    
+    if sentence == "quit." || [key2] == collect(keys(botProcDict))
+        gtp_exit(botProcDict)
+        flag = false
+    else
+        key, botProcDict = gtp_quit(key, botProcDict, key2)
+    end
+    
+    key, botProcDict, flag
+end
 
 function gtp_broadcast(botProcDict, sentence)
     @sync for (bot,proc) in botProcDict
@@ -231,22 +249,23 @@ function gtp_print(va::Vector{String}, b::String)
 end
 
 function gtp_loop()
+    flag = true
     botDictKey, botToRun = bot_get()
     botProcDict = bot_run(botToRun)
     
     key = collect(keys(botProcDict))[1]
     print_info("GTP ready (" * key * " first)")
-    while true
+    while flag
         sentence = readline()
         words = split(sentence)
         
-        if ["exit", "bye"] in words
-            gtp_exit(botProcDict)
-            break
-        elseif "quit" in words
-            key, botProcDict = gtp_quit(key, botProcDict, key)
-        elseif ["close", "kill"] in words
-            key, botProcDict = gtp_quit(key, botProcDict, String(words[end]))
+        #if ["exit", "bye"] in words
+        #    gtp_exit(botProcDict)
+        #    break
+        if occursin("quit", sentence)
+            key, botProcDict, flag = gtp_quitplus(key, botProcDict, sentence)
+        #elseif ["close", "kill"] in words
+        #    key, botProcDict = gtp_quit(key, botProcDict, String(words[end]))
         elseif ["status", "st"] in words
             gtp_status(botDictKey, botProcDict, key)
         elseif ["switch", "turn"] in words
