@@ -1,15 +1,13 @@
 using TOML
-#import JSON3  
-    # JSON3.read(), JSON3.write(), JSON3.pretty()
-#include("utility.jl")  
-    # match_diy(), split_undo()
+#import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
+#include("utility.jl")  # match_diy(), split_undo()
 
 const FILE   = @__FILE__
 const SRC    = dirname(FILE)
 const VASTGO = normpath(joinpath(SRC, ".."))
 const DATA   = joinpath(VASTGO, "data")
 const CONFIG = joinpath(DATA, "config.toml")
-    
+
 function findindex(element, collection)::Vector{Int64}
     m = 1
     n = Vector{Int64}()
@@ -71,23 +69,30 @@ function bot_key(default::String)::String
     default
 end
 
-function bot_config()::Tuple{Dict, Bool}
+function bot_config(path::String)::Tuple{Dict, Bool}
     flag = true
-    botConfig = Dict()
+    #botConfig = Dict()
+    botConfig = Dict(
+        "default" => ["g"], 
+        "g"       => Dict(
+            "cmd" => "gnugo --mode gtp", 
+            "dir" => ""
+        )
+    )
     
-    if ispath(CONFIG)
-            botConfig = TOML.tryparsefile(CONFIG)
+    if ispath(path)
+            botConfig = TOML.tryparsefile(path)
             if botConfig isa TOML.ParserError
                 errType = botConfig.type
                 errRow = botConfig.line 
                 errCol = botConfig.column
                 
-                info = errType * " at " * CONFIG * ':' * errRow * ',' * errCol
+                info = errType * " at " * path * ':' * errRow * ',' * errCol
                 printstyled("[ Error: ", info, c=:red)
                 flag = false
             end
     else
-        info = CONFIG * " not found"
+        info = "config file not found: " * path
         print_info("[ Error: ", info, c=:red)
         flag = false
     end
@@ -95,52 +100,48 @@ function bot_config()::Tuple{Dict, Bool}
     botConfig, flag
 end
 
+function bot_raw(botConfig::Dict)::Tuple{String,String}
+    dirRaw = ""
+    cmdRaw = ""
+    
+    botDefault = botConfig["default"][1]
+    botDict = delete!(botConfig, "default")
+    key = bot_key(botDefault)
+    if haskey(botDict, key)
+        bot = botDict[key]
+        if typeof(bot) == Dict{String,Any} && haskey(bot, "dir") && haskey(bot, "cmd")
+            cmdRaw = bot["cmd"]
+            dirRaw = bot["dir"]
+            if ! ( cmdRaw isa String || dirRaw isa String )
+                info = cmdRaw * " or " * dirRaw * " of " * key * " is not String: " * CONFIG
+                print_info("[ Error: ", info, c=:red)
+            end 
+        else 
+            info = bot * " Dict format or key err : " * CONFIG
+            print_info("[ Error: ", info, c=:red)
+        end 
+    else 
+        info = key * " not found: " * CONFIG
+        print_info("[ Error: ", info, c=:red)
+    end
+    
+    dirRaw, cmdRaw
+end
 function bot_get(botConfig::Dict)::Tuple{Cmd, Bool}
     flag = true
     cmd = ``
     
-    if haskey(botConfig, "default") 
-        defaultVector = botConfig["default"]
-        if typeof(defaultVector) == Vector{String} && length(defaultVector) > 0
-            default = defaultVector[1]
-            key = bot_key(default)
-            if haskey(botConfig, key)
-                bot = botConfig[key]
-                if typeof(bot) == Dict{String,Any} && haskey(bot, "dir") && haskey(bot, "cmd")
-                    cmdRaw = bot["cmd"]
-                    dirRaw = bot["dir"]
-                    if ! ( cmdRaw isa String || dirRaw isa String )
-                        info = cmdRaw * " or " * dirRaw * " of " * key * " is not String: " * CONFIG
-                        print_info("[ Error: ", info, c=:red)
-                        flag = false
-                    end 
-                else 
-                    info = bot * " Dict format or key err : " * CONFIG
-                    print_info("[ Error: ", info, c=:red)
-                    flag = false
-                end 
-            else 
-                info = key * " not found: " * CONFIG
-                print_info("[ Error: ", info, c=:red)
-                flag = false
-            end 
-        else 
-            info = defaultVector * " format err: " * CONFIG
-            print_info("[ Error: ", info, c=:red)
-            flag = false
-        end 
-    else 
-        info = "default bot not found: " * CONFIG
-        print_info("[ Error: ", info, c=:red)
+    dirRaw, cmdRaw = bot_raw(botConfig)
+    if dirRaw == "" && cmdRaw == ""
         flag = false
-    end
+    else
+        dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
+        cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))  # otherwise there will be ' in command
+        cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
     
-    dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
-    cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))  # otherwise there will be ' in command
-    cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
-    
-    print_info("VastGo will run the command: ", cmdRaw, flag=false, b=false)
-    print_info("in the directory: ", dir, flag=false, b=false)
+        print_info("VastGo will run the command: ", cmdRaw, flag=false, b=false)
+        print_info("in the directory: ", dir, flag=false, b=false)
+    end 
     
     cmd, flag
 end
@@ -452,9 +453,9 @@ function gtp_loop(proc::Base.Process, sentence::String)::Bool
 end
 
 function main()
-    config, set = bot_config()
+    cfg, set = bot_config(CONFIG)
     if set
-        cmd, get = bot_get(config)
+        cmd, get = bot_get(cfg)
         if get
             proc, run = bot_run(cmd)
             while run
