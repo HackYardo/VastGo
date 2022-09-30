@@ -394,12 +394,6 @@ function gtp_qr((proc, sentence)::Tuple{Base.Process, String})
     println(reply(proc))
 end
 
-function gtp_quit((proc, sentence)::Tuple{Base.Process, String})
-    query(proc, sentence)
-    println(reply(proc))
-    close(proc)
-end
-
 function gtp_showboard((proc, sentence)::Tuple{Base.Process, String})
     query(proc, sentence)
     proc |> showboard_get |> println
@@ -426,8 +420,8 @@ end
 
 function gtp_loop(proc::Base.Process, sentence::String)::Bool
     flag = true
-    funs =  [    gtp_quit, gtp_showboard, gtp_showboardf, gtp_analyze]
-    words = ["",   "quit",   "showboard",   "showboardf",   "analyze"]
+    funs =  [    gtp_showboard, gtp_showboardf, gtp_analyze]
+    words = ["",   "showboard",   "showboardf",   "analyze"]
     sentenceVector = split(sentence, [' ','-'], keepempty=true)
 
     cross = sentenceVector ∩ words
@@ -440,13 +434,14 @@ function gtp_loop(proc::Base.Process, sentence::String)::Bool
         else
             fun = funs[findindex(word, words)[1]-1]
             (proc, sentence) |> fun
-
-            if word == "quit"
-                flag = false
-            end
         end
     else
         (proc, sentence) |> fun
+        
+        if  "quit" in sentenceVector
+            close(proc)
+            flag = false
+        end
     end
 
     return flag

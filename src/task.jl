@@ -115,53 +115,43 @@ function gtp_exit(botProcDict)
     close.(collect(values(botProcDict)))
 end
 
-function gtp_quitplus(key, botProcDict, sentence)
+function gtp_quit(key, botProcDict, sentence)
     flag = true
-    key1 = key
     key2 = key
     if length(sentence) > 5
         key2 = sentence[6:end]
     end
     
-    if sentence == "quit." || [key2] == collect(keys(botProcDict))
+    if sentence == "quit."
         gtp_exit(botProcDict)
         flag = false
-    elseif haskey(botProcDict, key)
-        print("= ")
-        botProc = botProcDict[key]
-        println(botProc, "quit")
-        readuntil(botProc, "\n\n")
-        close(botProc)
-        println()
-        print_info(key * " gone")
-
-        pop!(botProcDict, key)
-        key = collect(keys(botProcDict))[1]
-        
-        if key2 == key1
-            print_info("auto switch to " * key)
+    elseif haskey(botProcDict, key2)
+        proc = botProcDict[key2]
+        if key2 == key
+            println(proc, "quit")
+            print(readuntil(proc, "\n\n"))
+            close(proc)
+            pop!(botProcDict, key)
+            if length(botProcDict) == 0
+                flag = false
+                println()
+            else 
+                key = collect(keys(botProcDict))[1]
+                print_info("auto switch to " * key)
+            end 
+            println()
+        else 
+            gtp_exit(Dict(key2 => proc))
+            pop!(botProcDict, key2)
         end
-        println()
     else 
         print("= ")
         print_info("[ Warning: ", key * " not found", :yellow)
         println()
-        key = key1
     end
     
     key, botProcDict, flag
 end
-#=
-function gtp_quit(key1, botProcDict, key2)
-    key = key2
-    print("= ")
-    if length(botProcDict) == 1
-        key = key1
-    end
-    
-    
-    return key, botProcDict
-end=#
 
 function gtp_status(botDictKey, botProcDict, key)
     botProcKey = collect(keys(botProcDict))
@@ -201,12 +191,8 @@ function gtp_help()
     println(": list all bot")
     printstyled("  open, run ", color=6, bold=true)
     println(": run a bot")
-    printstyled(" close, kill", color=6, bold=true)
-    println(": quit a bot")
     printstyled("switch, turn", color=6, bold=true)
     println(": switch to a bot")
-    printstyled("  exit, bye ", color=6, bold=true)
-    println(": quit all bots and exit")
     printstyled("  help, ?   ", color=6, bold=true)
     println(": show this message")
     printstyled("gtp_command.", color=6, bold=true)
@@ -256,7 +242,7 @@ function gtp_loop()
         words = split(sentence)
         
         if occursin("quit", sentence)
-            key, botProcDict, flag = gtp_quitplus(key, botProcDict, sentence)
+            key, botProcDict, flag = gtp_quit(key, botProcDict, sentence)
         elseif ["status", "st"] in words
             gtp_status(botDictKey, botProcDict, key)
         elseif ["switch", "turn"] in words
@@ -265,7 +251,7 @@ function gtp_loop()
             botProcDict = gtp_run(botDictKey, botProcDict, String(words[end]))
         elseif ["help", "?"] in words
             gtp_help()
-        elseif sentence[end] == '.'
+        elseif  length(sentence) > 1 && sentence[end] == '.'
             sentence = sentence[1:end-1]
             gtp_broadcast(botProcDict, sentence)
             #gtp_qr.(collect(values(botProcDict)), sentence)
