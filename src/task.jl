@@ -111,29 +111,23 @@ function gtp_run(botDictKey, botProcDict, key)
 end
 
 function gtp_exit(botProcDict)
-    print('=')
-    
-    botProcKey = collect(keys(botProcDict))
-    @sync for key in botProcKey
-        @async begin
-            botProc = botProcDict[key]
-            println(botProc, "quit")
-            readuntil(botProc, "\n\n")
-            close(botProc)
-            print(' ', key)
-        end
-    end 
-    println('\n')
+    gtp_broadcast(botProcDict, "quit")
+    close.(collect(values(botProcDict)))
 end
 
-function gtp_quit(key1, botProcDict, key2)
-    key = key2
-    print("= ")
-    if length(botProcDict) == 1
-        key = key1
+function gtp_quitplus(key, botProcDict, sentence)
+    flag = true
+    key1 = key
+    key2 = key
+    if length(sentence) > 5
+        key2 = sentence[6:end]
     end
     
-    if haskey(botProcDict, key)
+    if sentence == "quit." || [key2] == collect(keys(botProcDict))
+        gtp_exit(botProcDict)
+        flag = false
+    elseif haskey(botProcDict, key)
+        print("= ")
         botProc = botProcDict[key]
         println(botProc, "quit")
         readuntil(botProc, "\n\n")
@@ -147,13 +141,27 @@ function gtp_quit(key1, botProcDict, key2)
         if key2 == key1
             print_info("auto switch to " * key)
         end
+        println()
     else 
+        print("= ")
         print_info("[ Warning: ", key * " not found", :yellow)
+        println()
         key = key1
     end
-    println()
-    return key, botProcDict
+    
+    key, botProcDict, flag
 end
+#=
+function gtp_quit(key1, botProcDict, key2)
+    key = key2
+    print("= ")
+    if length(botProcDict) == 1
+        key = key1
+    end
+    
+    
+    return key, botProcDict
+end=#
 
 function gtp_status(botDictKey, botProcDict, key)
     botProcKey = collect(keys(botProcDict))
@@ -206,22 +214,6 @@ function gtp_help()
     println("-----Example:\nname.\ng = GNU Go\nl = Leela Zero")
     println()
 end
-function gtp_quitplus(key, botProcDict, sentence)
-    flag = true
-    key2 = key
-    if length(sentence) > 5
-        key2 = sentence[6:end]
-    end
-    
-    if sentence == "quit." || [key2] == collect(keys(botProcDict))
-        gtp_exit(botProcDict)
-        flag = false
-    else
-        key, botProcDict = gtp_quit(key, botProcDict, key2)
-    end
-    
-    key, botProcDict, flag
-end
 
 function gtp_broadcast(botProcDict, sentence)
     @sync for (bot,proc) in botProcDict
@@ -230,8 +222,12 @@ function gtp_broadcast(botProcDict, sentence)
                 println(bot, ' ', readuntil(proc, "\n\n"))                   
             end
         end
-    
     println()
+end
+
+function gtp_qr(proc, sentence)
+    println(proc, sentence)
+    print(readuntil(proc, "\n\n", keep=true))
 end
 
 print_info(s)    = print_info("[ Info: ", s)
@@ -259,13 +255,8 @@ function gtp_loop()
         sentence = readline()
         words = split(sentence)
         
-        #if ["exit", "bye"] in words
-        #    gtp_exit(botProcDict)
-        #    break
         if occursin("quit", sentence)
             key, botProcDict, flag = gtp_quitplus(key, botProcDict, sentence)
-        #elseif ["close", "kill"] in words
-        #    key, botProcDict = gtp_quit(key, botProcDict, String(words[end]))
         elseif ["status", "st"] in words
             gtp_status(botDictKey, botProcDict, key)
         elseif ["switch", "turn"] in words
@@ -277,9 +268,9 @@ function gtp_loop()
         elseif sentence[end] == '.'
             sentence = sentence[1:end-1]
             gtp_broadcast(botProcDict, sentence)
+            #gtp_qr.(collect(values(botProcDict)), sentence)
         else
-            println(botProcDict[key], sentence)
-            print(readuntil(botProcDict[key], "\n\n", keep=true))
+            gtp_qr(botProcDict[key], sentence)
         end
     end
 end
