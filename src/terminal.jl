@@ -1,66 +1,12 @@
 using TOML
 #import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
-#include("utility.jl")  # match_diy(), split_undo()
+include("utility.jl")  # match_diy(), split_undo()
 
 const FILE   = @__FILE__
 const SRC    = dirname(FILE)
 const VASTGO = normpath(joinpath(SRC, ".."))
 const DATA   = joinpath(VASTGO, "data")
 const CONFIG = joinpath(DATA, "config.toml")
-
-function findindex(element, collection)::Vector{Int64}
-    m = 1
-    n = Vector{Int64}()
-    for el in collection
-        if el == element
-            n = cat(n, m, dims=1)
-        end
-        m = m + 1
-    end
-    n
-end
-
-function split_undo(v::Vector{SubString{String}})::String
-    s = ""
-    for el in v 
-        s = s * el * "\n" 
-    end 
-    s
-end
-
-function match_diy(r::Regex, lines::Vector)::Vector{String}
-    mlines = match.(r, lines)
-    v = Vector{String}()
-    for line in mlines
-        if isnothing(line)
-            continue
-        else 
-            v = cat(v, line.match, dims=1)
-        end
-    end
-    v 
-end
-function match_diy(r::Vector{Regex}, lines::Vector)::Vector{String}
-    v = Vector{String}()
-    for i in r
-        v = match_diy(i, lines)
-        lines = v 
-    end
-    v 
-end
-
-function print_info(str1::String, str2::String; ln::Bool=true, flag::Bool=true, c::Union{Int64,Symbol}=6, b::Bool=true)
-    if ln
-        str2 = str2 * '\n'
-    end
-    if flag
-        printstyled(str1, color=c, bold=b)
-        print(str2)
-    else 
-        print(str1)
-        printstyled(str2, color=c, bold=b)
-    end
-end
 
 function bot_key(default::String)::String
     if length(ARGS) != 0 
@@ -71,29 +17,29 @@ end
 
 function bot_config(path::String)::Tuple{Dict, Bool}
     flag = true
-    #botConfig = Dict()
-    botConfig = Dict(
+    botConfig = Dict()
+    #=botConfig = Dict(  # + 0.1s
         "default" => ["g"], 
         "g"       => Dict(
             "cmd" => "gnugo --mode gtp", 
             "dir" => ""
         )
-    )
+    )=#
     
     if ispath(path)
-            botConfig = TOML.tryparsefile(path)
-            if botConfig isa TOML.ParserError
-                errType = botConfig.type
-                errRow = botConfig.line 
-                errCol = botConfig.column
-                
-                info = errType * " at " * path * ':' * errRow * ',' * errCol
-                printstyled("[ Error: ", info, c=:red)
-                flag = false
-            end
+        botConfig = TOML.tryparsefile(path)
+        if botConfig isa TOML.ParserError
+            errType = botConfig.type
+            errRow = botConfig.line
+            errCol = botConfig.column
+
+            info = errType * " at " * path * ':' * errRow * ',' * errCol
+            printstyled("[ Error: ", info, c=:red)
+            flag = false
+        end
     else
         info = "config file not found: " * path
-        print_info("[ Error: ", info, c=:red)
+        print_diy("[ Error: ", info, c=:red)
         flag = false
     end
     
@@ -107,22 +53,23 @@ function bot_raw(botConfig::Dict)::Tuple{String,String}
     botDefault = botConfig["default"][1]
     botDict = delete!(botConfig, "default")
     key = bot_key(botDefault)
+    postfix = CONFIG * ":[\"" * key * "\"]"
     if haskey(botDict, key)
         bot = botDict[key]
-        if typeof(bot) == Dict{String,Any} && haskey(bot, "dir") && haskey(bot, "cmd")
+        if bot isa Dict && haskey(bot, "dir") && haskey(bot, "cmd")
             cmdRaw = bot["cmd"]
             dirRaw = bot["dir"]
             if ! ( cmdRaw isa String || dirRaw isa String )
-                info = cmdRaw * " or " * dirRaw * " of " * key * " is not String: " * CONFIG
-                print_info("[ Error: ", info, c=:red)
+                info = cmdRaw * " or " * dirRaw * " is not String: " * postfix
+                print_diy("[ Error: ", info, c=:red)
             end 
         else 
-            info = bot * " Dict format or key err : " * CONFIG
-            print_info("[ Error: ", info, c=:red)
+            info = "Dict format or key err : " * postfix
+            print_diy("[ Error: ", info, c=:red)
         end 
     else 
-        info = key * " not found: " * CONFIG
-        print_info("[ Error: ", info, c=:red)
+        info = "not found: " * postfix
+        print_diy("[ Error: ", info, c=:red)
     end
     
     dirRaw, cmdRaw
@@ -136,11 +83,12 @@ function bot_get(botConfig::Dict)::Tuple{Cmd, Bool}
         flag = false
     else
         dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
-        cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))  # otherwise there will be ' in command
+        cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))
+          # otherwise there will be ' in command
         cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
     
-        print_info("VastGo will run the command: ", cmdRaw, flag=false, b=false)
-        print_info("in the directory: ", dir, flag=false, b=false)
+        print_diy("VastGo will run the command: ", cmdRaw, flag=false, b=false)
+        print_diy("in the directory: ", dir, flag=false, b=false)
     end 
     
     cmd, flag
@@ -168,7 +116,7 @@ function bot_ready(proc::Base.Process)::Bool
         if name == "KataGo"
             println(readuntil(proc.err, "loop", keep=true))
         end
-        print_info("[ Info: ", "GTP ready")
+        print_diy("[ Info: ", "GTP ready")
     end
 
     return flag
@@ -190,7 +138,7 @@ function bot_run(cmd::Cmd)::Tuple{Base.Process, Bool}
     try
         proc = run(cmd, inp, out, err; wait=false)
     catch
-        print_info("[ Error: ", "no such file, directory or program", c=:red)
+        print_diy("[ Error: ", "no such file, directory or program", c=:red)
         flag = false
     end
     
@@ -201,13 +149,17 @@ function bot_run(cmd::Cmd)::Tuple{Base.Process, Bool}
     return proc, flag
 end
 
-query((proc, sentence)::Tuple{Base.Process, String}) = query(proc, sentence)
 function query(proc::Base.Process, sentence::String)
     println(proc, sentence)
 end
 
 function reply(proc::Union{Base.Process, Base.PipeEndpoint})::String
-    paragraph = readuntil(proc, "\n\n") * "\n"
+    #paragraph = readuntil(proc, "\n\n") * '\n'  # + 0.25s ?
+    paragraph = ""
+    while true
+        line = readline(proc)
+        line == "" ? break : paragraph = paragraph * line * '\n'
+    end
     paragraph
 end
 
@@ -267,7 +219,9 @@ function leelaz_showboardf(paragraph::String)::NamedTuple  # f: _format
     x = repeat([p for p in 1:n], m)
     y = [p for p in m:-1:1 for q in 1:n]
 
-    (x = x, y = y, c = c, i = info)
+    (x=x, y=y, c=c, i=info)
+    #showboard_dict(x, y, c, info)
+    #Dict("x"=>x, "y"=>y, "c"=>c, "i"=>info)
 end
 
 function gnugo_showboardf(paragraph::String)::NamedTuple  # f: _format
@@ -325,7 +279,9 @@ function gnugo_showboardf(paragraph::String)::NamedTuple  # f: _format
     W stones captured: $whiteCaptured
     """
 
-    (x = x, y = y, c = c, i = info)
+    (x=x, y=y, c=c, i=info)
+    #showboard_dict(x, y, c, info)
+    #Dict("x"=>x, "y"=>y, "c"=>c, "i"=>info)
 end
 
 function katago_showboardf(paragraph::String)::NamedTuple
@@ -358,54 +314,64 @@ function katago_showboardf(paragraph::String)::NamedTuple
     infoAll = cat(infoUp, infoDown, dims=1)
     info = split_undo(infoAll)
 
-    (x = x, y = y, c = c, i = info)
+    (x=x, y=y, c=c, i=info)
+    #showboard_dict(x, y, c, info)
+    #Dict("x"=>x, "y"=>y, "c"=>c, "i"=>info)
 end
 
-function showboard_get(proc::Base.Process)::String
+function showboard_get(proc::Base.Process)::Tuple{String,String}
     paragraph = reply(proc)
     name = name_get(proc)
     if name == "Leela Zero"
         paragraph = paragraph * leelaz_showboard(proc)
     end
     #println(paragraph)
-    paragraph
+    paragraph, name
 end 
 
-function showboard_format(proc::Base.Process)::String
-    paragraph = showboard_get(proc)
-    name = name_get(proc)
+function showboard_format(proc::Base.Process)::NamedTuple
+    paragraph, name = showboard_get(proc)
     board = NamedTuple()
+
     if name == "GNU Go"
         board = gnugo_showboardf(paragraph)
-    elseif name == "Leela Zero"
+    end
+    if name == "Leela Zero"
         board = leelaz_showboardf(paragraph)
-    elseif name == "KataGo"
+    end
+    if name == "KataGo"
         board = katago_showboardf(paragraph)
-    else
     end
     #println(dump(board))
-    boardf = "=\n$board\n"
+    #board = "=\n$board\n"
 
-    boardf
+    board
 end
 
-function gtp_qr((proc, sentence)::Tuple{Base.Process, String})
+function gtp_qr(proc::Base.Process, sentence::String)::Bool
     query(proc, sentence)
     println(reply(proc))
+    true
 end
 
-function gtp_showboard((proc, sentence)::Tuple{Base.Process, String})
+function gtp_showboard(proc::Base.Process, sentence::String)::Bool
     query(proc, sentence)
-    proc |> showboard_get |> println
+    paragraph, name = showboard_get(proc)
+    println(paragraph)
+    true
 end
 
-function gtp_showboardf((proc, sentence)::Tuple{Base.Process, String})
+function gtp_showboardf(proc::Base.Process, sentence::String)::Bool
+    println('=')
     sentence = sentence[1:end-1]
-    (proc, sentence) |> query
-    proc |> showboard_format |> println
+    query(proc, sentence)
+    println(showboard_format(proc))
+    println()
+
+    true
 end
 
-function gtp_analyze((proc, sentence)::Tuple{Base.Process, String})
+function gtp_analyze(proc::Base.Process, sentence::String)::Bool
     query(proc, sentence)
     line = readline(proc)
     println(line)
@@ -416,38 +382,40 @@ function gtp_analyze((proc, sentence)::Tuple{Base.Process, String})
     query(proc, "stop_analyze")
     reply(proc)
     println()
+
+    true
+end
+
+function gtp_valid(proc::Base.Process, sentence::String)::Bool
+    println("? invalid command\n")
+    true
+end
+
+function gtp_quit(proc::Base.Process, sentence::String)::Bool
+    gtp_qr(proc, sentence)
+    close(proc)
+    false
 end
 
 function gtp_loop(proc::Base.Process, sentence::String)::Bool
-    flag = true
-    funs =  [    gtp_showboard, gtp_showboardf, gtp_analyze]
-    words = ["",   "showboard",   "showboardf",   "analyze"]
     sentenceVector = split(sentence, [' ','-'], keepempty=true)
-
-    cross = sentenceVector ∩ words
-    word = "qr"
+    words = [       "",   "quit",   "showboard",   "showboardf",   "analyze"]
+    funs =  [gtp_valid, gtp_quit, gtp_showboard, gtp_showboardf, gtp_analyze]
     fun = gtp_qr
-    if length(cross) != 0
-        word = cross[1]
-        if word == ""
-            println("? invalid command\n")
-        else
-            fun = funs[findindex(word, words)[1]-1]
-            (proc, sentence) |> fun
+
+    i = 1
+    for word in words
+        if word in sentenceVector
+            fun = funs[i]
+            break
         end
-    else
-        (proc, sentence) |> fun
-        
-        if  "quit" in sentenceVector
-            close(proc)
-            flag = false
-        end
+        i = i + 1
     end
 
-    return flag
+    fun(proc, sentence)
 end
 
-function main()
+function terminal()
     cfg, set = bot_config(CONFIG)
     if set
         cmd, get = bot_get(cfg)
@@ -456,12 +424,38 @@ function main()
             while run
                 sentence = readline()
                 run = gtp_loop(proc, sentence)
-                #sentence == "quit" ? break : continue #**save 1s, 1.5a, 80MiB**
+                #sentence == "quit" ? break : continue # - 1s
+                #gtp_loop(proc, "showboardf")
+                #run = gtp_loop(proc, "quit")
             end
         end
     end
 end
 
 if abspath(PROGRAM_FILE) == FILE
-    main()
+    terminal()
 end
+
+#= SpeedUp
+
+using Profile
+@profile include("path/to/terminal.lj")  # run() can not use
+julia> quit
+
+open("some.txt", "w") do io
+    Profile.print(IOContext(io, :displaysize => (24, 500)), combine=true)
+end
+Profile.clear()
+
+overhead*count  :line  ;fun    speedupable  seconds
+8*126   :63     ;print_diy.printstyled   ~
+25*55   :195    ;bot_run.run             x
+184*184 :214    ;reply.readuntil         v  0/0.25
+15*19   :461    ;main.readline           X
+18*18   :427    ;gtp_loop.[fun...]       ~  simplify 0.12
+8*131   :431    ;gtp.loop.intersect      v  0.16
+8*5     :398    ;gtp_showboard.println   ?
+bot_showboardf.return.Tuple>>Dict        V  0.03
+bot_config.botConfig.init=Dict()         V  0.10
+
+=#

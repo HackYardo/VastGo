@@ -165,6 +165,41 @@ function json_pretty(sth)
 end 
 
 """
+```
+function print_diy(
+    str1::String, str2::String;
+    ln::Bool=true, flag::Bool=true, c::Union{Int64,Symbol}=6, b::Bool=true
+    )
+
+    if ln
+        str2 = str2 * '\n'
+    end
+    if flag
+        printstyled(str1, color=c, bold=b)
+        print(str2)
+    else
+        print(str1)
+        printstyled(str2, color=c, bold=b)
+    end
+end
+```
+"""
+function print_diy(str1::String, str2::String;
+    ln::Bool=true, flag::Bool=true, c::Union{Int64,Symbol}=6, b::Bool=true)
+
+    if ln
+        str2 = str2 * '\n'
+    end
+    if flag
+        printstyled(str1, color=c, bold=b)
+        print(str2)
+    else
+        print(str1)
+        printstyled(str2, color=c, bold=b)
+    end
+end
+
+"""
 `utility()`
 
 Some utilities.
@@ -186,5 +221,10 @@ function utility()
         collectrows
         split_undo
         json_pretty
+        print_diy
         """)
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    utility()
 end
