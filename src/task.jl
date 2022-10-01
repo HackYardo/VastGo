@@ -9,12 +9,10 @@ and will try not only one approaches:
 
 using TOML
 
-const FILE = @__FILE__
-const SRC = dirname(FILE)
-const VASTGO = normpath(joinpath(SRC, ".."))
-const DATA = joinpath(VASTGO, "data")
-const CONFIG = joinpath(DATA, "config.toml")
-    
+const FILE   = @__FILE__
+const SRC    = dirname(FILE)
+const CONFIG = joinpath(normpath(joinpath(SRC, "..")), "data", "config.toml")
+
 function Base.in(a::Vector{String}, b)
     for s in a
         if s in b
@@ -203,11 +201,11 @@ end
 
 function gtp_broadcast(botProcDict, sentence)
     @sync for (bot,proc) in botProcDict
-            @async begin
-                println(proc, sentence)
-                println(bot, ' ', readuntil(proc, "\n\n"))                   
-            end
+        @async begin
+            println(proc, sentence)
+            println(bot, ' ', readuntil(proc, "\n\n"))
         end
+    end
     println()
 end
 
@@ -230,7 +228,7 @@ function gtp_print(va::Vector{String}, b::String)
     println('=', va[1], b, '\n')
 end
 
-function gtp_loop()
+function task()
     flag = true
     botDictKey, botToRun = bot_get()
     botProcDict = bot_run(botToRun)
@@ -262,5 +260,5 @@ function gtp_loop()
 end
 
 if abspath(PROGRAM_FILE) == FILE
-    gtp_loop()
+    task()
 end

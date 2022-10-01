@@ -1,12 +1,9 @@
 using TOML
-#import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
 include("utility.jl")  # match_diy(), split_undo()
 
 const FILE   = @__FILE__
-const SRC    = dirname(FILE)
-const VASTGO = normpath(joinpath(SRC, ".."))
-const DATA   = joinpath(VASTGO, "data")
-const CONFIG = joinpath(DATA, "config.toml")
+const REPO   = normpath(joinpath(dirname(FILE), ".."))
+const CONFIG = joinpath(REPO, "data", "config.toml")
 
 function bot_config(path::String)::Tuple{Dict, Bool}
     flag = true
@@ -32,8 +29,7 @@ function bot_config(path::String)::Tuple{Dict, Bool}
             flag = false
         end
     else
-        info = "config file not found: " * path
-        print_diy("e", info)
+        print_diy("e", "config file not found: " * path)
         flag = false
     end
     
@@ -64,8 +60,7 @@ function bot_raw(botConfig::Dict)::Tuple{String,String}
                         print_diy("e", info)
                     end
                 else
-                    info =
-                    print_diy("e", "Dict format or key err: postfix")
+                    print_diy("e", "Dict format or key err: " * postfix)
                 end
             else
                 print_diy("e", "not found: " * postfix)
@@ -80,15 +75,15 @@ function bot_raw(botConfig::Dict)::Tuple{String,String}
     dir, cmd
 end
 
-function bot_get(botConfig::Dict)::Tuple{Cmd, Bool}
-    flag = true
+function bot_get(path::String)::Tuple{Cmd, Bool}
     cmd = ``
-    
+    botConfig, flag = bot_config(path)
     dirRaw, cmdRaw = bot_raw(botConfig)
+
     if dirRaw == "" && cmdRaw == ""
         flag = false
     else
-        dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(VASTGO, dirRaw))
+        dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(REPO, dirRaw))
         cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))
           # otherwise there will be ' in command
         cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
@@ -181,13 +176,10 @@ end
 
 function leelaz_showboard(proc::Base.Process)::String
     readuntil(proc.err, "Passes:")
-    paragraphErr = "Passes:" * readuntil(proc.err, "\n") * "\n"
+    paragraphErr = "Passes:" * readuntil(proc.err, "\n") * '\n'
     while true
         line = readline(proc.err)
-        if line == ""
-            continue
-        end
-        paragraphErr = paragraphErr * line * "\n"
+        line == "" ? continue : paragraphErr = paragraphErr * line * '\n'
         if occursin("White time:", line)
             break
         end
@@ -196,7 +188,7 @@ function leelaz_showboard(proc::Base.Process)::String
 end
 
 function leelaz_showboardf(paragraph::String)::NamedTuple  # f: _format
-    lines = split(paragraph, "\n")
+    lines = split(paragraph, '\n')
     
     infoUp = lines[2:3]
     infoDown = lines[25:27]
@@ -285,7 +277,7 @@ function gnugo_showboardf(paragraph::String)::NamedTuple  # f: _format
 end
 
 function katago_showboardf(paragraph::String)::NamedTuple
-    lines = split(paragraph, "\n")
+    lines = split(paragraph, '\n')
 
     infoUp = lines[1][3:end]
 
@@ -414,18 +406,15 @@ function gtp_loop(proc::Base.Process, sentence::String)::Bool
 end
 
 function terminal()
-    cfg, set = bot_config(CONFIG)
-    if set
-        cmd, get = bot_get(cfg)
-        if get
-            proc, run = bot_run(cmd)
-            while run
-                sentence = readline()
-                run = gtp_loop(proc, sentence)
-                #sentence == "quit" ? break : continue # - 1s
-                #gtp_loop(proc, "showboardf")
-                #run = gtp_loop(proc, "quit")
-            end
+    cmd, get = bot_get(CONFIG)
+    if get
+        proc, run = bot_run(cmd)
+        while run
+            sentence = readline()
+            run = gtp_loop(proc, sentence)
+            #sentence == "quit" ? break : continue # - 1s
+            #gtp_loop(proc, "showboardf")
+            #run = gtp_loop(proc, "quit")
         end
     end
 end
@@ -450,12 +439,12 @@ overhead*count  :line  ;fun    speedupable  seconds
 25*55   :195    ;bot_run.run             x
 184*184 :214    ;reply.readuntil         v  0/0.25
 15*19   :461    ;main.readline           X
-18*18   :427    ;gtp_loop.[fun...]       ~  simplify 0.12
+18*18   :427    ;gtp_loop.[fun...]       ~  0.12 (simplify)
 8*131   :431    ;gtp.loop.intersect      v  0.16
 8*5     :398    ;gtp_showboard.println   ?
 bot_showboardf.return.Tuple>>Dict        V  0.03
 bot_config.botConfig.init=Dict()         V  0.10
-utility.jl.print_diy.c.Int>>Symbol       V  0.3
+utility.jl.print_diy.c.Int>>Symbol       V  0.30
 
 TODO: speedup showboardf()
 =#
