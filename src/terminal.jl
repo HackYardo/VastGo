@@ -8,13 +8,6 @@ const VASTGO = normpath(joinpath(SRC, ".."))
 const DATA   = joinpath(VASTGO, "data")
 const CONFIG = joinpath(DATA, "config.toml")
 
-function bot_key(default::String)::String
-    if length(ARGS) != 0 
-        default = ARGS[1]
-    end
-    default
-end
-
 function bot_config(path::String)::Tuple{Dict, Bool}
     flag = true
     botConfig = Dict()
@@ -33,13 +26,14 @@ function bot_config(path::String)::Tuple{Dict, Bool}
             errRow = botConfig.line
             errCol = botConfig.column
 
-            info = errType * " at " * path * ':' * errRow * ',' * errCol
-            printstyled("[ Error: ", info, c=:red)
+            info = "$errType at " * path * ":$errRow,$errCol"
+            print_diy("e", info)
+            botConfig = Dict()
             flag = false
         end
     else
         info = "config file not found: " * path
-        print_diy("[ Error: ", info, c=:red)
+        print_diy("e", info)
         flag = false
     end
     
@@ -47,33 +41,45 @@ function bot_config(path::String)::Tuple{Dict, Bool}
 end
 
 function bot_raw(botConfig::Dict)::Tuple{String,String}
-    dirRaw = ""
-    cmdRaw = ""
-    
-    botDefault = botConfig["default"][1]
-    botDict = delete!(botConfig, "default")
-    key = bot_key(botDefault)
-    postfix = CONFIG * ":[\"" * key * "\"]"
-    if haskey(botDict, key)
-        bot = botDict[key]
-        if bot isa Dict && haskey(bot, "dir") && haskey(bot, "cmd")
-            cmdRaw = bot["cmd"]
-            dirRaw = bot["dir"]
-            if ! ( cmdRaw isa String || dirRaw isa String )
-                info = cmdRaw * " or " * dirRaw * " is not String: " * postfix
-                print_diy("[ Error: ", info, c=:red)
-            end 
-        else 
-            info = "Dict format or key err : " * postfix
-            print_diy("[ Error: ", info, c=:red)
-        end 
-    else 
-        info = "not found: " * postfix
-        print_diy("[ Error: ", info, c=:red)
+    dir = ""
+    cmd = ""
+
+    if haskey(botConfig, "default")
+        default = botConfig["default"]
+        if typeof(default) == Vector{String}
+            key = length(ARGS) == 0 ? default[1] : ARGS[1]
+            botDict = delete!(botConfig, "default")
+
+            postfix = CONFIG * ":[\"" * key * "\"]"
+            if haskey(botDict, key)
+                bot = botDict[key]
+                if bot isa Dict && haskey(bot, "dir") && haskey(bot, "cmd")
+                    cmdRaw = bot["cmd"]
+                    dirRaw = bot["dir"]
+                    if cmdRaw isa String && dirRaw isa String
+                        dir = dirRaw
+                        cmd = cmdRaw
+                    else
+                        info = "$cmdRaw or $dirRaw is not String: " * postfix
+                        print_diy("e", info)
+                    end
+                else
+                    info =
+                    print_diy("e", "Dict format or key err: postfix")
+                end
+            else
+                print_diy("e", "not found: " * postfix)
+            end
+        else
+            print_diy("e", "format err: " * CONFIG * ":default")
+        end
+    else
+        print_diy("e", "not found: " * CONFIG * ":default")
     end
     
-    dirRaw, cmdRaw
+    dir, cmd
 end
+
 function bot_get(botConfig::Dict)::Tuple{Cmd, Bool}
     flag = true
     cmd = ``
@@ -87,8 +93,8 @@ function bot_get(botConfig::Dict)::Tuple{Cmd, Bool}
           # otherwise there will be ' in command
         cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
     
-        print_diy("VastGo will run the command: ", cmdRaw, flag=false, b=false)
-        print_diy("in the directory: ", dir, flag=false, b=false)
+        print_diy("VastGo will run the command: ", cmdRaw)
+        print_diy("in the directory: ", dir)
     end 
     
     cmd, flag
@@ -98,28 +104,28 @@ function bot_ready(proc::Base.Process)::Bool
     flag = true
     query(proc, "name")
     outInfo = reply(proc)
-    name = outInfo[3:end-1]
-    
-    if outInfo[1] != '='
-        errInfo = reply(proc.err)
-        info = "stdout:\n$outInfo\nstderr:\n$errInfo"
-        infoLines = split(info, "\n", keepempty=false)
-        printstyled("[ Error:\n", color=:red, bold=true)
-        for line in infoLines
-            println(line)
-        end
-        flag = false
-    else
+
+    if length(outInfo) > 1 && outInfo[1] == '='
+        name = outInfo[3:end-1]
         if name == "Leela Zero"
             println(readuntil(proc.err, "MiB.", keep=true))
         end
         if name == "KataGo"
             println(readuntil(proc.err, "loop", keep=true))
         end
-        print_diy("[ Info: ", "GTP ready")
+        print_diy("i", "GTP ready")
+    else
+        errInfo = reply(proc.err)
+        infoRaw = "stdout:\n" * outInfo * '\n' * "stderr:\n" * errInfo
+        info = split_undo(split(infoRaw, '\n', keepempty=false))[1:end-1]
+        print_diy("e", '\n' * info)
+        #=for line in infoLines
+            println(line)
+        end=#
+        flag = false
     end
 
-    return flag
+    flag
 end
 
 #=
@@ -138,7 +144,7 @@ function bot_run(cmd::Cmd)::Tuple{Base.Process, Bool}
     try
         proc = run(cmd, inp, out, err; wait=false)
     catch
-        print_diy("[ Error: ", "no such file, directory or program", c=:red)
+        print_diy("e", "no such file, directory or program")
         flag = false
     end
     
@@ -146,7 +152,7 @@ function bot_run(cmd::Cmd)::Tuple{Base.Process, Bool}
         flag = bot_ready(proc)
     end
     
-    return proc, flag
+    proc, flag
 end
 
 function query(proc::Base.Process, sentence::String)
@@ -165,14 +171,12 @@ end
 
 function name_get(proc::Base.Process)::String
     query(proc, "name")
-    name = reply(proc)[3:end-1]
-    name
+    reply(proc)[3:end-1]
 end
 
 function version_get(proc::Base.Process)::String
     query(proc, "version")
-    version = reply(proc)[3:end-1]
-    version
+    reply(proc)[3:end-1]
 end 
 
 function leelaz_showboard(proc::Base.Process)::String
@@ -220,8 +224,6 @@ function leelaz_showboardf(paragraph::String)::NamedTuple  # f: _format
     y = [p for p in m:-1:1 for q in 1:n]
 
     (x=x, y=y, c=c, i=info)
-    #showboard_dict(x, y, c, info)
-    #Dict("x"=>x, "y"=>y, "c"=>c, "i"=>info)
 end
 
 function gnugo_showboardf(paragraph::String)::NamedTuple  # f: _format
@@ -280,8 +282,6 @@ function gnugo_showboardf(paragraph::String)::NamedTuple  # f: _format
     """
 
     (x=x, y=y, c=c, i=info)
-    #showboard_dict(x, y, c, info)
-    #Dict("x"=>x, "y"=>y, "c"=>c, "i"=>info)
 end
 
 function katago_showboardf(paragraph::String)::NamedTuple
@@ -315,8 +315,6 @@ function katago_showboardf(paragraph::String)::NamedTuple
     info = split_undo(infoAll)
 
     (x=x, y=y, c=c, i=info)
-    #showboard_dict(x, y, c, info)
-    #Dict("x"=>x, "y"=>y, "c"=>c, "i"=>info)
 end
 
 function showboard_get(proc::Base.Process)::Tuple{String,String}
@@ -457,5 +455,7 @@ overhead*count  :line  ;fun    speedupable  seconds
 8*5     :398    ;gtp_showboard.println   ?
 bot_showboardf.return.Tuple>>Dict        V  0.03
 bot_config.botConfig.init=Dict()         V  0.10
+utility.jl.print_diy.c.Int>>Symbol       V  0.3
 
+TODO: speedup showboardf()
 =#

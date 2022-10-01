@@ -145,7 +145,7 @@ Undo `split`(str, "\n").
 function split_undo(v::Vector{SubString{String}})::String
     s = ""
     for el in v 
-        s = s * el * "\n" 
+        s = s * el * '\n'
     end 
     s
 end
@@ -184,18 +184,32 @@ function print_diy(
 end
 ```
 """
-function print_diy(str1::String, str2::String;
-    ln::Bool=true, flag::Bool=true, c::Union{Int64,Symbol}=6, b::Bool=true)
-
+function print_diy(s::String, str::String; ln::Bool=true, c::Symbol=:blue)
+#= color
+Symbol
+    :red, :green, :yellow, :blue, :magenta
+Int
+    1,2,3,4,5
+=#
     if ln
-        str2 = str2 * '\n'
+        str = str * '\n'
     end
-    if flag
-        printstyled(str1, color=c, bold=b)
-        print(str2)
+
+    if length(s) == 1
+        if s == "i"
+            s = "[ Info: "
+        elseif s == "e"
+            s = "[ Error: "
+            c = :red
+        else
+            s = "[ Warning: "
+            c = :yellow
+        end
+        printstyled(s, color=c, bold=true)
+        print(str)
     else
-        print(str1)
-        printstyled(str2, color=c, bold=b)
+        print(s)
+        printstyled(str, color=c, bold=true)
     end
 end
 

@@ -1,4 +1,4 @@
-default = ["g", "l", "k"]
+default = ["g", "k", "l"]
 
 [ka]
 cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"
