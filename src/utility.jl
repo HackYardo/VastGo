@@ -201,6 +201,7 @@ Int
         elseif s == "e"
             s = "[ Error: "
             c = :red
+            str = str * '\n'
         else
             s = "[ Warning: "
             c = :yellow

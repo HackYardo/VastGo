@@ -7,11 +7,7 @@ and will try not only one approaches:
 4. stack
 =#
 
-using TOML
-
-const FILE   = @__FILE__
-const SRC    = dirname(FILE)
-const CONFIG = joinpath(normpath(joinpath(SRC, "..")), "data", "config.toml")
+include("terminal.jl")  # bot_config()
 
 function Base.in(a::Vector{String}, b)
     for s in a
@@ -22,98 +18,110 @@ function Base.in(a::Vector{String}, b)
     return false
 end
 
-function bot_config()
-    botConfig = open(CONFIG, "r") do io
-        TOML.parse(io)
+function bots_get()
+    botDictKey = String[]
+    botToRunValid = String[]
+
+    botConfig = bot_config()
+    if length(botConfig) == 0
+        return botDictKey, botToRun
     end
 
-    botDefault = botConfig["default"]
-    botDict = delete!(botConfig, "default")
+    botDefault, botDict = bot_list(botConfig)
+    if length(botDefault) == 0 || length(botDict) == 0
+        return botDictKey, botToRun
+    end
+
     botDictKey = collect(keys(botDict))
-    return botDefault, botDictKey
-end
 
-function bot_get()
-    botDefault, botDictKey = bot_config()
-    
-    botToRun = String[]
-    if length(ARGS) == 0 
-        botToRun = botDefault
-    else
-        botToRun = ARGS
-    end
+    botToRun = length(ARGS) == 0 ? botDefault : ARGS
     unique!(botToRun)
-    #println(botDict)
-    #println(botToRun)
-    botToRunValid = Vector{String}()
     for key in botToRun
+        postfix = CONFIG * ":[\"" * key * "\"]"
         if key in botDictKey
             push!(botToRunValid, key)
         else 
-            print_info("[ Warning: ", key * " not found", :yellow)
+            print_diy("w", "not found: " * postfix)
         end
     end
     
     botDictKey, botToRunValid
 end
 
-function bot_run(bot::String)
+function bots_ready(proc::Base.Process)::Bool
     flag = true
-    proc = open(Cmd(`julia terminal.jl $bot`, dir=SRC), "r+")
-    startupInfo = readuntil(proc, "[ Info: GTP ready\n")
-    print(startupInfo)
-    if occursin("Error", startupInfo)
-        print_info("[ ERROR: ", bot * " can not run", :red)
-        proc = nothing
-        flag = false
-    else 
-        print_info(bot * " ready")
+
+    while true
+        line = readline(proc)
+
+        if occursin(": GTP ready", line) || line == ""
+            break
+        end
+
+        println(line)
+
+        if occursin("Error", line)
+            flag = false
+        end
     end
-    return flag, proc
+
+    flag
 end
-function bot_run(botToRun::Vector{String})
+
+function bots_run(bot::String)
+    proc = open(Cmd(`julia terminal.jl $bot`, dir=SRC), "r+")
+
+    flag = bots_ready(proc)
+
+    if !flag
+        print_diy("e", bot * " can not run", ln=false)
+        proc = nothing
+    else
+        print_diy("i", bot * " ready")
+    end
+
+    proc
+end
+function bots_run(botToRun::Vector{String})
     botProcDict = Dict{String, Base.Process}()
+
     @sync for bot in botToRun
-            @async begin
-                flag, proc = bot_run(bot)
-                if flag
-                    botProcDict[bot] = proc
-                end
+        @async begin
+            proc = bots_run(bot)
+            if proc != nothing
+                botProcDict[bot] = proc
             end
         end
-    #println(botProcDict)
-    if length(botProcDict) == 0
-        print_info("[ ERROR: ", "no bot can run", :red)
-        exit()
     end
+    #println(botProcDict)
     
     botProcDict
 end 
 
-function gtp_run(botDictKey, botProcDict, key)
+function gtps_run(botDictKey, botProcDict, key)
     if haskey(botProcDict, key)
         print("= ")
-        print_info(key * " already running")
+        print_diy("w", key * " already running")
     elseif key in botDictKey
         println("=")
-        flag, proc = bot_run(key)
-        if flag
+        proc = bots_run(key)
+        if proc != nothing
             botProcDict[key] = proc
         end
     else
         print("= ")
-        print_info("[ Warning: ", key * " not found", :yellow)
+        print_diy("w", key * " not found")
     end
     println()
     return botProcDict
 end
 
-function gtp_exit(botProcDict)
-    gtp_broadcast(botProcDict, "quit")
+function gtps_exit(botProcDict)
+    gtps_broadcast(botProcDict, "quit")
     close.(collect(values(botProcDict)))
 end
 
-function gtp_quit(key, botProcDict, sentence)
+function gtps_quit(key, botProcDict, sentence)
     flag = true
     key2 = key
     if length(sentence) > 5
@@ -121,7 +129,7 @@ function gtp_quit(key, botProcDict, sentence)
     end
     
     if sentence == "quit."
-        gtp_exit(botProcDict)
+        gtps_exit(botProcDict)
         flag = false
     elseif haskey(botProcDict, key2)
         proc = botProcDict[key2]
@@ -135,23 +143,23 @@ function gtp_quit(key, botProcDict, sentence)
                 println()
             else 
                 key = collect(keys(botProcDict))[1]
-                print_info("auto switch to " * key)
+                print_diy("i", "auto switch to " * key)
             end 
             println()
         else 
-            gtp_exit(Dict(key2 => proc))
+            gtps_exit(Dict(key2 => proc))
             pop!(botProcDict, key2)
         end
     else 
         print("= ")
-        print_info("[ Warning: ", key * " not found", :yellow)
+        print_diy("w", key * " not found")
         println()
     end
     
     key, botProcDict, flag
 end
 
-function gtp_status(botDictKey, botProcDict, key)
+function gtps_status(botDictKey, botProcDict, key)
     botProcKey = collect(keys(botProcDict))
     
     print('=')
@@ -171,10 +179,10 @@ function gtp_status(botDictKey, botProcDict, key)
     println('\n')
 end
 
-function gtp_switch(key1, botProcDict, key2)
+function gtps_switch(key1, botProcDict, key2)
     print("= ")
     if ! haskey(botProcDict, key2)
-        print_info("[ Warning: ", key2 * " not found", :yellow)
+        print_diy("w", key2 * " not found")
         key2 = key1
     else
         println()
@@ -183,7 +191,7 @@ function gtp_switch(key1, botProcDict, key2)
     return key2
 end
 
-function gtp_help()
+function gtps_help()
     println("=")
     printstyled("status, st  ", color=6, bold=true)
     println(": list all bot")
@@ -193,13 +201,13 @@ function gtp_help()
     println(": switch to a bot")
     printstyled("  help, ?   ", color=6, bold=true)
     println(": show this message")
-    printstyled("gtp_command.", color=6, bold=true)
+    printstyled("gtps_command.", color=6, bold=true)
     println(": broadcast a GTP command to all running bots")
     println("-----Example:\nname.\ng = GNU Go\nl = Leela Zero")
     println()
 end
 
-function gtp_broadcast(botProcDict, sentence)
+function gtps_broadcast(botProcDict, sentence)
     @sync for (bot,proc) in botProcDict
         @async begin
             println(proc, sentence)
@@ -209,56 +217,58 @@ function gtp_broadcast(botProcDict, sentence)
     println()
 end
 
-function gtp_qr(proc, sentence)
+function gtps_qr(proc, sentence)
     println(proc, sentence)
     print(readuntil(proc, "\n\n", keep=true))
 end
 
-print_info(s)    = print_info("[ Info: ", s)
-print_info(a, s) = print_info(         a, s, 6)
-function print_info(a, s, c)
-    printstyled(a, color=c, bold=true)
-    println(s)
-end
-
 # GTP with ID number
-gtp_print(b::String)            = gtp_print(    [""], b)
-gtp_print(a::String, b::String) = gtp_print(split(a), b)
-function gtp_print(va::Vector{String}, b::String)
+gtps_print(b::String)            = gtps_print(    [""], b)
+gtps_print(a::String, b::String) = gtps_print(split(a), b)
+function gtps_print(va::Vector{String}, b::String)
     println('=', va[1], b, '\n')
 end
 
 function task()
     flag = true
-    botDictKey, botToRun = bot_get()
-    botProcDict = bot_run(botToRun)
+
+    botDictKey, botToRun = bots_get()
+    if length(botDictKey) == 0 || length(botToRun) == 0
+        return nothing
+    end
+
+    botProcDict = bots_run(botToRun)
+    if length(botProcDict) == 0
+        print_diy("e", "no bot can run", ln=false)
+        return nothing
+    end
     
     key = collect(keys(botProcDict))[1]
-    print_info("GTP ready (" * key * " first)")
+    print_diy("i", "GTP ready (" * key * " first)")
     while flag
         sentence = readline()
         words = split(sentence)
         
         if occursin("quit", sentence)
-            key, botProcDict, flag = gtp_quit(key, botProcDict, sentence)
+            key, botProcDict, flag = gtps_quit(key, botProcDict, sentence)
         elseif ["status", "st"] in words
-            gtp_status(botDictKey, botProcDict, key)
+            gtps_status(botDictKey, botProcDict, key)
         elseif ["switch", "turn"] in words
-            key = gtp_switch(key, botProcDict, String(words[end]))
+            key = gtps_switch(key, botProcDict, String(words[end]))
         elseif ["open", "run"] in words
-            botProcDict = gtp_run(botDictKey, botProcDict, String(words[end]))
+            botProcDict = gtps_run(botDictKey, botProcDict, String(words[end]))
         elseif ["help", "?"] in words
-            gtp_help()
+            gtps_help()
         elseif  length(sentence) > 1 && sentence[end] == '.'
             sentence = sentence[1:end-1]
-            gtp_broadcast(botProcDict, sentence)
-            #gtp_qr.(collect(values(botProcDict)), sentence)
+            gtps_broadcast(botProcDict, sentence)
+            #gtps_qr.(collect(values(botProcDict)), sentence)
         else
-            gtp_qr(botProcDict[key], sentence)
+            gtps_qr(botProcDict[key], sentence)
         end
     end
 end
 
-if abspath(PROGRAM_FILE) == FILE
+if abspath(PROGRAM_FILE) == @__FILE__
     task()
 end

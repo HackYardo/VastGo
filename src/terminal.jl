@@ -1,12 +1,12 @@
 using TOML
-include("utility.jl")  # match_diy(), split_undo()
+include("utility.jl")  # match_diy(), split_undo(), print_diy()
 
-const FILE   = @__FILE__
-const REPO   = normpath(joinpath(dirname(FILE), ".."))
-const CONFIG = joinpath(REPO, "data", "config.toml")
+const TERMINAL = @__FILE__
+const SRC      = dirname(TERMINAL)
+const REPO     = dirname(SRC)
+const CONFIG   = joinpath(REPO, "data", "config.toml")
 
-function bot_config(path::String)::Tuple{Dict, Bool}
-    flag = true
+function bot_config()::Dict
     botConfig = Dict()
     #=botConfig = Dict(  # + 0.1s
         "default" => ["g"], 
@@ -16,54 +16,36 @@ function bot_config(path::String)::Tuple{Dict, Bool}
         )
     )=#
     
-    if ispath(path)
-        botConfig = TOML.tryparsefile(path)
+    if ispath(CONFIG)
+        botConfig = TOML.tryparsefile(CONFIG)
         if botConfig isa TOML.ParserError
             errType = botConfig.type
             errRow = botConfig.line
             errCol = botConfig.column
 
-            info = "$errType at " * path * ":$errRow,$errCol"
+            info = "$errType at " * CONFIG * ":$errRow,$errCol"
             print_diy("e", info)
             botConfig = Dict()
-            flag = false
         end
     else
-        print_diy("e", "config file not found: " * path)
-        flag = false
+        print_diy("e", "config file not found: " * CONFIG)
     end
     
-    botConfig, flag
+    botConfig
 end
 
-function bot_raw(botConfig::Dict)::Tuple{String,String}
-    dir = ""
-    cmd = ""
+function bot_list(botConfig::Dict)::Tuple{Vector{String},Dict}
+    botDefault = String[]
+    botDict = Dict()
 
     if haskey(botConfig, "default")
-        default = botConfig["default"]
-        if typeof(default) == Vector{String}
-            key = length(ARGS) == 0 ? default[1] : ARGS[1]
-            botDict = delete!(botConfig, "default")
-
-            postfix = CONFIG * ":[\"" * key * "\"]"
-            if haskey(botDict, key)
-                bot = botDict[key]
-                if bot isa Dict && haskey(bot, "dir") && haskey(bot, "cmd")
-                    cmdRaw = bot["cmd"]
-                    dirRaw = bot["dir"]
-                    if cmdRaw isa String && dirRaw isa String
-                        dir = dirRaw
-                        cmd = cmdRaw
-                    else
-                        info = "$cmdRaw or $dirRaw is not String: " * postfix
-                        print_diy("e", info)
-                    end
-                else
-                    print_diy("e", "Dict format or key err: " * postfix)
-                end
+        botDefault = botConfig["default"]
+        if typeof(botDefault) == Vector{String}
+            botDictRaw = delete!(botConfig, "default")
+            if botDictRaw isa Dict
+                botDict = botDictRaw
             else
-                print_diy("e", "not found: " * postfix)
+                print_diy("e", "$botDictRaw is not a Dict: " * CONFIG)
             end
         else
             print_diy("e", "format err: " * CONFIG * ":default")
@@ -71,28 +53,65 @@ function bot_raw(botConfig::Dict)::Tuple{String,String}
     else
         print_diy("e", "not found: " * CONFIG * ":default")
     end
-    
+
+    botDefault, botDict
+end
+
+function bot_raw(keys::Vector{String}, dict::Dict)::Tuple{String,String}
+    dir = ""
+    cmd = ""
+
+    key = length(ARGS) == 0 ? keys[1] : ARGS[1]
+    postfix = CONFIG * ":[\"" * key * "\"]"
+
+    if haskey(dict, key)
+        bot = dict[key]
+        if bot isa Dict && haskey(bot, "dir") && haskey(bot, "cmd")
+            cmdRaw = bot["cmd"]
+            dirRaw = bot["dir"]
+            if cmdRaw isa String && dirRaw isa String
+                dir = dirRaw
+                cmd = cmdRaw
+            else
+                print_diy("e", "$cmdRaw or $dirRaw is not String: " * postfix)
+            end
+        else
+            print_diy("e", "Dict format or key err: " * postfix)
+        end
+    else
+        print_diy("e", "not found: " * postfix)
+    end
+
     dir, cmd
 end
 
-function bot_get(path::String)::Tuple{Cmd, Bool}
+function bot_get()::Cmd
     cmd = ``
-    botConfig, flag = bot_config(path)
-    dirRaw, cmdRaw = bot_raw(botConfig)
 
-    if dirRaw == "" && cmdRaw == ""
-        flag = false
-    else
-        dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(REPO, dirRaw))
-        cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))
-          # otherwise there will be ' in command
-        cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
-    
-        print_diy("VastGo will run the command: ", cmdRaw)
-        print_diy("in the directory: ", dir)
-    end 
-    
-    cmd, flag
+    botConfig = bot_config()
+    if length(botConfig) == 0
+        return cmd
+    end
+
+    botDefault, botDict = bot_list(botConfig)
+    if length(botDefault) == 0 || length(botDict) == 0
+        return cmd
+    end
+
+    dirRaw, cmdRaw = bot_raw(botDefault, botDict)
+    if cmdRaw == ""
+        return cmd
+    end
+
+    dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(REPO, dirRaw))
+    cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))
+      # otherwise there will be ' in command
+    cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
+
+    print_diy("VastGo will run the command: ", cmdRaw)
+    print_diy("in the directory: ", dir)
+
+    cmd
 end
 
 function bot_ready(proc::Base.Process)::Bool
@@ -406,8 +425,8 @@ function gtp_loop(proc::Base.Process, sentence::String)::Bool
 end
 
 function terminal()
-    cmd, get = bot_get(CONFIG)
-    if get
+    cmd = bot_get()
+    if cmd != ``
         proc, run = bot_run(cmd)
         while run
             sentence = readline()
@@ -419,7 +438,7 @@ function terminal()
     end
 end
 
-if abspath(PROGRAM_FILE) == FILE
+if abspath(PROGRAM_FILE) == TERMINAL
     terminal()
 end
 
