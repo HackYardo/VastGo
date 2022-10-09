@@ -442,7 +442,7 @@ if abspath(PROGRAM_FILE) == TERMINAL
     terminal()
 end
 
-#= SpeedUp
+#= Speedup
 
 using Profile
 @profile include("path/to/terminal.lj")  # run() can not use

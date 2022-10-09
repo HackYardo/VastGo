@@ -201,7 +201,7 @@ function gtps_help()
     println(": switch to a bot")
     printstyled("  help, ?   ", color=6, bold=true)
     println(": show this message")
-    printstyled("gtps_command.", color=6, bold=true)
+    printstyled("gtp_command.", color=6, bold=true)
     println(": broadcast a GTP command to all running bots")
     println("-----Example:\nname.\ng = GNU Go\nl = Leela Zero")
     println()
@@ -244,7 +244,7 @@ function task()
     end
     
     key = collect(keys(botProcDict))[1]
-    print_diy("i", "GTP ready (" * key * " first)")
+    print_diy("i", "GTP ready (" * key * " first), type ? or list_commands for help")
     while flag
         sentence = readline()
         words = split(sentence)
