@@ -1,42 +1,11 @@
 using Dash, JSON3, PlotlyJS
 
-struct Bot 
-    dir::String
-    cmd::String
-end
-
-function Base.convert(::Type{Bot}, t::NamedTuple)
-    Bot(t.dir, t.cmd)
-end 
-function Base.convert(::Type{Bot}, t::Tuple)
-    Bot(t[1], t[2])
-end 
-function Base.convert(::Type{Bot}, d::Dict)
-    Bot(d["dir"], d["cmd"])
-end 
-function Base.convert(::Type{Bot}, v::Vector)
-    Bot(v[1], v[2])
-end 
-
 #include("gtp.jl")
 
 function run_engine()
-    include_string(Main, readchomp("data/config.txt"))
-    
-    key = ""
-    if length(ARGS) == 0
-        key = "k"
-    else
-        key = ARGS[1]
-    end
-    
-    bot = convert(Bot, botDict[key])
-
-    cmd = split(bot.cmd)
-    dir = bot.dir
-    botCommand = Cmd(`$cmd`, dir = dir)
-    
-    botProcess=open(botCommand,"r+")
+    bot = length(ARGS)==0 ? "k" : ARGS[1]
+    botCommand = Cmd(`julia src/terminal.jl $bot`, dir=dirname(@__FILE__))
+    botProcess = open(botCommand,"r+")
     return botProcess
 end
 
@@ -62,7 +31,7 @@ end
 =#
 function query(sentence::String)
     println(engineProcess,sentence)
-    println(sentence)
+    #println(sentence)
 end
 
 function reply()
@@ -75,7 +44,7 @@ function reply()
             paragraph="$paragraph$sentence\n"
         end
     end
-    println(paragraph)
+    #println(paragraph)
     return paragraph::String
 end
 
@@ -1405,7 +1374,7 @@ function checkRule(wholeRule)
     return checkBoard
 end
 
-engineProcess=run_engine()
+#engineProcess=run_engine()
 
 app=dash()
 
@@ -1619,9 +1588,12 @@ end
 #
 @async run_server(app, "0.0.0.0", 8050, debug=false)
 
+engineProcess = run_engine()
+
 function kata_dash()
     while true
         if readline() == "exit"
+            end_engine()
             break
         end
     end
