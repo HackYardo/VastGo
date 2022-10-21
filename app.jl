@@ -3,7 +3,7 @@ using Dash, JSON3, PlotlyJS
 #include("gtp.jl")
 
 function run_engine()
-    bot = length(ARGS)==0 ? "k" : ARGS[1]
+    bot = length(ARGS)==0 ? "k" : ARGS[1]  # can only run KataGo currently
     botCommand = Cmd(`julia src/terminal.jl $bot`, dir=dirname(@__FILE__))
     botProcess = open(botCommand,"r+")
     return botProcess

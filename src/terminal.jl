@@ -110,7 +110,10 @@ function bot_get()::Cmd
     cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))
       # otherwise there will be ' in command
     cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
-
+    if isnothing(Sys.which("$cmd"))
+        print_diy("e", "command can not run: $cmd")
+        return ``
+    end
     print_diy("VastGo will run the command: ", cmdRaw)
     print_diy("in the directory: ", dir)
 
