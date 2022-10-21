@@ -41,6 +41,9 @@ function bot_list(botConfig::Dict)::Tuple{Vector{String},Dict}
     if haskey(botConfig, "default")
         botDefault = botConfig["default"]
         if typeof(botDefault) == Vector{String}
+            if length(ARGS) != 0 
+                botDefault = ARGS
+            end
             botDictRaw = delete!(botConfig, "default")
             if botDictRaw isa Dict
                 botDict = botDictRaw
@@ -57,11 +60,11 @@ function bot_list(botConfig::Dict)::Tuple{Vector{String},Dict}
     botDefault, botDict
 end
 
-function bot_raw(keys::Vector{String}, dict::Dict)::Tuple{String,String}
+bot_raw(keys::Vector{String}, dict::Dict) = bot_raw(keys[1], dict)
+function bot_raw(key::String, dict::Dict)::Tuple{String,String}
     dir = ""
     cmd = ""
 
-    key = length(ARGS) == 0 ? keys[1] : ARGS[1]
     postfix = CONFIG * ":[\"" * key * "\"]"
 
     if haskey(dict, key)
@@ -70,13 +73,13 @@ function bot_raw(keys::Vector{String}, dict::Dict)::Tuple{String,String}
             cmdRaw = bot["cmd"]
             dirRaw = bot["dir"]
             if cmdRaw isa String && dirRaw isa String
-                dir = dirRaw
                 cmd = cmdRaw
+                dir = dirRaw
             else
-                print_diy("e", "$cmdRaw or $dirRaw is not String: " * postfix)
+                print_diy("e", "Dict keys are not String: " * postfix)
             end
         else
-            print_diy("e", "Dict format or key err: " * postfix)
+            print_diy("e", "Dict format err: " * postfix)
         end
     else
         print_diy("e", "not found: " * postfix)

@@ -184,7 +184,7 @@ function print_diy(
 end
 ```
 """
-function print_diy(s::String, str::String; ln::Bool=true, c::Symbol=:blue)
+function print_diy(s::String, str::String; ln::Bool=true, c::Symbol=:cyan)
 #= color
 Symbol
     :red, :green, :yellow, :blue, :magenta
