@@ -150,25 +150,15 @@ Because stderr is hard to talk with, source:
 https://discourse.julialang.org/t/avoiding-readavailable-when-communicating-
 with-long-lived-external-program/61611/25
 =#
-function bot_run(cmd::Cmd)::Tuple{Base.Process, Bool}
-    flag = true
+function bot_run(cmd::Cmd)::Base.Process
     inp = Base.PipeEndpoint()
     out = Base.PipeEndpoint()
     err = Base.PipeEndpoint()
                    
-    proc = Base.Process(``, Ptr{Nothing}())
-    try
-        proc = run(cmd, inp, out, err; wait=false)
-    catch
-        print_diy("e", "no such file, directory or program")
-        flag = false
-    end
+    #proc = Base.Process(``, Ptr{Nothing}())
+    proc = run(cmd, inp, out, err; wait=false)
     
-    if flag
-        flag = bot_ready(proc)
-    end
-    
-    proc, flag
+    proc
 end
 
 function query(proc::Base.Process, sentence::String)
@@ -429,7 +419,8 @@ end
 function terminal()
     cmd = bot_get()
     if cmd != ``
-        proc, run = bot_run(cmd)
+        proc = bot_run(cmd)
+        run = bot_ready(proc)
         while run
             sentence = readline()
             run = gtp_loop(proc, sentence)
