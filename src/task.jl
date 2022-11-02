@@ -269,6 +269,6 @@ function task()
     end
 end
 
-if abspath(PROGRAM_FILE) == @__FILE__
+if abspath(PROGRAM_FILE) == joinpath(SRC, "task.jl")
     task()
 end

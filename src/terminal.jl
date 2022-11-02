@@ -1,11 +1,6 @@
 using TOML
 include("utility.jl")  # match_diy(), split_undo(), print_diy()
 
-const TERMINAL = @__FILE__
-const SRC      = dirname(TERMINAL)
-const REPO     = dirname(SRC)
-const CONFIG   = joinpath(REPO, "data", "config.toml")
-
 function bot_config()::Dict
     botConfig = Dict()
     #=botConfig = Dict(  # + 0.1s
@@ -107,17 +102,17 @@ function bot_get()::Cmd
     end
 
     dir = ispath(dirRaw) ? dirRaw : normpath(joinpath(REPO, dirRaw))
-    cmdVector = Cmd(convert(Vector{String}, split(cmdRaw)))
+    cmdVector = convert(Vector{String}, split(cmdRaw))
       # otherwise there will be ' in command
-    cmd = Cmd(cmdVector, dir=dir, ignorestatus=true)
-    if isnothing(Sys.which("$cmd"))
-        print_diy("e", "command can not run: $cmd")
+    cmd = Cmd(Cmd(cmdVector), dir=dir, ignorestatus=true)
+    print_diy("VastGo will run the command: ", cmdRaw)
+    print_diy("in the directory: ", dirRaw)
+    
+    if isprogram(cmdVector[1], dir)
+        return cmd
+    else 
         return ``
     end
-    print_diy("VastGo will run the command: ", cmdRaw)
-    print_diy("in the directory: ", dir)
-
-    cmd
 end
 
 function bot_ready(proc::Base.Process)::Bool
@@ -444,7 +439,7 @@ function terminal()
     end
 end
 
-if abspath(PROGRAM_FILE) == TERMINAL
+if abspath(PROGRAM_FILE) == joinpath(SRC, "terminal.jl")
     terminal()
 end
 

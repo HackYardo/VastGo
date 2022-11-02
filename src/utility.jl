@@ -17,7 +17,10 @@ utilityfunction2
 """
 =#
 
-
+const UTILITY  = @__FILE__
+const SRC      = dirname(UTILITY)
+const REPO     = dirname(SRC)
+const CONFIG   = joinpath(REPO, "data", "config.toml")
 
 """
 `average(v::Vector)`
@@ -215,6 +218,27 @@ Int
 end
 
 """
+"""
+function isprogram(program::String, dir::String)::Bool
+    flag = true
+    
+    if '/' in program
+        program = normpath(joinpath(dir, program))
+    end
+    
+    programWhich = Sys.which(program)
+    if programWhich == nothing
+        print_diy("e", "program not found: " * program)
+        flag = false
+    else 
+        print_diy("i", "which program: " * programWhich)
+        flag = true
+    end
+    
+    flag
+end
+
+"""
 `utility()`
 
 Some utilities.
@@ -237,9 +261,10 @@ function utility()
         split_undo
         json_pretty
         print_diy
+        isprogram
         """)
 end
 
-if abspath(PROGRAM_FILE) == @__FILE__
+if abspath(PROGRAM_FILE) == UTILITY
     utility()
 end
