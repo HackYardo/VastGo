@@ -194,7 +194,7 @@ end
 function gtps_help()
     println("=")
     printstyled("status, st  ", color=6, bold=true)
-    println(": list all bot")
+    println(": list all bots")
     printstyled("  open, run ", color=6, bold=true)
     println(": run a bot")
     printstyled("switch, turn", color=6, bold=true)

@@ -106,13 +106,14 @@ function bot_get()::Cmd
       # otherwise there will be ' in command
     cmd = Cmd(Cmd(cmdVector), dir=dir, ignorestatus=true)
     print_diy("VastGo will run the command: ", cmdRaw)
-    print_diy("in the directory: ", dirRaw)
+    print_diy("in the directory: ", dir)
     
-    if isprogram(cmdVector[1], dir)
-        return cmd
-    else 
-        return ``
+    if ! isprogram(cmdVector[1], dir)
+        print_diy("e", "program not found")
+        cmd = ``
     end
+    
+    cmd
 end
 
 function bot_ready(proc::Base.Process)::Bool

@@ -9,10 +9,7 @@ Some utilities.
 julia> include("path/to/utility.jl")
 utility
 
-julia> utility()
-utilityfunction1
-utilityfunction2
-...
+help?> utility
 ```
 """
 =#
@@ -21,6 +18,11 @@ const UTILITY  = @__FILE__
 const SRC      = dirname(UTILITY)
 const REPO     = dirname(SRC)
 const CONFIG   = joinpath(REPO, "data", "config.toml")
+function const_path()
+    println(SRC)
+    println(REPO)
+    println(CONFIG)
+end
 
 """
 `average(v::Vector)`
@@ -218,21 +220,29 @@ Int
 end
 
 """
+`isprogram(program::String, dir::String="")::Bool`
+
+Decide if a string is a program via `Sys`.`which`().
+
+# Examples
+
+```
+julia> isprogram("julia")
+true
+
+julia> isprogram("./julia", "../julia/bin/")
+true
+```
 """
-function isprogram(program::String, dir::String)::Bool
+function isprogram(program::String, dir::String="")::Bool
     flag = true
     
     if '/' in program
         program = normpath(joinpath(dir, program))
     end
     
-    programWhich = Sys.which(program)
-    if programWhich == nothing
-        print_diy("e", "program not found: " * program)
+    if Sys.which(program) == nothing
         flag = false
-    else 
-        print_diy("i", "which program: " * programWhich)
-        flag = true
     end
     
     flag
@@ -253,6 +263,7 @@ utilityfunction2
 """
 function utility()
     print("""
+        const_path
         average
         findindex
         match_diy
