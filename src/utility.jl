@@ -189,13 +189,15 @@ function print_diy(
 end
 ```
 """
-function print_diy(s::String, str::String; ln::Bool=true, c::Symbol=:cyan)
+function print_diy(s::String, str::String; 
+    ln::Bool=true, c::Symbol=:cyan, lr::Bool=false)
 #= color
 Symbol
     :red, :green, :yellow, :blue, :magenta
 Int
     1,2,3,4,5
 =#
+    
     if ln
         str = str * '\n'
     end
@@ -211,6 +213,9 @@ Int
             s = "[ Warning: "
             c = :yellow
         end
+        printstyled(s, color=c, bold=true)
+        print(str)
+    elseif lr
         printstyled(s, color=c, bold=true)
         print(str)
     else
