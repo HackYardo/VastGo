@@ -398,7 +398,8 @@ function gtp_quit(proc::Base.Process, sentence::String)::Bool
     false
 end
 
-function gtp_loop(proc::Base.Process, sentence::String)::Bool
+function gtp_loop(proc::Base.Process)::Bool
+    sentence = readline()
     sentenceVector = split(sentence, [' ','-'], keepempty=true)
     words = [       "",   "quit",   "showboard",   "showboardf",   "analyze"]
     funs =  [gtp_valid, gtp_quit, gtp_showboard, gtp_showboardf, gtp_analyze]
@@ -422,8 +423,7 @@ function terminal()
         proc = bot_run(cmd)
         run = bot_ready(proc)
         while run
-            sentence = readline()
-            run = gtp_loop(proc, sentence)
+            run = gtp_loop(proc)
             #sentence == "quit" ? break : continue # - 1s
             #gtp_loop(proc, "showboardf")
             #run = gtp_loop(proc, "quit")

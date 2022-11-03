@@ -22,12 +22,7 @@ function bots_get()
     botDictKey = String[]
     botToRunValid = String[]
 
-    botConfig = bot_config()
-    if length(botConfig) == 0
-        return botDictKey, botToRun
-    end
-
-    botDefault, botDict = bot_list(botConfig)
+    botDefault, botDict = bot_list(bot_config())
     if length(botDefault) == 0 || length(botDict) == 0
         return botDictKey, botToRun
     end
@@ -37,10 +32,10 @@ function bots_get()
     botToRun = length(ARGS) == 0 ? botDefault : ARGS
     unique!(botToRun)
     for key in botToRun
-        postfix = CONFIG * ":[\"" * key * "\"]"
         if key in botDictKey
             push!(botToRunValid, key)
         else 
+            postfix = CONFIG * ":[\"" * key * "\"]"
             print_diy("w", "not found: " * postfix)
         end
     end
@@ -48,55 +43,39 @@ function bots_get()
     botDictKey, botToRunValid
 end
 
-function bots_ready(proc::Base.Process)::Bool
-    flag = true
-
+function bots_ready(bot::String, proc::Base.Process)::Bool 
     while true
         line = readline(proc)
 
-        if occursin(": GTP ready", line) || line == ""
-            break
-        end
-
-        println(line)
-
-        if occursin("Error", line)
-            flag = false
+        if line == ""
+            print_diy("e", bot * " can not run", ln=false)
+            return false
+        elseif line[7:9] == ": G"
+            print_diy("i", bot * " ready")
+            return true
+        else 
+            println(line)
         end
     end
-
-    flag
 end
 
 function bots_run(bot::String)
-    proc = open(Cmd(`julia terminal.jl $bot`, dir=SRC), "r+")
-
-    flag = bots_ready(proc)
-
-    if !flag
-        print_diy("e", bot * " can not run", ln=false)
-        proc = nothing
-    else
-        print_diy("i", bot * " ready")
-    end
-
-    proc
+    open(Cmd(`julia terminal.jl $bot`, dir=SRC), "r+")
 end
 function bots_run(botToRun::Vector{String})
     botProcDict = Dict{String, Base.Process}()
-
+    
     @sync for bot in botToRun
         @async begin
             proc = bots_run(bot)
-            if proc != nothing
+            if bots_ready(bot, proc)
                 botProcDict[bot] = proc
             end
         end
     end
-    #println(botProcDict)
     
     botProcDict
-end 
+end
 
 function gtps_run(botDictKey, botProcDict, key)
     if haskey(botProcDict, key)
