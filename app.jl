@@ -1,5 +1,4 @@
 using Dash, JSON3, PlotlyJS
-
 #include("gtp.jl")
 
 function run_engine()
@@ -1582,14 +1581,6 @@ callback!(
     return finalScore,dialogDisplay,info, plot_board(boardSize,colorVector)
 end
 
-#server = app.server # no server field?
-
-#run_server(app, "0.0.0.0", 8050, debug=true)
-#
-@async run_server(app, "0.0.0.0", 8050, debug=false)
-
-engineProcess = run_engine()
-
 function kata_dash()
     while true
         if readline() == "exit"
@@ -1599,4 +1590,8 @@ function kata_dash()
     end
 end
 
-kata_dash()  #
+if abspath(PROGRAM_FILE) == @__FILE__
+    engineProcess = run_engine()
+    @async run_server(app, "0.0.0.0", 8050, debug=false)
+    kata_dash()
+end
