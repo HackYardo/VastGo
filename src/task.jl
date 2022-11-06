@@ -7,7 +7,10 @@ and will try not only one approaches:
 4. stack
 =#
 
-include("terminal.jl")  # bot_config()
+include("terminal.jl")
+    # bot_config(), bot_list()
+    # utility.jl
+        # SRC, print_diy()
 
 function Base.in(a::Vector{String}, b)
     for s in a
@@ -23,7 +26,7 @@ function bots_get()
     botToRunValid = String[]
 
     botDefault, botDict = bot_list(bot_config())
-    if length(botDefault) == 0 || length(botDict) == 0
+    if length(botDefault) * length(botDict) == 0
         return botDictKey, botToRun
     end
 
@@ -34,9 +37,8 @@ function bots_get()
     for key in botToRun
         if key in botDictKey
             push!(botToRunValid, key)
-        else 
-            postfix = CONFIG * ":[\"" * key * "\"]"
-            print_diy("w", "not found: " * postfix)
+        else
+            print_diy("w", "not found: " * CONFIG * ":[\"" * key * "\"]")
         end
     end
     
@@ -208,7 +210,7 @@ function task()
     flag = true
 
     botDictKey, botToRun = bots_get()
-    if length(botDictKey) == 0 || length(botToRun) == 0
+    if length(botDictKey) * length(botToRun) == 0
         return nothing
     end
 

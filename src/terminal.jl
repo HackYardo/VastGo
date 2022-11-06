@@ -92,7 +92,7 @@ function bot_get()::Cmd
     end
 
     botDefault, botDict = bot_list(botConfig)
-    if length(botDefault) == 0 || length(botDict) == 0
+    if length(botDefault) * length(botDict) == 0
         return cmd
     end
 
@@ -457,6 +457,7 @@ overhead*count  :line  ;fun    speedupable  seconds
 bot_showboardf.return.Tuple>>Dict        V  0.03
 bot_config.botConfig.init=Dict()         V  0.10
 utility.jl.print_diy.c.Int>>Symbol       V  0.30
+a == 0 or b == 0 >> a * b == 0           V  0.03
 
 TODO: speedup showboardf()
 =#
