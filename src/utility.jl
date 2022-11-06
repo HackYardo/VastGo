@@ -7,7 +7,6 @@ Some utilities.
 # Examples
 ```
 julia> include("path/to/utility.jl")
-utility
 
 help?> utility
 ```
@@ -170,27 +169,30 @@ function json_pretty(sth)
 end 
 
 """
-```
-function print_diy(
-    str1::String, str2::String;
-    ln::Bool=true, flag::Bool=true, c::Union{Int64,Symbol}=6, b::Bool=true
-    )
+```print_diy(s::String, str::String;
+             ln::Bool=true, c::Symbol=:cyan, lr::Bool=false)```
+`print_diy(str::String; ln::Bool=false, c::Symbol=:cyan, b::Bool=false)`
 
-    if ln
-        str2 = str2 * '\n'
-    end
-    if flag
-        printstyled(str1, color=c, bold=b)
-        print(str2)
-    else
-        print(str1)
-        printstyled(str2, color=c, bold=b)
-    end
-end
-```
+Print colorful text in terminal via `printstyled`().
+- `s` can be used to simplify macros
+  - "i" for `@info`
+  - "w" for `@warn`
+  - "e" for `@error`
+- `ln` for '\\n' or not
+- `c` for printstyled(;color)
+- `lr` for print `str` firstly `s` secondly or not
+- `b` for printstyled(;bold)
+
 """
-function print_diy(s::String, str::String; 
-    ln::Bool=true, c::Symbol=:cyan, lr::Bool=false)
+function print_diy(str::String; ln::Bool=false, c::Symbol=:cyan, b::Bool=false)
+    if ln
+        str = str * '\n'
+    end
+
+    printstyled(str, color=c, bold=b)
+end
+function print_diy(s::String, str::String;
+                   ln::Bool=true, c::Symbol=:cyan, lr::Bool=false)
 #= color
 Symbol
     :red, :green, :yellow, :blue, :magenta

@@ -148,9 +148,9 @@ function gtps_status(botDictKey, botProcDict, key)
     for k in botDictKey
         if k in botProcKey
             if k == key
-                printstyled(' ' * k, color=:green, bold=true)
+                print_diy(' ' * k, c=:green, b=true)
             else
-                printstyled(' ' * k, color=6)
+                print_diy(' ' * k)
             end
         else
             print(' ' * k)
