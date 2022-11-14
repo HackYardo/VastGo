@@ -237,7 +237,7 @@ Decide if a string is a program via `Sys`.`which`().
 julia> isprogram("julia")
 true
 
-julia> isprogram("./julia", "../julia/bin/")
+julia> isprogram("./julia", "~/julia/bin/")
 true
 ```
 """

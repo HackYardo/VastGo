@@ -85,10 +85,7 @@ function gtps_run(botDictKey, botProcDict, key)
         print_diy("w", key * " already running")
     elseif key in botDictKey
         println("=")
-        proc = bots_run(key)
-        if proc != nothing
-            botProcDict[key] = proc
-        end
+        botProcDict = bots_run([key])  # [] for the startup info from bots_ready
     else
         print("= ")
         print_diy("w", key * " not found")
@@ -180,7 +177,7 @@ function gtps_help()
     print_diy("  help, ?   ", ": show this message", lr=true)
     print_diy("gtp_command.", ": broadcast a GTP command to all running bots", lr=true)
     println("-----Example:")
-    print_diy("name.\n", "g = GNU Go\nl = Leela Zero", lr=true)
+    print_diy("name.\n", "g = GNU Go\nk = KataGo\nl = Leela Zero", lr=true)
     println()
 end
 
@@ -188,7 +185,7 @@ function gtps_broadcast(botProcDict, sentence)
     @sync for (bot,proc) in botProcDict
         @async begin
             println(proc, sentence)
-            println(bot, ' ', readuntil(proc, "\n\n"))
+            println(bot, ' ',  readuntil(proc, "\n\n"))
         end
     end
     println()
@@ -236,7 +233,7 @@ function task()
             botProcDict = gtps_run(botDictKey, botProcDict, String(words[end]))
         elseif ["help", "?"] in words
             gtps_help()
-        elseif  length(sentence) > 1 && sentence[end] == '.'
+        elseif length(sentence) > 1 && sentence[end] == '.'
             sentence = sentence[1:end-1]
             gtps_broadcast(botProcDict, sentence)
             #gtps_qr.(collect(values(botProcDict)), sentence)
