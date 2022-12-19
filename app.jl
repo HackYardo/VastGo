@@ -1,10 +1,30 @@
 using Dash, JSON3, PlotlyJS
-#include("gtp.jl")
+include("src/utility.jl")
+
+function engine_ready(bot::String, proc::Base.Process)::Bool
+    while true
+        line = readline(proc)
+
+        if line == ""
+            print_diy("e", bot * " can not run", ln=false)
+            return false
+        elseif length(line) > 8 && line[7:9] == ": G"
+            print_diy("i", bot * " ready")
+            return true
+        else
+            println(line)
+        end
+    end
+end
 
 function run_engine()
     bot = length(ARGS)==0 ? "k" : ARGS[1]  # can only run KataGo currently
     botCommand = Cmd(`julia src/terminal.jl $bot`, dir=dirname(@__FILE__))
     botProcess = open(botCommand,"r+")
+
+    if ! engine_ready(bot, botProcess)
+        exit()
+    end
     return botProcess
 end
 
