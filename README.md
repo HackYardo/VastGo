@@ -68,7 +68,7 @@ Magnet Go | *19²* | *captures*, *move history*
 	<summary>Hard/Software requirements</summary>
   
 **Hardware:**
-- Free HardDisk >= 2GB
+- Free HardDisk >= 4GB
 - Total Memory >= 8GB
 
 **Julia, packages and this repo:**
@@ -178,7 +178,7 @@ Now the same as on x86-64.
 - Why create this?
   - C++ has [q5Go](https://github.com/bernds/q5Go).
   - Java has [LizzieYzy](https://github.com/yzyray/lizzieyzy).
-  - JavaScript has [Sabaki](https://sabaki.yichuanshen.de/),  [Lizgoban](https://github.com/kaorahi/lizgoban),  [Ogatak](https://github.com/rooklift/ogatak).
+  - JavaScript has [Sabaki](https://sabaki.yichuanshen.de/),  [LizGoban](https://github.com/kaorahi/lizgoban),  [Ogatak](https://github.com/rooklift/ogatak).
   - Python has [KaTrain](https://github.com/sanderland/katrain),  [BadukAI](https://aki65.github.io/).
   - 🚀🚀🚀 ***Julia must have one too!*** 🚀🚀🚀
 - Why so slow? 

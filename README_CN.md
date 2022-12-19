@@ -68,7 +68,7 @@ Magnet Go | *19²* | *captures*, *move history*
 	<summary>硬软件需求</summary>
   
 **硬件：**
-- 剩余磁盘空间 >= 2GB
+- 剩余磁盘空间 >= 4GB
 - 总共内存容量 >= 8GB
 
 **Julia、包和本仓库：**
@@ -178,7 +178,7 @@ shell> julia app.jl
 - 为什么创建？
   - C++有[q5Go](https://github.com/bernds/q5Go).
   - Java有[LizzieYzy](https://github.com/yzyray/lizzieyzy).
-  - JavaScript有[Sabaki](https://sabaki.yichuanshen.de/)、[Lizgoban](https://github.com/kaorahi/lizgoban)、[Ogatak](https://github.com/rooklift/ogatak).
+  - JavaScript有[Sabaki](https://sabaki.yichuanshen.de/)、[LizGoban](https://github.com/kaorahi/lizgoban)、[Ogatak](https://github.com/rooklift/ogatak).
   - Python有[KaTrain](https://github.com/sanderland/katrain)、[BadukAI](https://aki65.github.io/).
   - 🚀🚀🚀 ***Julia也必须得有！*** 🚀🚀🚀
 - 为什么这么慢？
