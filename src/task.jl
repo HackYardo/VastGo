@@ -52,7 +52,7 @@ function bots_ready(bot::String, proc::Base.Process)::Bool
         if line == ""
             print_diy("e", bot * " can not run", ln=false)
             return false
-        elseif line[7:9] == ": G"
+        elseif length(line) > 8 && line[7:9] == ": G"
             print_diy("i", bot * " ready")
             return true
         else 
