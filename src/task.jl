@@ -80,14 +80,13 @@ function bots_run(botToRun::Vector{String})
 end
 
 function gtps_run(botDictKey, botProcDict, key)
+    print("= ")
     if haskey(botProcDict, key)
-        print("= ")
         print_diy("w", key * " already running")
     elseif key in botDictKey
-        println("=")
+        println()
         botProcDict = bots_run([key])  # [] for the startup info from bots_ready
     else
-        print("= ")
         print_diy("w", key * " not found")
     end
     println()
