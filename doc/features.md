@@ -62,14 +62,17 @@
   - [ ] opening book of modern Go community? *(exercise opening and dissecting sequences)*
   - [ ] i18n
   - [ ] CSS theme
+  - [ ] intersections to boxes
 
 # Nonstandard Go
 
 - Preset
+  - [ ] "回", arxiv2211.00241
   - [ ] [Random Start Go](https://senseis.xmp.net/?RandomStartGo), need a moveNumber *(exercise fighting or ending games)*
   - [ ] [ChessWhiz](https://senseis.xmp.net/?ChessWhiz) *(exercise making/breaking eye shapes)* 
   - [ ] [Dots Go](https://senseis.xmp.net/?DotsGo) *(exercise trading or ko fighting)*
 - Visibility
+  - [ ] Ghost Go: can't see yourself
   - [x] [One Color Go](https://senseis.xmp.net/?OneColourGo)
   - [x] [Phantom Go](https://senseis.xmp.net/?PhantomGo)
   - [x] [Blind Go](https://senseis.xmp.net/?BlindGo)
