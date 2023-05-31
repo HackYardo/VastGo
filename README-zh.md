@@ -1,6 +1,4 @@
 ![静态的](assets/board.png)
-未来 /\ , \\/ 当前
-![动态的](assets/dynamic.gif)
 
 ## 关于
 

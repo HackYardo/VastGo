@@ -1,6 +1,4 @@
 ![static](assets/board.png)
-future /\ , \\/ current
-![dynamic](assets/dynamic.gif)
 
 ## About
 
