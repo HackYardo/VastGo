@@ -4,12 +4,12 @@
 
 **Note: Still in the very early [stage](doc/versions.md#001-just-work), don't expect to be stable.**
 
-> *The README is in both [English](./README.md) and [简体中文](./README_CN.md). The repo is on both [Github](https://github.com/HackYardo/VastGo) and [Gitee](https://gitee.com/vastgo/VastGo).* And it's about the game of [Go/Baduk/Weiqi](https://www.usgo.org/learn-play), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc. 
+> *The README is in both [English](./README.md) and [简体中文](./README_CN.md). The repo is on both [Github](https://github.com/HackYardo/VastGo) and [Gitee](https://gitee.com/vastgo/VastGo).* And it's about the game of [Go/Baduk/Weiqi](https://www.britgo.org/files/rules/GoQuickRef.pdf), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc. 
 
 VastGo is
 - A multi-platform Go GUI that can run on Windows, Linux, Android and perhaps FreeBSD, MacOS, IOS, HarmonyOS. 
 - Based on Dash.jl, PlotlyJS.jl, JSON3.jl and modern or classic GTP engines.
-- Written in pure julia and under the MIT [license](#license).
+- Written in pure julia and under the MIT license.
 
 Design:
 ```
@@ -48,7 +48,7 @@ Ideas:
 
 software | computer | phone
 --- | --- | ---
-julia | >= 1.6.7 | 1.6.7 - 1.7.2
+julia | >= 1.6.7 | 1.6.7 - 1.7.2 or 1.9.x
 KataGo | **PASS** | **PASS**
 Leela-Zero | *fail* | *fail*
 GNU Go | *fail* | *fail*
@@ -66,15 +66,15 @@ Magnet Go | *19²* | *captures*, *move history*
 	<summary>Hard/Software requirements</summary>
   
 **Hardware:**
-- Free HardDisk >= 4GB
-- Total Memory >= 8GB
+- Free HardDisk >= 5GB
+- Total Memory  >= 8GB
 
 **Julia, packages and this repo:**
 1. download and add [julia](https://julialang.org/) into path
 2. run julia in cmd/shell/terminal and you will enter julia REPL-mode
 ```shell
 shell> julia 
-```  
+```
 3. enter julia Pkg REPL-mode
 ```shell
 julia> ]
