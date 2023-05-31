@@ -74,14 +74,14 @@ Julia | >= 1.6.7 | 1.6.7 - 1.7.2 or 1.9.x
 2. 在终端cmd/shell/terminal里运行julia，即进入julia REPL模式
 ```shell
 shell> julia 
-```  
+```
 3. 进入julia Pkg REPL模式
 ```shell
 julia> ]
 ```
 4. 安装包
 ```julia
-(@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler PlotlyBase
+(@v1.9) pkg> add Dash PlotlyJS JSON3 PackageCompiler PlotlyBase
 ```
 5. 下载本仓库
 

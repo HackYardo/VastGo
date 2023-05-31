@@ -81,7 +81,7 @@ julia> ]
 ```
 4. install packages
 ```julia
-(@v1.8) pkg> add Dash PlotlyJS JSON3 PackageCompiler PlotlyBase
+(@v1.9) pkg> add Dash PlotlyJS JSON3 PackageCompiler PlotlyBase
 ```
 5. download this repo
 
