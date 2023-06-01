@@ -1,5 +1,9 @@
 default = ["g", "k", "l"]
 
+[kd]
+cmd = "./katago gtp"
+dir = "../kg/"
+
 [ka]
 cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"
 dir = "../KataGo1.11AVX2/"
