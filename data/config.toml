@@ -1,33 +1,33 @@
 default = ["g", "k", "l"]
 
-[kd]
-cmd = "./katago gtp"
-dir = "../kg/"
-
-[ka]
-cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"
-dir = "../KataGo1.11AVX2/"
-
 [g]
 cmd = "gnugo --mode gtp"
 dir = ""
 
 [k]
-cmd = "./katago gtp -config v8t5.cfg -model ../networks/m6.txt.gz"
-dir = "../KataGo1.11Eigen/"
-
-[ka2]
-cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.bin.gz"
-dir = "../KataGo1.11AVX2/"
+cmd = "./katago gtp"
+dir = "../KataGo/"
 
 [l]
-cmd = "leelaz --cpu-only -g -v 8 -w w6.gz"
-dir = "../networks/"
+cmd = "leelaz --cpu-only -g -v 8 -w weight.gz"
+dir = "../LeelaZero/"
 
-[k2]
-cmd = "./katago gtp -config v8t5.cfg -model ../networks/m20.bin.gz"
-dir = "../KataGo1.11Eigen/"
+[kVanilla]
+cmd = "./katago gtp -config default_gtp.cfg -model default_model.bin.gz"
+dir = "../KataGo/"
 
-[ks]
-cmd = "./katago gtp -config v8t5.cfg -override-config defaultBoardSize=8,maxVisits=64 -model ../networks/m6.txt.gz"
-dir = "../KataGo1.11Eigen/"
+[l20]
+cmd = "leelaz --cpu-only -g -v 8 -w w20.gz"
+dir = "../LeelaZero/"
+
+[ka20]
+cmd = "./katago gtp -config 8visits5seconds.cfg -model m20.bin.gz"
+dir = "../KataGo1.10.0AVX2/"
+
+[ke6]
+cmd = "./katago gtp -config v8t5.cfg -model m6.txt.gz"
+dir = "../KataGo1111Eigen/"
+
+[ko69c]
+cmd = "./katago gtp -override-config defaultBoardXSize=9,defaultBoardYSize=12"
+dir = "../KataGo1124OpenCL/"
