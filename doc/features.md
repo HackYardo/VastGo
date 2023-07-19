@@ -63,6 +63,7 @@
   - [ ] i18n
   - [ ] CSS theme
   - [ ] intersections to boxes
+  - [ ] rotate board 0 to 360∘
 
 # Nonstandard Go
 
