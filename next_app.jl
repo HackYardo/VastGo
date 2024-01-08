@@ -1,6 +1,8 @@
 using Dash
 using PlotlyBase  # Layout(), scatter(), Plot()
+
 import JSON3  # JSON3.read(), JSON3.write(), JSON3.pretty()
+
 include("src/board.jl")  
     # VERTEX
     # trace_stone(), plot_board()
