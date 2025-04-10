@@ -2,6 +2,9 @@
 
 ## About
 
+> [!CAUTION]
+> As Plotly Dash Official only supports Python since 2022, this project is archived. Potential options would be Makie.jl or NiceGUI.py. If the project come back, its new name will be VastBaduk.
+
 **Note: Still in the very early [stage](doc/versions.md#001-just-work), don't expect to be stable.**
 
 > *The README is in both [English](./README.md) and [简体中文](./README_CN.md). The repo is on both [Github](https://github.com/HackYardo/VastGo) and [Gitee](https://gitee.com/vastgo/VastGo).* And it's about the game of [Go/Baduk/Weiqi](https://www.britgo.org/files/rules/GoQuickRef.pdf), [GoTextProtocol(GTP)](http://www.lysator.liu.se/~gunnar/gtp/), [SmartGameFormat(.sgf)](https://www.red-bean.com/sgf/), [KataGo](https://katagotraining.org/), [Leela-Zero](https://zero.sjeng.org/), [GNU Go](https://www.gnu.org/software/gnugo/), [Julia](https://julialang.org/), [PlotlyJS.jl](https://plotly.com/julia/), [Dash.jl](https://dash-julia.plotly.com/), [Markdown](https://commonmark.org/), [ScalableVectorGraphics(.svg)](https://developer.mozilla.org/en-US/docs/Web/SVG), [Regular Expression](https://ryanstutorials.net/linuxtutorial/grep.php), etc. 
